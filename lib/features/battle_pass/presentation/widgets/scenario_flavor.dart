@@ -1,0 +1,37 @@
+import '../../domain/repositories/battle_pass_repository.dart';
+
+/// Косметический текст/картинка центрального предмета под каждый сценарий.
+/// Сознательно вынесено из domain-модели: это флейвор-контент конкретного
+/// сезона, а не часть проданской схемы данных БП (см. README).
+class ScenarioFlavor {
+  const ScenarioFlavor({
+    required this.itemAsset,
+    required this.itemTitle,
+    required this.tag,
+  });
+
+  final String itemAsset;
+  final String itemTitle;
+  final String tag;
+
+  static const _assetsBase = 'assets/images/battle_pass';
+
+  static ScenarioFlavor of(BattlePassScenario scenario) => switch (scenario) {
+    BattlePassScenario.premiumLocked => const ScenarioFlavor(
+      itemAsset: '$_assetsBase/reward_item_locked.png',
+      itemTitle: 'Мега пак',
+      tag: 'Доступно с прокачкой!',
+    ),
+    BattlePassScenario.premiumUnlockedWithReward => const ScenarioFlavor(
+      itemAsset: '$_assetsBase/reward_item_purchased.png',
+      itemTitle: '«Роковая женщина» или «Босс мафии»',
+      tag: 'Доступно с прокачкой!',
+    ),
+    BattlePassScenario.maxLevel ||
+    BattlePassScenario.completed => const ScenarioFlavor(
+      itemAsset: '$_assetsBase/reward_item_max_level.png',
+      itemTitle: 'Мега пак',
+      tag: 'Максимальный уровень',
+    ),
+  };
+}

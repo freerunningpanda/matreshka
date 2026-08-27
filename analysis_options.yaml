@@ -1,0 +1,9 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Конвенция проекта: конструкторы принимают именованные параметры без "_"
+    # (mockApi, getSeason...) и присваивают их приватным полям (_mockApi, _getSeason...)
+    # напрямую в initializer list — так публичное имя параметра не привязано
+    # к приватному имени поля. См. README.
+    prefer_initializing_formals: false
