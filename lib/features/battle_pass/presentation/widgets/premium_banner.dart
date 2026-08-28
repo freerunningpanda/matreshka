@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
 
@@ -77,38 +78,85 @@ class PremiumBanner extends StatelessWidget {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 125,
+                      top: 27,
+                      right: 80,
+                    ),
+                    child: _UpgradeButton(
+                      label: premiumOwned ? 'Повысить уровень' : 'Прокачать',
                       onPressed: onPressed,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentGold,
-                        foregroundColor: const Color(0xFF2D2D31),
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                      icon: Icon(
-                        premiumOwned
-                            ? Icons.arrow_upward
-                            : Icons.workspace_premium,
-                      ),
-                      label: Text(
-                        premiumOwned ? 'Повысить уровень' : 'Прокачать',
-                        style: const TextStyle(
-                          fontFamily: 'Geologica',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 22,
-                        ),
-                      ),
                     ),
                   ),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Золотая кнопка с глянцевым бликом (Rectangle 64755, blend "overlay").
+class _UpgradeButton extends StatelessWidget {
+  const _UpgradeButton({required this.label, required this.onPressed});
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.glowShadow,
+            blurRadius: 40,
+            spreadRadius: 4,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(30),
+        clipBehavior: Clip.antiAlias,
+        child: Ink(
+          decoration: const BoxDecoration(gradient: AppColors.itemTagGradient),
+          child: InkWell(
+            onTap: onPressed,
+            child: Ink(
+              decoration: const BoxDecoration(
+                gradient: AppColors.buttonShineGradient,
+                backgroundBlendMode: BlendMode.overlay,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/icons/battle_pass/premium.svg',
+                    width: 27,
+                    height: 20,
+                  ),
+                  const SizedBox(width: 24),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontFamily: 'Geologica',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 30,
+                      height: 1.2,
+                      letterSpacing: -0.3,
+                      color: AppColors.itemTagText,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -47,6 +47,20 @@ abstract final class AppColors {
     colors: [itemTagGradientTop, itemTagGradientBottom],
   );
 
+  /// Глянцевый блик поверх золотой кнопки (Rectangle 64755, blend "overlay").
+  static const LinearGradient buttonShineGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    stops: [0.0, 0.25, 0.5, 0.75, 1.0],
+    colors: [
+      Color(0x00D9D9D9),
+      Color(0x66C2C2C2),
+      Color(0xFFA9A9A9),
+      Color(0x668D8D8D),
+      Color(0x00737373),
+    ],
+  );
+
   static const LinearGradient claimGreenGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
