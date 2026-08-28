@@ -37,6 +37,16 @@ abstract final class AppColors {
     colors: [eventTitleTop, eventTitleBottom],
   );
 
+  static const Color itemTagText = Color(0xFF3C0B0B);
+  static const Color itemTagGradientTop = Color(0xFFEFCB4C);
+  static const Color itemTagGradientBottom = Color(0xFFF6743C);
+
+  static const LinearGradient itemTagGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [itemTagGradientTop, itemTagGradientBottom],
+  );
+
   static const LinearGradient claimGreenGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,

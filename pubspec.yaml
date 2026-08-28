@@ -24,6 +24,7 @@ flutter:
 
   assets:
     - assets/images/battle_pass/
+    - assets/icons/battle_pass/
 
   fonts:
     - family: Geologica

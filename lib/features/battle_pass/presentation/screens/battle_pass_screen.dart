@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/navigation/app_router.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../tasks/presentation/cubit/tasks_cubit.dart';
 import '../../../tasks/presentation/cubit/tasks_state.dart';
 import '../../domain/entities/level.dart';
@@ -117,18 +119,23 @@ class _BattlePassView extends StatelessWidget {
                                 .claimAllRewards(),
                           ),
                         Positioned(
-                          right: 24,
-                          top: 24,
+                          right: 80,
+                          top: 50,
                           child: Material(
-                            color: Colors.black.withValues(alpha: 0.35),
+                            color: AppColors.buttonOverlayWeak,
                             shape: const CircleBorder(),
                             child: InkWell(
                               customBorder: const CircleBorder(),
                               onTap: () {},
-                              child: const SizedBox(
-                                width: 56,
-                                height: 56,
-                                child: Icon(Icons.close, color: Colors.white),
+                              child: Container(
+                                width: 100,
+                                height: 100,
+                                padding: const EdgeInsets.all(32),
+                                child: SvgPicture.asset(
+                                  'assets/icons/battle_pass/icn_x.svg',
+                                  width: 36,
+                                  height: 36,
+                                ),
                               ),
                             ),
                           ),

@@ -210,7 +210,7 @@ class _TasksButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
-            'assets/images/battle_pass/icn_tasks.svg',
+            'assets/icons/battle_pass/icn_tasks.svg',
             width: 30,
             height: 30,
           ),
