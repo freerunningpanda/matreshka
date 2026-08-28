@@ -11,6 +11,14 @@ abstract final class AppColors {
   static const Color buttonOverlayWeak = Color(0x0DE9E9F3); // 0.05
   static const Color buttonOverlayStrong = Color(0x1AE9E9F3); // 0.1
 
+  static const Color progressRingTrack = Color(0x1AE9E9F3); // 0.1
+  static const Color progressRingFill = Color(0x99E9E9F3); // 0.6
+  static const Color textMuted = progressRingFill; // rgba(233,233,243,0.6)
+
+  static const Color taskCardHeaderBg = Color(0x99353847); // #353847 @ 0.6
+  static const Color taskCardBodyBg = Color(0x99212331); // #212331 @ 0.6
+  static const Color taskChipBg = Color(0xFF232429);
+
   static const Color claimGreenTop = Color(0xFF56B877);
   static const Color claimGreenBottom = Color(0xFF449660);
   static const Color claimPurpleTop = Color(0xFF925CD8);

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 
-/// Пилюля с уровнем и прогрессом опыта — переиспользует место "Info bar"
-/// из макета, но показывает BP-релевантные данные (уровень/XP), а не
-/// сторонний игровой ивент со скриншота (см. README, спорные места).
+/// Индикатор уровня — "BP_Level" из макета (node 1:1312): кольцевой прогресс
+/// (сплошной трек 10% + дуга прогресса 60%, толщина 8) с номером уровня по
+/// центру и подписью XP под кольцом. Позиция x:346 y:37 — из Figma.
 class XpProgressPill extends StatelessWidget {
   const XpProgressPill({
     required this.currentLevel,
@@ -21,69 +21,65 @@ class XpProgressPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = xpToNextLevel == 0
+    final isMaxLevel = currentLevel >= maxLevel;
+    final progress = isMaxLevel || xpToNextLevel == 0
         ? 1.0
         : (currentXp / xpToNextLevel).clamp(0.0, 1.0);
     return Positioned(
       left: 346,
       top: 37,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.35),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 26,
-              backgroundColor: AppColors.accentGold,
-              child: Text(
-                '$currentLevel',
-                style: const TextStyle(
-                  fontFamily: 'Geologica',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 22,
-                  color: Color(0xFF2D2D31),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 100,
+            height: 100,
+            child: Stack(
+              alignment: Alignment.center,
               children: [
+                // Stack даёт non-positioned детям только loose constraints,
+                // а CircularProgressIndicator без tight constraints рисуется
+                // в своём дефолтном размере (~36px) — поэтому обязателен
+                // собственный SizedBox 100x100 вокруг самого индикатора.
+                SizedBox.expand(
+                  child: CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: 8,
+                    backgroundColor: AppColors.progressRingTrack,
+                    valueColor: const AlwaysStoppedAnimation(
+                      AppColors.progressRingFill,
+                    ),
+                  ),
+                ),
                 Text(
-                  currentLevel >= maxLevel
-                      ? 'Максимальный уровень'
-                      : '$currentXp / $xpToNextLevel XP',
+                  '$currentLevel',
                   style: const TextStyle(
                     fontFamily: 'Geologica',
                     fontWeight: FontWeight.w600,
-                    fontSize: 18,
+                    fontSize: 42,
+                    height: 1.3,
+                    letterSpacing: -0.42,
                     color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: SizedBox(
-                    width: 180,
-                    height: 8,
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: Colors.white.withValues(alpha: 0.15),
-                      valueColor: const AlwaysStoppedAnimation(
-                        AppColors.accentGold,
-                      ),
-                    ),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            isMaxLevel ? 'Максимальный уровень' : '$currentXp / $xpToNextLevel',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'Geologica',
+              fontWeight: FontWeight.w500,
+              fontSize: 22,
+              height: 1.2,
+              letterSpacing: -0.22,
+              color: AppColors.progressRingFill,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/navigation/app_router.dart';
+import '../../../tasks/presentation/cubit/tasks_cubit.dart';
+import '../../../tasks/presentation/cubit/tasks_state.dart';
 import '../../domain/entities/level.dart';
 import '../cubit/battle_pass_cubit.dart';
 import '../cubit/battle_pass_state.dart';
@@ -24,7 +26,10 @@ class BattlePassScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<BattlePassCubit>(
       create: (_) => sl<BattlePassCubit>(),
-      child: const _BattlePassView(),
+      child: BlocProvider<TasksCubit>(
+        create: (_) => sl<TasksCubit>(),
+        child: const _BattlePassView(),
+      ),
     );
   }
 }
@@ -64,8 +69,17 @@ class _BattlePassView extends StatelessWidget {
                                     .requiredXp
                               : 0,
                         ),
-                        TasksTeaserCard(
-                          onTap: () => AppRouter.toTasks(context),
+                        BlocBuilder<TasksCubit, TasksState>(
+                          builder: (context, tasksState) => TasksTeaserCard(
+                            task: switch (tasksState) {
+                              TasksLoaded(:final overview) =>
+                                overview.tasks.isEmpty
+                                    ? null
+                                    : overview.tasks.first,
+                              _ => null,
+                            },
+                            onTap: () => AppRouter.toTasks(context),
+                          ),
                         ),
                         CentralItemDisplay(scenario: scenario),
                         PremiumBanner(
