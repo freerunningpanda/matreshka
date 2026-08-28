@@ -14,10 +14,10 @@ class CentralItemDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     final flavor = ScenarioFlavor.of(scenario);
     return Positioned(
-      left: 900,
-      top: 40,
-      width: 730,
-      height: 700,
+      left: 960,
+      top: 160,
+      width: 600,
+      height: 550,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 350),
         child: Column(

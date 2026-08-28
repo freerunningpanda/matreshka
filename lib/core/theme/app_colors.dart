@@ -27,6 +27,16 @@ abstract final class AppColors {
   static const Color glowGold = Color(0xFFFFB41C);
   static const Color glowShadow = Color(0x52FFB800); // rgba(255,184,0,0.32)
 
+  static const Color timerText = Color(0x66E9E9F3); // rgba(233,233,243,0.4)
+  static const Color eventTitleTop = Color(0xFFD63A26);
+  static const Color eventTitleBottom = Color(0xFFEF6429);
+
+  static const LinearGradient eventTitleGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [eventTitleTop, eventTitleBottom],
+  );
+
   static const LinearGradient claimGreenGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,

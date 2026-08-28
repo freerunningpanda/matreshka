@@ -12,6 +12,7 @@ import '../widgets/battle_pass_background.dart';
 import '../widgets/central_item_display.dart';
 import '../widgets/claim_all_button.dart';
 import '../widgets/design_canvas.dart';
+import '../widgets/event_timer_banner.dart';
 import '../widgets/left_nav_panel.dart';
 import '../widgets/premium_banner.dart';
 import '../widgets/rewards_track.dart';
@@ -69,6 +70,7 @@ class _BattlePassView extends StatelessWidget {
                                     .requiredXp
                               : 0,
                         ),
+                        const EventTimerBanner(),
                         BlocBuilder<TasksCubit, TasksState>(
                           builder: (context, tasksState) => TasksTeaserCard(
                             task: switch (tasksState) {

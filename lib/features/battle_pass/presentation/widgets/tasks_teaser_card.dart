@@ -82,20 +82,19 @@ class _RewardHeader extends StatelessWidget {
             height: 96,
           ),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'x $rewardXp',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: 'Geologica',
-                fontWeight: FontWeight.w500,
-                fontSize: 26,
-                height: 1.2,
-                letterSpacing: -0.26,
-                color: AppColors.textPrimary,
-              ),
+          Text(
+            'x $rewardXp',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'Geologica',
+              fontWeight: FontWeight.w500,
+              fontSize: 26,
+              height: 1.2,
+              letterSpacing: -0.26,
+              color: AppColors.textPrimary,
             ),
           ),
+          const Spacer(),
           Container(
             width: 112,
             height: 56,
