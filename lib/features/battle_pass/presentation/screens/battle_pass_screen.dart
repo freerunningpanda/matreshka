@@ -100,6 +100,8 @@ class _BattlePassView extends StatelessWidget {
                             );
                           }
                         },
+                        onUnlockPremium: () =>
+                            context.read<BattlePassCubit>().purchasePremium(),
                       ),
                       if (scenario != BattlePassScenario.premiumLocked &&
                           scenario !=

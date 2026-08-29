@@ -63,6 +63,12 @@ class BattlePassCubit extends Cubit<BattlePassState> {
     );
   }
 
+  /// Мок-покупка премиума: реального IAP в задании нет. Переключение
+  /// сценария — источник правды один, так что уровень/трек/премиум-плашки
+  /// остаются согласованными (см. README про мок-схему).
+  Future<void> purchasePremium() =>
+      switchScenario(BattlePassScenario.premiumUnlockedWithReward);
+
   Future<void> claimAllRewards() async {
     final current = state;
     if (current is! BattlePassLoaded) return;

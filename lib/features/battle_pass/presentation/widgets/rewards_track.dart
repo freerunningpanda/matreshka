@@ -2,13 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/season.dart';
+import 'premium_teaser_cluster.dart';
 import 'reward_tile.dart';
 
 class RewardsTrack extends StatefulWidget {
-  const RewardsTrack({required this.season, required this.onClaim, super.key});
+  const RewardsTrack({
+    required this.season,
+    required this.onClaim,
+    required this.onUnlockPremium,
+    super.key,
+  });
 
   final BattlePassSeason season;
   final void Function(int levelNumber) onClaim;
+  final VoidCallback onUnlockPremium;
 
   @override
   State<RewardsTrack> createState() => _RewardsTrackState();
@@ -17,6 +24,9 @@ class RewardsTrack extends StatefulWidget {
 class _RewardsTrackState extends State<RewardsTrack> {
   final _controller = ScrollController();
   static const double _tileExtent = 170;
+
+  double get _leadingOffset =>
+      widget.season.premiumOwned ? 0 : PremiumTeaserCluster.width;
 
   @override
   void initState() {
@@ -36,8 +46,9 @@ class _RewardsTrackState extends State<RewardsTrack> {
   void _scrollToCurrent() {
     if (!_controller.hasClients) return;
     final target =
+        _leadingOffset +
         (widget.season.currentLevel - 2).clamp(0, widget.season.levels.length) *
-        _tileExtent;
+            _tileExtent;
     _controller.animateTo(
       target.clamp(0, _controller.position.maxScrollExtent),
       duration: const Duration(milliseconds: 500),
@@ -77,18 +88,19 @@ class _RewardsTrackState extends State<RewardsTrack> {
             onTap: () => _scrollBy(-_tileExtent * 3),
           ),
           Expanded(
-            child: ListView.builder(
+            child: ListView(
               controller: _controller,
               scrollDirection: Axis.horizontal,
-              itemCount: widget.season.levels.length,
-              itemBuilder: (context, index) {
-                final level = widget.season.levels[index];
-                return RewardTile(
-                  level: level,
-                  premiumOwned: widget.season.premiumOwned,
-                  onClaim: () => widget.onClaim(level.number),
-                );
-              },
+              children: [
+                if (!widget.season.premiumOwned)
+                  PremiumTeaserCluster(onUnlock: widget.onUnlockPremium),
+                for (final level in widget.season.levels)
+                  RewardTile(
+                    level: level,
+                    premiumOwned: widget.season.premiumOwned,
+                    onClaim: () => widget.onClaim(level.number),
+                  ),
+              ],
             ),
           ),
           _ArrowButton(
