@@ -63,6 +63,15 @@ class BattlePassCubit extends Cubit<BattlePassState> {
     );
   }
 
+  /// Мок-покупка премиума: реального IAP в задании нет. Простой флип
+  /// `premiumOwned` в текущем сезоне не годится — премиум-награды на уровнях
+  /// уже испечены в JSON при загрузке (см. `BattlePassMockApi`), так что без
+  /// смены сценария они остались бы заблокированы, а свитчер сценариев (dev)
+  /// разъехался бы с реальным состоянием. Переключение сценария — источник
+  /// правды один, всё остаётся согласованным.
+  Future<void> purchasePremium() =>
+      switchScenario(BattlePassScenario.premiumUnlockedWithReward);
+
   Future<void> claimAllRewards() async {
     final current = state;
     if (current is! BattlePassLoaded) return;

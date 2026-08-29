@@ -90,16 +90,20 @@ class _ItemTitle extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          text,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontFamily: 'Geologica',
-            fontWeight: FontWeight.w600,
-            fontSize: 36,
-            height: 1.3,
-            letterSpacing: -0.36,
-            color: AppColors.textPrimary,
+        Flexible(
+          child: Text(
+            text,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: 'Geologica',
+              fontWeight: FontWeight.w600,
+              fontSize: 36,
+              height: 1.3,
+              letterSpacing: -0.36,
+              color: AppColors.textPrimary,
+            ),
           ),
         ),
         const SizedBox(width: 16),

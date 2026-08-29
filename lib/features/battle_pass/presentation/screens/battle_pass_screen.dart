@@ -37,8 +37,15 @@ class BattlePassScreen extends StatelessWidget {
   }
 }
 
-class _BattlePassView extends StatelessWidget {
+class _BattlePassView extends StatefulWidget {
   const _BattlePassView();
+
+  @override
+  State<_BattlePassView> createState() => _BattlePassViewState();
+}
+
+class _BattlePassViewState extends State<_BattlePassView> {
+  bool _premiumBannerVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -83,10 +90,17 @@ class _BattlePassView extends StatelessWidget {
                         ),
                       ),
                       CentralItemDisplay(scenario: scenario),
-                      PremiumBanner(
-                        premiumOwned: season.premiumOwned,
-                        onPressed: () {},
-                      ),
+                      if (_premiumBannerVisible)
+                        PremiumBanner(
+                          premiumOwned: season.premiumOwned,
+                          onPressed: season.premiumOwned
+                              ? () => context
+                                    .read<BattlePassCubit>()
+                                    .claimAllRewards()
+                              : () => context
+                                    .read<BattlePassCubit>()
+                                    .purchasePremium(),
+                        ),
                       RewardsTrack(
                         season: season,
                         onClaim: (levelNumber) {
@@ -114,28 +128,30 @@ class _BattlePassView extends StatelessWidget {
                           onPressed: () =>
                               context.read<BattlePassCubit>().claimAllRewards(),
                         ),
-                      Positioned(
-                        right: 80,
-                        top: 50,
-                        child: Material(
-                          color: AppColors.buttonOverlayWeak,
-                          shape: const CircleBorder(),
-                          child: InkWell(
-                            customBorder: const CircleBorder(),
-                            onTap: () {},
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              padding: const EdgeInsets.all(32),
-                              child: SvgPicture.asset(
-                                'assets/icons/battle_pass/icn_x.svg',
-                                width: 36,
-                                height: 36,
+                      if (_premiumBannerVisible)
+                        Positioned(
+                          right: 80,
+                          top: 50,
+                          child: Material(
+                            color: AppColors.buttonOverlayWeak,
+                            shape: const CircleBorder(),
+                            child: InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () =>
+                                  setState(() => _premiumBannerVisible = false),
+                              child: Container(
+                                width: 100,
+                                height: 100,
+                                padding: const EdgeInsets.all(32),
+                                child: SvgPicture.asset(
+                                  'assets/icons/battle_pass/icn_x.svg',
+                                  width: 36,
+                                  height: 36,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
