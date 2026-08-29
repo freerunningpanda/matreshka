@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../tasks/presentation/cubit/tasks_cubit.dart';
 import '../../../tasks/presentation/cubit/tasks_state.dart';
 import '../../domain/entities/level.dart';
+import '../../domain/repositories/battle_pass_repository.dart';
 import '../cubit/battle_pass_cubit.dart';
 import '../cubit/battle_pass_state.dart';
 import '../widgets/battle_pass_background.dart';
@@ -100,9 +101,12 @@ class _BattlePassView extends StatelessWidget {
                           }
                         },
                       ),
-                      if (season.levels.any(
-                        (l) => l.state == LevelState.claimable,
-                      ))
+                      if (scenario != BattlePassScenario.premiumLocked &&
+                          scenario !=
+                              BattlePassScenario.premiumUnlockedWithReward &&
+                          season.levels.any(
+                            (l) => l.state == LevelState.claimable,
+                          ))
                         ClaimAllButton(
                           label: 'Забрать все награды',
                           gradient: const LinearGradient(
