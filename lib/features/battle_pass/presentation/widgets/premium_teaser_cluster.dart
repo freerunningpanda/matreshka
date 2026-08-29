@@ -7,7 +7,9 @@ import '../../../../core/theme/app_colors.dart';
 /// Награды этого блока взять нельзя напрямую — плашка "продаёт" премиум:
 /// тап переключает сценарий на "премиум куплен" (см. README про мок-покупку),
 /// после чего блок пропадает — он не имеет смысла, когда премиум уже куплен.
-class PremiumTeaserCluster extends StatelessWidget {
+/// Сами иконки кликабельны — можно выбрать (подсветить), какая из наград
+/// интересна, ровно один элемент одновременно.
+class PremiumTeaserCluster extends StatefulWidget {
   const PremiumTeaserCluster({required this.onUnlock, super.key});
 
   final VoidCallback onUnlock;
@@ -15,37 +17,41 @@ class PremiumTeaserCluster extends StatelessWidget {
   static const double width = 646;
 
   @override
+  State<PremiumTeaserCluster> createState() => _PremiumTeaserClusterState();
+}
+
+class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
+  static const _assets = [
+    'assets/images/battle_pass/premium_teaser_bag.png',
+    'assets/images/battle_pass/premium_teaser_bracelet.png',
+    'assets/images/battle_pass/premium_teaser_fuel.png',
+  ];
+  static const _quantityLabels = [null, '×2', null];
+
+  int _selectedIndex = 2;
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width,
+      width: PremiumTeaserCluster.width,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          const Positioned(
-            left: 0,
-            child: _PremiumTeaserTile(
-              asset: 'assets/images/battle_pass/premium_teaser_bag.png',
+          for (var i = 0; i < _assets.length; i++)
+            Positioned(
+              left: i * 202,
+              child: _PremiumTeaserTile(
+                asset: _assets[i],
+                quantityLabel: _quantityLabels[i],
+                selected: _selectedIndex == i,
+                onTap: () => setState(() => _selectedIndex = i),
+              ),
             ),
-          ),
-          const Positioned(
-            left: 202,
-            child: _PremiumTeaserTile(
-              asset: 'assets/images/battle_pass/premium_teaser_bracelet.png',
-              quantityLabel: '×2',
-            ),
-          ),
-          const Positioned(
-            left: 404,
-            child: _PremiumTeaserTile(
-              asset: 'assets/images/battle_pass/premium_teaser_fuel.png',
-              selected: true,
-            ),
-          ),
           Positioned(
             left: 6,
             top: 248,
             width: 596,
-            child: _UnlockSticker(onTap: onUnlock),
+            child: _UnlockSticker(onTap: widget.onUnlock),
           ),
         ],
       ),
@@ -56,11 +62,13 @@ class PremiumTeaserCluster extends StatelessWidget {
 class _PremiumTeaserTile extends StatelessWidget {
   const _PremiumTeaserTile({
     required this.asset,
+    required this.onTap,
     this.quantityLabel,
     this.selected = false,
   });
 
   final String asset;
+  final VoidCallback onTap;
   final String? quantityLabel;
   final bool selected;
 
@@ -77,26 +85,19 @@ class _PremiumTeaserTile extends StatelessWidget {
             top: 28,
             width: 200,
             height: 184,
-            child: Container(
-              decoration: BoxDecoration(
+            child: Material(
+              color: AppColors.taskCardBodyBg,
+              borderRadius: BorderRadius.circular(24),
+              child: InkWell(
+                onTap: onTap,
                 borderRadius: BorderRadius.circular(24),
-                color: AppColors.taskCardBodyBg,
-                gradient: selected ? AppColors.levelUpBorderGradient : null,
-                boxShadow: selected
-                    ? const [
-                        BoxShadow(
-                          color: AppColors.glowShadow,
-                          blurRadius: 40,
-                          spreadRadius: 4,
-                        ),
-                      ]
-                    : null,
-              ),
-              padding: selected ? const EdgeInsets.all(3) : EdgeInsets.zero,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(21),
-                  color: AppColors.taskCardBodyBg,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    border: selected
+                        ? Border.all(color: AppColors.textPrimary, width: 4)
+                        : null,
+                  ),
                 ),
               ),
             ),
@@ -106,23 +107,27 @@ class _PremiumTeaserTile extends StatelessWidget {
             top: 44,
             width: 152,
             height: 152,
-            child: Image.asset(asset, fit: BoxFit.contain),
+            child: IgnorePointer(
+              child: Image.asset(asset, fit: BoxFit.contain),
+            ),
           ),
           Positioned(
             left: 47,
             top: 38,
-            child: Container(
-              width: 40,
-              height: 40,
-              padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: AppColors.itemTagGradientTop,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.workspace_premium,
-                color: AppColors.itemTagText,
-                size: 22,
+            child: IgnorePointer(
+              child: Container(
+                width: 40,
+                height: 40,
+                padding: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  color: AppColors.itemTagGradientTop,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.workspace_premium,
+                  color: AppColors.itemTagText,
+                  size: 22,
+                ),
               ),
             ),
           ),
@@ -130,22 +135,24 @@ class _PremiumTeaserTile extends StatelessWidget {
             Positioned(
               right: 26,
               bottom: 20,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.55),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  quantityLabel!,
-                  style: const TextStyle(
-                    fontFamily: 'Geologica',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: Colors.white,
+              child: IgnorePointer(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.55),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    quantityLabel!,
+                    style: const TextStyle(
+                      fontFamily: 'Geologica',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),

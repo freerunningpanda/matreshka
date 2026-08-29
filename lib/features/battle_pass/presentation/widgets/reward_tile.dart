@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -67,81 +69,101 @@ class RewardTile extends StatelessWidget {
                     ),
               child: Padding(
                 padding: const EdgeInsets.all(4),
-                child: Material(
-                  color: _rarityColor(
-                    reward?.rarity,
-                  ).withValues(alpha: locked ? 0.25 : 0.55),
+                child: ClipRRect(
                   borderRadius: BorderRadius.circular(22),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(22),
-                    onTap: claimable ? onClaim : null,
-                    child: Opacity(
-                      opacity: locked ? 0.5 : 1,
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Icon(
-                              locked
-                                  ? Icons.lock_rounded
-                                  : Icons.card_giftcard_rounded,
-                              color: Colors.white,
-                              size: _isMilestone ? 64 : 44,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: claimable
+                            ? BackdropFilter(
+                                filter: ImageFilter.blur(
+                                  sigmaX: 4,
+                                  sigmaY: 4,
+                                ),
+                                child: const ColoredBox(
+                                  color: Color(0x8D88FFAF),
+                                ),
+                              )
+                            : ColoredBox(
+                                color: _rarityColor(
+                                  reward?.rarity,
+                                ).withValues(alpha: locked ? 0.25 : 0.55),
+                              ),
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: claimable ? onClaim : null,
+                          child: Opacity(
+                            opacity: locked ? 0.5 : 1,
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Icon(
+                                    locked
+                                        ? Icons.lock_rounded
+                                        : Icons.card_giftcard_rounded,
+                                    color: Colors.white,
+                                    size: _isMilestone ? 64 : 44,
+                                  ),
+                                ),
+                                if (reward != null && reward.amount > 1)
+                                  Positioned(
+                                    right: 8,
+                                    bottom: 8,
+                                    child: _Chip(text: '×${reward.amount}'),
+                                  ),
+                                if (claimed)
+                                  const Positioned(
+                                    left: 8,
+                                    top: 8,
+                                    child: _Badge(
+                                      icon: Icons.check_rounded,
+                                      color: Color(0xFF3DDC6B),
+                                    ),
+                                  )
+                                else if (showPremiumBadge)
+                                  const Positioned(
+                                    left: 8,
+                                    top: 8,
+                                    child: _Badge(
+                                      icon: Icons.workspace_premium,
+                                      color: AppColors.accentGold,
+                                    ),
+                                  ),
+                                if (claimable)
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 6,
+                                      ),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF3DDC6B),
+                                        borderRadius: BorderRadius.vertical(
+                                          bottom: Radius.circular(20),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Забрать',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontFamily: 'Geologica',
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
-                          if (reward != null && reward.amount > 1)
-                            Positioned(
-                              right: 8,
-                              bottom: 8,
-                              child: _Chip(text: '×${reward.amount}'),
-                            ),
-                          if (claimed)
-                            const Positioned(
-                              left: 8,
-                              top: 8,
-                              child: _Badge(
-                                icon: Icons.check_rounded,
-                                color: Color(0xFF3DDC6B),
-                              ),
-                            )
-                          else if (showPremiumBadge)
-                            const Positioned(
-                              left: 8,
-                              top: 8,
-                              child: _Badge(
-                                icon: Icons.workspace_premium,
-                                color: AppColors.accentGold,
-                              ),
-                            ),
-                          if (claimable)
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 6,
-                                ),
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF3DDC6B),
-                                  borderRadius: BorderRadius.vertical(
-                                    bottom: Radius.circular(20),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Забрать',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: 'Geologica',
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
