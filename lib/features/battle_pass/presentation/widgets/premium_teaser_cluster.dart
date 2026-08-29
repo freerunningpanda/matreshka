@@ -45,7 +45,7 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
         children: [
           for (var i = 0; i < _assets.length; i++)
             Positioned(
-              left: i * 202,
+              left: i * 216,
               child: _PremiumTeaserTile(
                 asset: _assets[i],
                 quantityLabel: _quantityLabels[i],
@@ -54,7 +54,7 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
               ),
             ),
           const Positioned(
-            left: 630,
+            left: 660,
             top: 90,
             child: IgnorePointer(
               child: _SkewedBox(
@@ -66,8 +66,8 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
           ),
           Positioned(
             left: 6,
-            top: 248,
-            width: 596,
+            top: 236,
+            width: 626,
             child: _UnlockSticker(onTap: widget.onUnlock),
           ),
         ],
@@ -160,18 +160,18 @@ class _PremiumTeaserTile extends StatelessWidget {
           ),
           if (quantityLabel != null)
             Positioned(
-              right: 22,
-              bottom: 18,
+              right: 48,
+              bottom: 44,
               child: IgnorePointer(
                 child: SizedBox(
-                  width: 54,
-                  height: 28,
+                  width: 69,
+                  height: 36,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       const _SkewedBox(
-                        width: 54,
-                        height: 28,
+                        width: 69,
+                        height: 36,
                         decoration: BoxDecoration(
                           color: Color(0x8C000000),
                           borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -241,13 +241,13 @@ class _UnlockSticker extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: SizedBox(
-          height: 48,
+          height: 60,
           child: Stack(
             alignment: Alignment.center,
             children: [
               const _SkewedBox(
-                width: 596,
-                height: 48,
+                width: 626,
+                height: 60,
                 decoration: BoxDecoration(
                   color: Color(0x4CE29432), // rgba(226,148,50,0.3)
                   borderRadius: BorderRadius.all(Radius.circular(14)),
@@ -259,13 +259,11 @@ class _UnlockSticker extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Geologica',
                   fontWeight: FontWeight.w500,
-                  fontSize: 22,
+                  fontSize: 30,
                   height: 1.2,
-                  letterSpacing: -0.22,
+                  letterSpacing: -1,
                   color: AppColors.accentGold,
-                  shadows: [
-                    Shadow(color: Color(0xFFFF5C00), blurRadius: 14.4),
-                  ],
+                  shadows: [Shadow(color: Color(0xFFFF5C00), blurRadius: 14.4)],
                 ),
               ),
             ],
