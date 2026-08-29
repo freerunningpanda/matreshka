@@ -37,15 +37,8 @@ class BattlePassScreen extends StatelessWidget {
   }
 }
 
-class _BattlePassView extends StatefulWidget {
+class _BattlePassView extends StatelessWidget {
   const _BattlePassView();
-
-  @override
-  State<_BattlePassView> createState() => _BattlePassViewState();
-}
-
-class _BattlePassViewState extends State<_BattlePassView> {
-  bool _premiumBannerVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -90,17 +83,7 @@ class _BattlePassViewState extends State<_BattlePassView> {
                         ),
                       ),
                       CentralItemDisplay(scenario: scenario),
-                      if (_premiumBannerVisible)
-                        PremiumBanner(
-                          premiumOwned: season.premiumOwned,
-                          onPressed: season.premiumOwned
-                              ? () => context
-                                    .read<BattlePassCubit>()
-                                    .claimAllRewards()
-                              : () => context
-                                    .read<BattlePassCubit>()
-                                    .purchasePremium(),
-                        ),
+                      _DismissiblePremiumPromo(premiumOwned: season.premiumOwned),
                       RewardsTrack(
                         season: season,
                         onClaim: (levelNumber) {
@@ -128,30 +111,6 @@ class _BattlePassViewState extends State<_BattlePassView> {
                           onPressed: () =>
                               context.read<BattlePassCubit>().claimAllRewards(),
                         ),
-                      if (_premiumBannerVisible)
-                        Positioned(
-                          right: 80,
-                          top: 50,
-                          child: Material(
-                            color: AppColors.buttonOverlayWeak,
-                            shape: const CircleBorder(),
-                            child: InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: () =>
-                                  setState(() => _premiumBannerVisible = false),
-                              child: Container(
-                                width: 100,
-                                height: 100,
-                                padding: const EdgeInsets.all(32),
-                                child: SvgPicture.asset(
-                                  'assets/icons/battle_pass/icn_x.svg',
-                                  width: 36,
-                                  height: 36,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),
@@ -164,6 +123,63 @@ class _BattlePassViewState extends State<_BattlePassView> {
             ),
           };
         },
+      ),
+    );
+  }
+}
+
+/// Баннер премиума + кнопка закрытия — своё локальное состояние видимости,
+/// изолированное в отдельном виджете: скрытие/показ не должно триггерить
+/// перестройку соседей по Stack (трек наград и т.п.), которые с баннером
+/// никак не связаны.
+class _DismissiblePremiumPromo extends StatefulWidget {
+  const _DismissiblePremiumPromo({required this.premiumOwned});
+
+  final bool premiumOwned;
+
+  @override
+  State<_DismissiblePremiumPromo> createState() =>
+      _DismissiblePremiumPromoState();
+}
+
+class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
+  bool _visible = true;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_visible) return const SizedBox.shrink();
+    void dismiss() => setState(() => _visible = false);
+
+    return Positioned.fill(
+      child: Stack(
+        children: [
+          PremiumBanner(
+            premiumOwned: widget.premiumOwned,
+            onPressed: dismiss,
+          ),
+          Positioned(
+            right: 80,
+            top: 50,
+            child: Material(
+              color: AppColors.buttonOverlayWeak,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: dismiss,
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  padding: const EdgeInsets.all(32),
+                  child: SvgPicture.asset(
+                    'assets/icons/battle_pass/icn_x.svg',
+                    width: 36,
+                    height: 36,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
