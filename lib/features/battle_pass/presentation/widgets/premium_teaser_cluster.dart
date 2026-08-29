@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+
+/// Общий наклон (shear) для всех "боевых" элементов трека — плитки,
+/// значок премиума, чип количества, рамка кнопки, стрелка. Иконки/текст
+/// внутри остаются прямыми — это отдельный неповёрнутый слой поверх.
+const double _skewAngle = -0.26;
 
 /// Блок из 3 премиум-наград в начале трека (узел "Frame 1539", id 1:1275) +
 /// плашка "Получи все сразу!" (Premium_Awards_Stiker, id 1:1297) под ним.
@@ -14,7 +20,7 @@ class PremiumTeaserCluster extends StatefulWidget {
 
   final VoidCallback onUnlock;
 
-  static const double width = 646;
+  static const double width = 676;
 
   @override
   State<PremiumTeaserCluster> createState() => _PremiumTeaserClusterState();
@@ -47,6 +53,17 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
                 onTap: () => setState(() => _selectedIndex = i),
               ),
             ),
+          const Positioned(
+            left: 630,
+            top: 90,
+            child: IgnorePointer(
+              child: _SkewedBox(
+                width: 12,
+                height: 60,
+                decoration: BoxDecoration(color: Color(0x33E9E9F3)),
+              ),
+            ),
+          ),
           Positioned(
             left: 6,
             top: 248,
@@ -55,6 +72,30 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Фоновая подложка, наклонённая через shear-transform — контент поверх неё
+/// (иконки, текст) кладётся отдельным неповёрнутым слоем, а не внутрь этого
+/// виджета, чтобы не наклонять его вместе с фоном.
+class _SkewedBox extends StatelessWidget {
+  const _SkewedBox({
+    required this.width,
+    required this.height,
+    required this.decoration,
+  });
+
+  final double width;
+  final double height;
+  final BoxDecoration decoration;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform(
+      alignment: Alignment.center,
+      transform: Matrix4.skewX(_skewAngle),
+      child: Container(width: width, height: height, decoration: decoration),
     );
   }
 }
@@ -86,13 +127,14 @@ class _PremiumTeaserTile extends StatelessWidget {
             width: 200,
             height: 184,
             child: Material(
-              color: AppColors.taskCardBodyBg,
-              borderRadius: BorderRadius.circular(24),
+              type: MaterialType.transparency,
               child: InkWell(
                 onTap: onTap,
-                borderRadius: BorderRadius.circular(24),
-                child: DecoratedBox(
+                child: _SkewedBox(
+                  width: 200,
+                  height: 184,
                   decoration: BoxDecoration(
+                    color: AppColors.taskCardBodyBg,
                     borderRadius: BorderRadius.circular(24),
                     border: selected
                         ? Border.all(color: AppColors.textPrimary, width: 4)
@@ -111,53 +153,77 @@ class _PremiumTeaserTile extends StatelessWidget {
               child: Image.asset(asset, fit: BoxFit.contain),
             ),
           ),
-          Positioned(
+          const Positioned(
             left: 47,
             top: 38,
-            child: IgnorePointer(
-              child: Container(
-                width: 40,
-                height: 40,
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: AppColors.itemTagGradientTop,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.workspace_premium,
-                  color: AppColors.itemTagText,
-                  size: 22,
-                ),
-              ),
-            ),
+            child: IgnorePointer(child: _RewardSticker()),
           ),
           if (quantityLabel != null)
             Positioned(
-              right: 26,
-              bottom: 20,
+              right: 22,
+              bottom: 18,
               child: IgnorePointer(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.55),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    quantityLabel!,
-                    style: const TextStyle(
-                      fontFamily: 'Geologica',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Colors.white,
-                    ),
+                child: SizedBox(
+                  width: 54,
+                  height: 28,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const _SkewedBox(
+                        width: 54,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: Color(0x8C000000),
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                        ),
+                      ),
+                      Text(
+                        quantityLabel!,
+                        style: const TextStyle(
+                          fontFamily: 'Geologica',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// Значок "BP_Reward_Sticker" — наклонный жёлто-оранжевый квадрат с
+/// premium.svg внутри, 55×50 (см. Figma-скрин с замером). Наклон общий
+/// (тот же shear, что у плиток), крону поворачиваем вместе с фоном — на
+/// референсе видно, что весь бейдж читается как единая наклонная деталь.
+class _RewardSticker extends StatelessWidget {
+  const _RewardSticker();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 55,
+      height: 50,
+      child: Center(
+        child: Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.skewX(_skewAngle),
+          child: Container(
+            width: 40,
+            height: 40,
+            padding: const EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+              gradient: AppColors.itemTagGradient,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: SvgPicture.asset('assets/icons/battle_pass/premium.svg'),
+          ),
+        ),
       ),
     );
   }
@@ -171,31 +237,38 @@ class _UnlockSticker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      type: MaterialType.transparency,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(30),
-        child: Container(
+        child: SizedBox(
           height: 48,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: const Color(0x4CE29432), // rgba(226,148,50,0.3)
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: const Text(
-            'Получи все сразу!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Geologica',
-              fontWeight: FontWeight.w500,
-              fontSize: 22,
-              height: 1.2,
-              letterSpacing: -0.22,
-              color: AppColors.accentGold,
-              shadows: [
-                Shadow(color: Color(0xFFFF5C00), blurRadius: 14.4),
-              ],
-            ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              const _SkewedBox(
+                width: 596,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Color(0x4CE29432), // rgba(226,148,50,0.3)
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                ),
+              ),
+              const Text(
+                'Получи все сразу!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Geologica',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 22,
+                  height: 1.2,
+                  letterSpacing: -0.22,
+                  color: AppColors.accentGold,
+                  shadows: [
+                    Shadow(color: Color(0xFFFF5C00), blurRadius: 14.4),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
