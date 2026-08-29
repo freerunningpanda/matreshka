@@ -54,94 +54,89 @@ class _BattlePassView extends StatelessWidget {
             ),
             BattlePassLoaded(:final season, :final scenario) => Stack(
               children: [
-                SafeArea(
-                  child: DesignCanvas(
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        const BattlePassBackground(),
-                        const LeftNavPanel(),
-                        XpProgressPill(
-                          currentLevel: season.currentLevel,
-                          maxLevel: season.maxLevel,
-                          currentXp: season.currentXp,
-                          xpToNextLevel:
-                              season.currentLevel < season.levels.length
-                              ? season
-                                    .levels[season.currentLevel - 1]
-                                    .requiredXp
-                              : 0,
+                DesignCanvas(
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      const BattlePassBackground(),
+                      const LeftNavPanel(),
+                      XpProgressPill(
+                        currentLevel: season.currentLevel,
+                        maxLevel: season.maxLevel,
+                        currentXp: season.currentXp,
+                        xpToNextLevel:
+                            season.currentLevel < season.levels.length
+                            ? season.levels[season.currentLevel - 1].requiredXp
+                            : 0,
+                      ),
+                      const EventTimerBanner(),
+                      BlocBuilder<TasksCubit, TasksState>(
+                        builder: (context, tasksState) => TasksTeaserCard(
+                          task: switch (tasksState) {
+                            TasksLoaded(:final overview) =>
+                              overview.tasks.isEmpty
+                                  ? null
+                                  : overview.tasks.first,
+                            _ => null,
+                          },
+                          onTap: () => AppRouter.toTasks(context),
                         ),
-                        const EventTimerBanner(),
-                        BlocBuilder<TasksCubit, TasksState>(
-                          builder: (context, tasksState) => TasksTeaserCard(
-                            task: switch (tasksState) {
-                              TasksLoaded(:final overview) =>
-                                overview.tasks.isEmpty
-                                    ? null
-                                    : overview.tasks.first,
-                              _ => null,
-                            },
-                            onTap: () => AppRouter.toTasks(context),
-                          ),
-                        ),
-                        CentralItemDisplay(scenario: scenario),
-                        PremiumBanner(
-                          premiumOwned: season.premiumOwned,
-                          onPressed: () {},
-                        ),
-                        RewardsTrack(
-                          season: season,
-                          onClaim: (levelNumber) {
-                            final cubit = context.read<BattlePassCubit>();
+                      ),
+                      CentralItemDisplay(scenario: scenario),
+                      PremiumBanner(
+                        premiumOwned: season.premiumOwned,
+                        onPressed: () {},
+                      ),
+                      RewardsTrack(
+                        season: season,
+                        onClaim: (levelNumber) {
+                          final cubit = context.read<BattlePassCubit>();
+                          cubit.claimReward(
+                            levelNumber,
+                            isPremiumReward: false,
+                          );
+                          if (season.premiumOwned) {
                             cubit.claimReward(
                               levelNumber,
-                              isPremiumReward: false,
+                              isPremiumReward: true,
                             );
-                            if (season.premiumOwned) {
-                              cubit.claimReward(
-                                levelNumber,
-                                isPremiumReward: true,
-                              );
-                            }
-                          },
-                        ),
-                        if (season.levels.any(
-                          (l) => l.state == LevelState.claimable,
-                        ))
-                          ClaimAllButton(
-                            label: 'Забрать все награды',
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF56B877), Color(0xFF449660)],
-                            ),
-                            onPressed: () => context
-                                .read<BattlePassCubit>()
-                                .claimAllRewards(),
+                          }
+                        },
+                      ),
+                      if (season.levels.any(
+                        (l) => l.state == LevelState.claimable,
+                      ))
+                        ClaimAllButton(
+                          label: 'Забрать все награды',
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF56B877), Color(0xFF449660)],
                           ),
-                        Positioned(
-                          right: 80,
-                          top: 50,
-                          child: Material(
-                            color: AppColors.buttonOverlayWeak,
-                            shape: const CircleBorder(),
-                            child: InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: () {},
-                              child: Container(
-                                width: 100,
-                                height: 100,
-                                padding: const EdgeInsets.all(32),
-                                child: SvgPicture.asset(
-                                  'assets/icons/battle_pass/icn_x.svg',
-                                  width: 36,
-                                  height: 36,
-                                ),
+                          onPressed: () =>
+                              context.read<BattlePassCubit>().claimAllRewards(),
+                        ),
+                      Positioned(
+                        right: 80,
+                        top: 50,
+                        child: Material(
+                          color: AppColors.buttonOverlayWeak,
+                          shape: const CircleBorder(),
+                          child: InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: () {},
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              padding: const EdgeInsets.all(32),
+                              child: SvgPicture.asset(
+                                'assets/icons/battle_pass/icn_x.svg',
+                                width: 36,
+                                height: 36,
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 ScenarioSwitcher(
