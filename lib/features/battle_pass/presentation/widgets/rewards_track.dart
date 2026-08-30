@@ -184,45 +184,71 @@ class _RewardsTrackState extends State<RewardsTrack> {
         children: [
           _buildTrack(),
           if (_showLeftArrow)
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              child: Center(
+            if (_nextMilestone != null)
+              Positioned(
+                // На одной линии со стрелкой к юбилейному уровню — обе
+                // стрелки трека должны стоять на одной высоте.
+                left: 0,
+                top: _MilestonePreview.cardCenterY - 32,
                 child: _ArrowButton(
                   icon: Icons.chevron_left,
                   onTap: () => _scrollBy(-_tileExtent * 3),
                 ),
+              )
+            else
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: _ArrowButton(
+                    icon: Icons.chevron_left,
+                    onTap: () => _scrollBy(-_tileExtent * 3),
+                  ),
+                ),
               ),
-            ),
           if (_nextMilestone != null)
             Positioned(
               right: 0,
               // Столько же места, сколько остаётся под обычной плиткой трека
               // (300 высотой минус её содержимое высотой 286) — так ромб
               // превью встаёт вровень с остальными, а не съезжает вниз.
-              bottom: 14,
+              bottom: _MilestonePreview._bottomMargin,
               child: _MilestonePreview(
                 level: widget.season.levels[_nextMilestone! - 1],
                 onTap: () => _scrollToMilestone(_nextMilestone!),
               ),
             ),
-          Positioned(
-            // Пока впереди есть непройденный юбилейный уровень, стрелка
-            // сдвинута левее превью и ведёт прямиком к нему, а не листает
-            // на фиксированный шаг.
-            right: _nextMilestone != null ? 260 : 0,
-            top: 0,
-            bottom: 0,
-            child: Center(
+          if (_nextMilestone != null)
+            Positioned(
+              // Превью юбилейного уровня растёт вверх от общей нижней линии
+              // трека (см. _MilestonePreview) — стрелка должна указывать на
+              // его собственный центр, а не на центр всей 300-высокой
+              // области, иначе она указывает заметно ниже самой карточки.
+              //
+              // 13px — горизонтальный отступ между самой кнопкой (не рамкой
+              // Positioned) и превью: ширина карточки превью + 13 минус
+              // собственный горизонтальный паддинг _ArrowButton (8), на
+              // который её видимый круг уже отступает от границ Positioned.
+              right: _MilestonePreview._cardSize + 13 - 8,
+              top: _MilestonePreview.cardCenterY - 32,
               child: _ArrowButton(
                 icon: Icons.chevron_right,
-                onTap: _nextMilestone != null
-                    ? () => _scrollToMilestone(_nextMilestone!)
-                    : () => _scrollBy(_tileExtent * 3),
+                onTap: () => _scrollToMilestone(_nextMilestone!),
+              ),
+            )
+          else
+            Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: _ArrowButton(
+                  icon: Icons.chevron_right,
+                  onTap: () => _scrollBy(_tileExtent * 3),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -278,6 +304,23 @@ class _MilestonePreview extends StatelessWidget {
 
   static const _accentColor = Color(0xFFDA7128);
 
+  static const _cardSize = 268.0;
+  static const _spacer = 12.0;
+  static const _diamondSize = 34.0;
+  static const _bottomMargin = 14.0;
+
+  /// Вертикальный центр самой карточки (без ромба) в координатах области
+  /// трека высотой 300 — карточка растёт вверх от общей нижней линии
+  /// (`bottom: _bottomMargin`), поэтому её центр заметно выше середины
+  /// всей 300-высокой области. Используется, чтобы стрелка-подсказка
+  /// указывала на центр карточки, а не терялась ниже неё.
+  static double get cardCenterY {
+    const columnHeight = _cardSize + _spacer + _diamondSize;
+    const columnBottom = 300 - _bottomMargin;
+    const columnTop = columnBottom - columnHeight;
+    return columnTop + _cardSize / 2;
+  }
+
   @override
   Widget build(BuildContext context) {
     final reward = level.freeReward;
@@ -291,15 +334,15 @@ class _MilestonePreview extends StatelessWidget {
           borderColor: _accentColor,
           showGlow: true,
           onTap: onTap,
-          width: 268,
-          height: 268,
+          width: _cardSize,
+          height: _cardSize,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: _spacer),
         Transform.rotate(
           angle: 0.785398, // 45°
           child: Container(
-            width: 34,
-            height: 34,
+            width: _diamondSize,
+            height: _diamondSize,
             // Уровень ещё не достигнут — тот же серый, что у непройденного
             // отрезка прогресс-бара под обычными плитками.
             decoration: const BoxDecoration(
@@ -374,9 +417,9 @@ class _ArrowButton extends StatelessWidget {
           customBorder: const CircleBorder(),
           onTap: onTap,
           child: SizedBox(
-            width: 64,
-            height: 64,
-            child: Icon(icon, color: Colors.white, size: 32),
+            width: 84,
+            height: 84,
+            child: Icon(icon, color: Colors.white, size: 56),
           ),
         ),
       ),
