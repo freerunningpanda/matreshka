@@ -86,8 +86,8 @@ abstract final class AppColors {
     stops: [0.0, 0.37, 0.40, 0.73, 1.0],
   );
 
-  /// Фоновые градиенты плиток премиум-тизера (по редкости: серый / синий /
-  /// фиолетово-розовый), см. `PremiumTeaserCluster`.
+  /// Фоновые градиенты плиток трека наград — общие для `PremiumTeaserCluster`
+  /// и `RewardTile`, подобраны по редкости: common / rare / epic / legendary.
   static const LinearGradient rewardTileGrayGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
@@ -104,5 +104,11 @@ abstract final class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [Color(0xFF2C1440), Color(0xFFC63F9E)],
+  );
+
+  static const LinearGradient rewardTileGoldGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF3D2B0A), Color(0xFFE0A030)],
   );
 }

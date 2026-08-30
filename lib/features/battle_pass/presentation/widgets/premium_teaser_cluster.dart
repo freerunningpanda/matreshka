@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
-
-/// Общий наклон (shear) для всех "боевых" элементов трека — плитки,
-/// значок премиума, чип количества, рамка кнопки, стрелка. Иконки/текст
-/// внутри остаются прямыми — это отдельный неповёрнутый слой поверх.
-const double _skewAngle = -0.12;
+import 'reward_carousel_tile.dart';
 
 /// Блок из 3 премиум-наград в начале трека (узел "Frame 1539", id 1:1275) +
 /// плашка "Получи все сразу!" (Premium_Awards_Stiker, id 1:1297) под ним.
@@ -51,25 +46,15 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
           for (var i = 0; i < _assets.length; i++)
             Positioned(
               left: i * 216,
-              child: _PremiumTeaserTile(
+              child: RewardCarouselTile(
                 asset: _assets[i],
                 quantityLabel: _quantityLabels[i],
                 gradient: _gradients[i],
-                selected: _selectedIndex == i,
+                badge: RewardBadgeKind.premium,
+                borderColor: _selectedIndex == i ? AppColors.textPrimary : null,
                 onTap: () => setState(() => _selectedIndex = i),
               ),
             ),
-          Positioned(
-            left: 670,
-            top: 100,
-            child: IgnorePointer(
-              child: SvgPicture.asset(
-                'assets/icons/battle_pass/arrow.svg',
-                width: 12,
-                height: 20,
-              ),
-            ),
-          ),
           Positioned(
             left: 6,
             top: 236,
@@ -77,161 +62,6 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
             child: _UnlockSticker(onTap: widget.onUnlock),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Фоновая подложка, наклонённая через shear-transform — контент поверх неё
-/// (иконки, текст) кладётся отдельным неповёрнутым слоем, а не внутрь этого
-/// виджета, чтобы не наклонять его вместе с фоном.
-class _SkewedBox extends StatelessWidget {
-  const _SkewedBox({
-    required this.width,
-    required this.height,
-    required this.decoration,
-  });
-
-  final double width;
-  final double height;
-  final BoxDecoration decoration;
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform(
-      alignment: Alignment.center,
-      transform: Matrix4.skewX(_skewAngle),
-      child: Container(width: width, height: height, decoration: decoration),
-    );
-  }
-}
-
-class _PremiumTeaserTile extends StatelessWidget {
-  const _PremiumTeaserTile({
-    required this.asset,
-    required this.onTap,
-    required this.gradient,
-    this.quantityLabel,
-    this.selected = false,
-  });
-
-  final String asset;
-  final VoidCallback onTap;
-  final Gradient gradient;
-  final String? quantityLabel;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 242,
-      height: 240,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned(
-            left: 21,
-            top: 28,
-            width: 200,
-            height: 184,
-            child: Material(
-              type: MaterialType.transparency,
-              child: InkWell(
-                onTap: onTap,
-                child: _SkewedBox(
-                  width: 200,
-                  height: 184,
-                  decoration: BoxDecoration(
-                    gradient: gradient,
-                    borderRadius: BorderRadius.circular(30),
-                    border: selected
-                        ? Border.all(color: AppColors.textPrimary, width: 4)
-                        : null,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 45,
-            top: 44,
-            width: 152,
-            height: 152,
-            child: IgnorePointer(
-              child: Image.asset(asset, fit: BoxFit.contain),
-            ),
-          ),
-          const Positioned(
-            left: 34,
-            top: 34,
-            child: IgnorePointer(child: _RewardSticker()),
-          ),
-          if (quantityLabel != null)
-            Positioned(
-              right: 48,
-              bottom: 44,
-              child: IgnorePointer(
-                child: SizedBox(
-                  width: 69,
-                  height: 36,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const _SkewedBox(
-                        width: 69,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: Color(0x8C000000),
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                        ),
-                      ),
-                      Text(
-                        quantityLabel!,
-                        style: const TextStyle(
-                          fontFamily: 'Geologica',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Значок "BP_Reward_Sticker" — наклонный жёлто-оранжевый квадрат с
-/// premium.svg внутри, 55×50 (см. Figma-скрин с замером). Наклон общий
-/// (тот же shear, что у плиток), крону поворачиваем вместе с фоном — на
-/// референсе видно, что весь бейдж читается как единая наклонная деталь.
-class _RewardSticker extends StatelessWidget {
-  const _RewardSticker();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 55,
-      height: 50,
-      child: Center(
-        child: Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.skewX(_skewAngle),
-          child: Container(
-            width: 40,
-            height: 40,
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              gradient: AppColors.itemTagGradient,
-              borderRadius: BorderRadius.all(Radius.circular(14)),
-            ),
-            child: SvgPicture.asset('assets/icons/battle_pass/premium.svg'),
-          ),
-        ),
       ),
     );
   }
@@ -253,7 +83,7 @@ class _UnlockSticker extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const _SkewedBox(
+              const SkewedBox(
                 width: 626,
                 height: 60,
                 decoration: BoxDecoration(

@@ -5,6 +5,13 @@ import '../../domain/repositories/battle_pass_repository.dart';
 class BattlePassMockApi {
   static const int _maxLevel = 40;
 
+  static const _rewardIcons = [
+    'assets/images/battle_pass/reward_lollipop.png',
+    'assets/images/battle_pass/reward_passport.png',
+    'assets/images/battle_pass/reward_mask_devil.png',
+    'assets/images/battle_pass/reward_mask_ghost.png',
+  ];
+
   Map<String, dynamic> fetchSeason(BattlePassScenario scenario) {
     switch (scenario) {
       case BattlePassScenario.premiumLocked:
@@ -77,7 +84,7 @@ class BattlePassMockApi {
     return {
       'id': level * 10 + (premium ? 1 : 0),
       'name': premium ? 'Премиум-награда $level ур.' : 'Награда $level ур.',
-      'icon_asset': 'assets/images/battle_pass/reward_placeholder.png',
+      'icon_asset': _rewardIcons[level % _rewardIcons.length],
       'amount': premium ? 50 : 10,
       'rarity': rarity,
       'claimed': claimed,

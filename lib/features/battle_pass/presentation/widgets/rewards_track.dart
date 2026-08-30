@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/season.dart';
@@ -156,18 +157,24 @@ class _RewardsTrackState extends State<RewardsTrack> {
   }
 
   Widget _buildTrack() {
+    final items = [
+      if (!widget.season.premiumOwned)
+        PremiumTeaserCluster(onUnlock: widget.onUnlockPremium),
+      for (final level in widget.season.levels)
+        RewardTile(
+          level: level,
+          premiumOwned: widget.season.premiumOwned,
+          onClaim: () => widget.onClaim(level.number),
+        ),
+    ];
     final listView = ListView(
       controller: _controller,
       scrollDirection: Axis.horizontal,
       children: [
-        if (!widget.season.premiumOwned)
-          PremiumTeaserCluster(onUnlock: widget.onUnlockPremium),
-        for (final level in widget.season.levels)
-          RewardTile(
-            level: level,
-            premiumOwned: widget.season.premiumOwned,
-            onClaim: () => widget.onClaim(level.number),
-          ),
+        for (var i = 0; i < items.length; i++) ...[
+          if (i > 0) const _TrackSeparator(),
+          items[i],
+        ],
       ],
     );
     final gradient = _hasScrolled ? _edgeFadeGradient : _noFadeGradient;
@@ -175,6 +182,28 @@ class _RewardsTrackState extends State<RewardsTrack> {
       shaderCallback: (bounds) => gradient.createShader(bounds),
       blendMode: BlendMode.dstIn,
       child: listView,
+    );
+  }
+}
+
+/// Стрелка-разделитель между плитками трека — тот же ассет, что и внутри
+/// `PremiumTeaserCluster`, здесь используется между вообще всеми элементами.
+/// Центрируется по высоте самой плитки (RewardCarouselTile, 240), а не по
+/// всей колонке трека — иначе бейдж уровня снизу утягивает центр вниз.
+class _TrackSeparator extends StatelessWidget {
+  const _TrackSeparator();
+
+  static const _tileHeight = 240;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: (_tileHeight - 20) / 2),
+      child: SvgPicture.asset(
+        'assets/icons/battle_pass/arrow.svg',
+        width: 12,
+        height: 20,
+      ),
     );
   }
 }
