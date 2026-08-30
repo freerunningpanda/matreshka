@@ -66,6 +66,9 @@ class _RewardsTrackState extends State<RewardsTrack> {
 
   void _scrollToCurrent() {
     if (!_controller.hasClients) return;
+    // Пока премиум не куплен, трек должен открываться с самого начала —
+    // с тизером премиум-наград, а не сразу проскроленным к текущему уровню.
+    if (!widget.season.premiumOwned) return;
     final target =
         _leadingOffset +
         (widget.season.currentLevel - 2).clamp(0, widget.season.levels.length) *
@@ -164,7 +167,9 @@ class _RewardsTrackState extends State<RewardsTrack> {
         RewardTile(
           level: level,
           premiumOwned: widget.season.premiumOwned,
+          currentXp: widget.season.currentXp,
           onClaim: () => widget.onClaim(level.number),
+          onUnlockPremium: widget.onUnlockPremium,
         ),
     ];
     final listView = ListView(

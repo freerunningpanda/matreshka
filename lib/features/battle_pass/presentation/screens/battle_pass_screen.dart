@@ -84,17 +84,29 @@ class _BattlePassView extends StatelessWidget {
                         ),
                       ),
                       CentralItemDisplay(scenario: scenario),
-                      _DismissiblePremiumPromo(premiumOwned: season.premiumOwned),
+                      _DismissiblePremiumPromo(
+                        premiumOwned: season.premiumOwned,
+                        onUnlockPremium: () =>
+                            context.read<BattlePassCubit>().purchasePremium(),
+                      ),
                       RewardsTrack(
                         season: season,
-                        onClaim: (levelNumber) {
+                        onClaim: (levelNumber) async {
+                          // Второй вызов должен дождаться первого: claimReward
+                          // читает текущий cubit.state как снимок для copyWith,
+                          // и если оба вызова стартуют не дожидаясь друг друга,
+                          // они оба берут один и тот же снимок "до клейма" —
+                          // тогда результат более позднего emit затирает более
+                          // ранний (особенно заметно, когда премиум-награды на
+                          // уровне нет: тот вызов — no-op, но всё равно
+                          // переэмитит устаревший season поверх уже забранного).
                           final cubit = context.read<BattlePassCubit>();
-                          cubit.claimReward(
+                          await cubit.claimReward(
                             levelNumber,
                             isPremiumReward: false,
                           );
                           if (season.premiumOwned) {
-                            cubit.claimReward(
+                            await cubit.claimReward(
                               levelNumber,
                               isPremiumReward: true,
                             );
@@ -139,9 +151,13 @@ class _BattlePassView extends StatelessWidget {
 /// перестройку соседей по Stack (трек наград и т.п.), которые с баннером
 /// никак не связаны.
 class _DismissiblePremiumPromo extends StatefulWidget {
-  const _DismissiblePremiumPromo({required this.premiumOwned});
+  const _DismissiblePremiumPromo({
+    required this.premiumOwned,
+    required this.onUnlockPremium,
+  });
 
   final bool premiumOwned;
+  final VoidCallback onUnlockPremium;
 
   @override
   State<_DismissiblePremiumPromo> createState() =>
@@ -161,7 +177,12 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
         children: [
           PremiumBanner(
             premiumOwned: widget.premiumOwned,
-            onPressed: dismiss,
+            // Пока премиум не куплен, кнопка баннера — "Прокачать": она
+            // должна переключать сценарий на премиум, а не просто прятать
+            // баннер (крестик рядом отвечает за скрытие отдельно). Когда
+            // премиум уже куплен, у кнопки нет своего действия для "повысить
+            // уровень" — оставляем прежнее поведение (скрыть баннер).
+            onPressed: widget.premiumOwned ? dismiss : widget.onUnlockPremium,
           ),
           Positioned(
             right: 80,

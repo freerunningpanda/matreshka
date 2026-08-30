@@ -90,6 +90,7 @@ class RewardCarouselTile extends StatelessWidget {
     this.claimed = false,
     this.locked = false,
     this.onTap,
+    this.footer,
     this.width = 242,
     this.height = 240,
     super.key,
@@ -103,6 +104,12 @@ class RewardCarouselTile extends StatelessWidget {
   final bool claimed;
   final bool locked;
   final VoidCallback? onTap;
+
+  /// Плашка "Забрать" на нижнем крае карточки — рисуется только когда
+  /// награду реально можно взять. Чисто декоративная (`IgnorePointer`):
+  /// тап по ней должен попадать на тот же `InkWell`, что и по всей карточке,
+  /// а не перехватываться отдельно.
+  final Widget? footer;
 
   final double width;
   final double height;
@@ -185,7 +192,9 @@ class RewardCarouselTile extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: 'Geologica',
                           fontWeight: FontWeight.w600,
-                          fontSize: 14,
+                          fontSize: 26,
+                          height: 1.2,
+                          letterSpacing: -0.01,
                           color: Colors.white,
                         ),
                       ),
@@ -193,6 +202,13 @@ class RewardCarouselTile extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+          if (footer != null)
+            Positioned(
+              left: 21,
+              width: cardWidth,
+              bottom: 28,
+              child: IgnorePointer(child: footer!),
             ),
         ],
       ),

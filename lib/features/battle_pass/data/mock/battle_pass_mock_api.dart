@@ -15,7 +15,7 @@ class BattlePassMockApi {
   Map<String, dynamic> fetchSeason(BattlePassScenario scenario) {
     switch (scenario) {
       case BattlePassScenario.premiumLocked:
-        return _buildSeason(currentLevel: 7, premiumOwned: false);
+        return _buildSeason(currentLevel: 5, premiumOwned: false);
       case BattlePassScenario.premiumUnlockedWithReward:
         return _buildSeason(currentLevel: 12, premiumOwned: true);
       case BattlePassScenario.maxLevel:
@@ -44,13 +44,17 @@ class BattlePassMockApi {
           ? 'current'
           : (currentLevel - number <= 3 ? 'claimable' : 'claimed');
       final claimed = state == 'claimed';
+      // Премиум-награда есть не на каждом уровне — только там, где и так
+      // выпадает более редкий бесплатный предмет: это она "продаёт" апгрейд,
+      // корону над плиткой показываем именно на таких уровнях.
+      final hasPremiumTier = _rarityFor(number) != 'common';
       return {
         'number': number,
         'required_xp': number * 1000,
         'state': state,
         'free_reward': _reward(number, premium: false, claimed: claimed),
-        'premium_reward': (premiumOwned || allClaimed)
-            ? _reward(number, premium: true, claimed: claimed)
+        'premium_reward': hasPremiumTier
+            ? _reward(number, premium: true, claimed: premiumOwned && claimed)
             : null,
       };
     });
@@ -69,24 +73,29 @@ class BattlePassMockApi {
     };
   }
 
+  String _rarityFor(int level) => level % 10 == 0
+      ? 'legendary'
+      : level % 5 == 0
+      ? 'epic'
+      : level % 3 == 0
+      ? 'rare'
+      : 'common';
+
   Map<String, dynamic> _reward(
     int level, {
     required bool premium,
     required bool claimed,
   }) {
-    final rarity = level % 10 == 0
-        ? 'legendary'
-        : level % 5 == 0
-        ? 'epic'
-        : level % 3 == 0
-        ? 'rare'
-        : 'common';
+    final iconIndex = (level - 1) % _rewardIcons.length;
+    // Чип количества (×N) показываем только у леденца — у остальных наград
+    // это одна штука, амаунт-чип на плитке не рисуется.
+    final isLollipop = iconIndex == 0;
     return {
       'id': level * 10 + (premium ? 1 : 0),
       'name': premium ? 'Премиум-награда $level ур.' : 'Награда $level ур.',
-      'icon_asset': _rewardIcons[(level - 1) % _rewardIcons.length],
-      'amount': premium ? 50 : 10,
-      'rarity': rarity,
+      'icon_asset': _rewardIcons[iconIndex],
+      'amount': premium ? 50 : (isLollipop ? 16 : 1),
+      'rarity': _rarityFor(level),
       'claimed': claimed,
     };
   }
