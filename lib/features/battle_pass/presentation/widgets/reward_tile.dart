@@ -12,11 +12,17 @@ class RewardTile extends StatefulWidget {
     required this.currentXp,
     required this.onClaim,
     required this.onUnlockPremium,
+    this.nextReached,
     super.key,
   });
 
   final BattlePassLevel level;
   final bool premiumOwned;
+
+  /// Достигнут ли следующий по порядку уровень — красит правую половину
+  /// соединительной линии под этим уровнем (левая красится по себе самому).
+  /// `null` для последнего уровня трека — линии дальше некуда идти.
+  final bool? nextReached;
 
   /// Накопленный опыт сезона — нужен, чтобы на тапе по своему текущему
   /// уровню показать реальную нехватку XP, а не общую фразу (иначе не
@@ -107,7 +113,12 @@ class _RewardTileState extends State<RewardTile> {
       children: [
         tile,
         const SizedBox(height: 12),
-        _LevelBadge(number: level.number, reached: !locked),
+        _LevelTrackNode(
+          number: level.number,
+          reached: !locked,
+          nextReached: widget.nextReached,
+          showIncomingLine: level.number != 1,
+        ),
       ],
     );
   }
@@ -168,37 +179,95 @@ class _ClaimButton extends StatelessWidget {
   }
 }
 
-class _LevelBadge extends StatelessWidget {
-  const _LevelBadge({required this.number, required this.reached});
+/// Ромб уровня + соединительная линия трека под плиткой. Линия рисуется
+/// внутри самого узла (а не отдельным виджетом между плитками), чтобы не
+/// зависеть от точной ширины разделителя между ними: левая половина красится
+/// по этому же уровню, правая — по следующему, поэтому цвет на границе
+/// "достигнуто / не достигнуто" плавно переходит от красного к серому.
+/// Каждая половина заходит за границу плитки (`_overflow`) и перекрывается
+/// с такой же половиной соседнего узла — так линия остаётся сплошной, даже
+/// не зная точную ширину разделителя между плитками.
+class _LevelTrackNode extends StatelessWidget {
+  const _LevelTrackNode({
+    required this.number,
+    required this.reached,
+    required this.nextReached,
+    this.showIncomingLine = true,
+  });
 
   final int number;
   final bool reached;
+  final bool? nextReached;
+
+  /// false только у самого первого уровня трека — идти линии слева не от куда.
+  final bool showIncomingLine;
+
+  static const _reachedColor = Color(0xFFE5484D);
+  static const _unreachedColor = Color(0xFF4A4A52);
+  static const _overflow = 40.0;
 
   @override
   Widget build(BuildContext context) {
-    return Transform.rotate(
-      angle: 0.785398, // 45°
-      child: Container(
-        width: 34,
-        height: 34,
-        decoration: BoxDecoration(
-          color: reached ? const Color(0xFFE5484D) : const Color(0xFF4A4A52),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Transform.rotate(
-          angle: -0.785398,
-          child: Center(
-            child: Text(
-              '$number',
-              style: const TextStyle(
-                fontFamily: 'Geologica',
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                color: Colors.white,
+    final ownColor = reached ? _reachedColor : _unreachedColor;
+    final outColor = (nextReached ?? reached) ? _reachedColor : _unreachedColor;
+
+    return SizedBox(
+      width: 242,
+      height: 34,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            left: -_overflow,
+            right: -_overflow,
+            child: Row(
+              children: [
+                Expanded(
+                  child: showIncomingLine
+                      ? ColoredBox(
+                          color: ownColor,
+                          child: const SizedBox(height: 4),
+                        )
+                      : const SizedBox(height: 4),
+                ),
+                Expanded(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: [ownColor, outColor]),
+                    ),
+                    child: const SizedBox(height: 4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Transform.rotate(
+            angle: 0.785398, // 45°
+            child: Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: ownColor,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Transform.rotate(
+                angle: -0.785398,
+                child: Center(
+                  child: Text(
+                    '$number',
+                    style: const TextStyle(
+                      fontFamily: 'Geologica',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

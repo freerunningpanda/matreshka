@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../domain/entities/level.dart';
 import '../../domain/entities/season.dart';
 import 'premium_teaser_cluster.dart';
 import 'reward_tile.dart';
@@ -160,15 +161,19 @@ class _RewardsTrackState extends State<RewardsTrack> {
   }
 
   Widget _buildTrack() {
+    final levels = widget.season.levels;
     final items = [
       if (!widget.season.premiumOwned)
         PremiumTeaserCluster(onUnlock: widget.onUnlockPremium),
-      for (final level in widget.season.levels)
+      for (var i = 0; i < levels.length; i++)
         RewardTile(
-          level: level,
+          level: levels[i],
           premiumOwned: widget.season.premiumOwned,
           currentXp: widget.season.currentXp,
-          onClaim: () => widget.onClaim(level.number),
+          nextReached: i + 1 < levels.length
+              ? levels[i + 1].state != LevelState.locked
+              : null,
+          onClaim: () => widget.onClaim(levels[i].number),
           onUnlockPremium: widget.onUnlockPremium,
         ),
     ];
