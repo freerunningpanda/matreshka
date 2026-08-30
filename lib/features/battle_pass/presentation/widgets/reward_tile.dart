@@ -165,20 +165,29 @@ class _ClaimButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Сам наклон вокруг общего с карточкой центра накладывает снаружи
+    // RewardCarouselTile (см. footer в reward_carousel_tile.dart) — здесь
+    // только компенсирующий встречный наклон, чтобы текст остался прямым.
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      alignment: Alignment.center,
       decoration: const BoxDecoration(
-        color: Color(0xFF3DDC6B),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        gradient: AppColors.claimGreenGradient,
+        borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
-      child: const Text(
-        'Забрать',
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'Geologica',
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-          color: Colors.white,
+      child: Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.skewX(-kRewardTileSkewAngle),
+        child: const Text(
+          'Забрать',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Geologica',
+            fontWeight: FontWeight.w500,
+            fontSize: 26,
+            height: 1.2,
+            letterSpacing: -0.01,
+            color: Colors.white,
+          ),
         ),
       ),
     );

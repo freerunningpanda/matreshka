@@ -66,8 +66,12 @@ class BattlePassMockApi {
       'current_level': currentLevel,
       // current_level ещё не пройден — это уровень, до завершения которого
       // осталось набрать опыт, поэтому xp должен быть чуть меньше его
-      // порога, а не константой, слабо связанной с currentLevel.
-      'current_xp': currentLevel * 1000 - 450,
+      // порога, а не константой, слабо связанной с currentLevel. Но на
+      // максимальном уровне дальше копить нечего — там он должен быть
+      // полностью пройден (иначе ромб 40 красится как недостигнутый).
+      'current_xp': currentLevel >= _maxLevel
+          ? currentLevel * 1000
+          : currentLevel * 1000 - 450,
       'max_level': _maxLevel,
       'levels': levels,
       'season_ends_at_ms': DateTime.now()

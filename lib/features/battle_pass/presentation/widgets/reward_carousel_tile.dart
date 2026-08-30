@@ -141,6 +141,17 @@ class RewardCarouselTile extends StatelessWidget {
                     border: borderColor != null
                         ? Border.all(color: borderColor!, width: 4)
                         : null,
+                    // "Backlight_BP_Card" из Figma — мягкое свечение вокруг
+                    // выбранной для получения плитки, того же цвета, что рамка.
+                    boxShadow: borderColor != null
+                        ? [
+                            BoxShadow(
+                              color: borderColor!.withValues(alpha: 0.6),
+                              blurRadius: 24,
+                              spreadRadius: 2,
+                            ),
+                          ]
+                        : null,
                   ),
                 ),
               ),
@@ -204,11 +215,35 @@ class RewardCarouselTile extends StatelessWidget {
               ),
             ),
           if (footer != null)
-            Positioned(
-              left: 21,
-              width: cardWidth,
-              bottom: 28,
-              child: IgnorePointer(child: footer!),
+            Builder(
+              builder: (context) {
+                const margin = 8.0;
+                const footerHeight = 48.0;
+                final footerTop = 28 + cardHeight - margin - footerHeight;
+                // Наклоняем плашку footer вокруг того же центра, что и сама
+                // карточка (28 + cardHeight/2), а не вокруг своего — иначе
+                // при независимом наклоне вокруг собственного (более
+                // высокого, раз плашка ниже и у́же карточки) центра сдвиг
+                // получается меньше, чем у карточки на той же высоте, и
+                // плашка вылезает за скошенный край.
+                final origin = Offset(
+                  0,
+                  28 + cardHeight / 2 - footerTop,
+                );
+                return Positioned(
+                  left: 21 + margin,
+                  width: cardWidth - margin * 2,
+                  top: footerTop,
+                  height: footerHeight,
+                  child: IgnorePointer(
+                    child: Transform(
+                      origin: origin,
+                      transform: Matrix4.skewX(kRewardTileSkewAngle),
+                      child: footer!,
+                    ),
+                  ),
+                );
+              },
             ),
         ],
       ),
