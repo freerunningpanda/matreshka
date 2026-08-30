@@ -55,7 +55,7 @@ class _Tag extends StatelessWidget {
       child: Row(
         children: [
           SvgPicture.asset(
-            'assets/icons/battle_pass/premium.svg',
+            'assets/icons/battle_pass/premium_icon.svg',
             width: 30,
             height: 22,
           ),

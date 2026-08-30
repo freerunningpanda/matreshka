@@ -49,30 +49,10 @@ class RewardBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final premium = kind == RewardBadgeKind.premium;
-    return SizedBox(
-      width: 55,
-      height: 50,
-      child: Center(
-        child: Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.skewX(kRewardTileSkewAngle),
-          child: Container(
-            width: 40,
-            height: 40,
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              gradient: premium ? AppColors.itemTagGradient : null,
-              color: premium ? null : AppColors.buttonOverlayStrong,
-              borderRadius: const BorderRadius.all(Radius.circular(14)),
-            ),
-            child: SvgPicture.asset(
-              premium
-                  ? 'assets/icons/battle_pass/premium.svg'
-                  : 'assets/icons/battle_pass/gift.svg',
-            ),
-          ),
-        ),
-      ),
+    return SvgPicture.asset(
+      premium
+          ? 'assets/icons/battle_pass/premium.svg'
+          : 'assets/icons/battle_pass/reward.svg',
     );
   }
 }
@@ -201,8 +181,8 @@ class RewardCarouselTile extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: 34,
-            top: 34,
+            left: 40,
+            top: 40,
             child: IgnorePointer(child: RewardBadge(kind: badge)),
           ),
           if (quantityLabel != null)

@@ -137,7 +137,7 @@ class _UpgradeButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset(
-                    'assets/icons/battle_pass/premium.svg',
+                    'assets/icons/battle_pass/premium_icon.svg',
                     width: 27,
                     height: 20,
                   ),
