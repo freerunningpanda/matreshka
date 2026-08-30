@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -168,6 +170,40 @@ class _RewardsTrackState extends State<RewardsTrack> {
     colors: [Colors.black, Colors.black],
   );
 
+  /// Расстояние от правого края трека до середины стрелки, ведущей к
+  /// юбилейному уровню (см. её же `right`/паддинг ниже в build) — начиная
+  /// отсюда плитки уже не должны рендериться вовсе.
+  static double get _milestoneArrowMidpoint => _MilestonePreview._cardSize + 55;
+
+  /// Плитки трека гаснут (alpha 0) уже на середине стрелки, а не жёстко
+  /// подрезаются под неё — те же стопы, что и обычный `_edgeFadeGradient`,
+  /// но правый край выражен в пикселях от `_milestoneArrowMidpoint`, а не
+  /// фиксированным процентом ширины трека.
+  Gradient _trackFadeGradient(double width) {
+    if (_nextMilestone == null) {
+      return _hasScrolled ? _edgeFadeGradient : _noFadeGradient;
+    }
+    const transitionWidth = 150.0;
+    final fadeEndStop = 1 - _milestoneArrowMidpoint / width;
+    final fadeStartStop = 1 - (_milestoneArrowMidpoint + transitionWidth) / width;
+    return LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      stops: [
+        0.0,
+        _hasScrolled ? 0.07 : 0.0,
+        fadeStartStop.clamp(0.0, 1.0),
+        fadeEndStop.clamp(0.0, 1.0),
+      ],
+      colors: const [
+        Colors.transparent,
+        Colors.black,
+        Colors.black,
+        Colors.transparent,
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -183,6 +219,36 @@ class _RewardsTrackState extends State<RewardsTrack> {
         clipBehavior: Clip.none,
         children: [
           _buildTrack(),
+          if (_nextMilestone != null)
+            // Плитки трека, которые превью юбилейного уровня перекрывает
+            // собой, не подрезаются жёстко — сами гаснут (alpha 0) уже на
+            // середине стрелки (см. _trackFadeGradient), а блюр здесь лишь
+            // смягчает переход между чёткими плитками и уже погасшими:
+            // сам невидим по краям зоны и виден только в середине перехода.
+            Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: _milestoneArrowMidpoint + 150,
+              child: ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  stops: [0.0, 0.35, 0.7, 1.0],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black,
+                    Colors.black,
+                    Colors.transparent,
+                  ],
+                ).createShader(bounds),
+                blendMode: BlendMode.dstIn,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    child: const SizedBox.expand(),
+                  ),
+                ),
+              ),
+            ),
           if (_showLeftArrow)
             if (_nextMilestone != null)
               Positioned(
@@ -281,9 +347,9 @@ class _RewardsTrackState extends State<RewardsTrack> {
         ],
       ],
     );
-    final gradient = _hasScrolled ? _edgeFadeGradient : _noFadeGradient;
     return ShaderMask(
-      shaderCallback: (bounds) => gradient.createShader(bounds),
+      shaderCallback: (bounds) =>
+          _trackFadeGradient(bounds.width).createShader(bounds),
       blendMode: BlendMode.dstIn,
       child: listView,
     );
