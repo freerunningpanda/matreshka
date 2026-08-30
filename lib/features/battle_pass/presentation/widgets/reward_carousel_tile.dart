@@ -304,8 +304,8 @@ class _ClaimedBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return SvgPicture.asset(
       'assets/icons/battle_pass/done.svg',
-      width: 34,
-      height: 18,
+      width: 48,
+      height: 26,
     );
   }
 }
