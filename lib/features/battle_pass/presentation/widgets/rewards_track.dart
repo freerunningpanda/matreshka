@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/level.dart';
 import '../../domain/entities/season.dart';
 import 'premium_teaser_cluster.dart';
+import 'reward_carousel_tile.dart';
 import 'reward_tile.dart';
 
 class RewardsTrack extends StatefulWidget {
@@ -29,26 +30,51 @@ class _RewardsTrackState extends State<RewardsTrack> {
 
   bool _showLeftArrow = false;
   bool _hasScrolled = false;
+  int? _nextMilestone;
 
   /// Ширина первого элемента списка — стрелка "назад" появляется, только
   /// когда он целиком уходит за левый край экрана.
   double get _firstItemExtent =>
       widget.season.premiumOwned ? _tileExtent : PremiumTeaserCluster.width / 3;
 
+  /// Смещение скролла, на котором начинается плитка уровня — та же
+  /// приближённая арифметика, что уже использует `_scrollToCurrent`.
+  double _offsetForLevel(int levelNumber) {
+    final leading = widget.season.premiumOwned ? 0.0 : PremiumTeaserCluster.width;
+    return leading + (levelNumber - 1) * _tileExtent;
+  }
+
+  /// Ближайший ещё не пройденный юбилейный уровень (10, 20, 30…) — пока он
+  /// не проскроллен в начало трека, к нему ведут стрелка вправо и оверлей.
+  int? _computeNextMilestone() {
+    final maxLevel = widget.season.levels.length;
+    for (var m = 10; m <= maxLevel; m += 10) {
+      if (_controller.offset < _offsetForLevel(m)) return m;
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
     _controller.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToCurrent());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToCurrent();
+      if (mounted) setState(() => _nextMilestone = _computeNextMilestone());
+    });
   }
 
   void _onScroll() {
     final showLeftArrow = _controller.offset >= _firstItemExtent;
     final hasScrolled = _controller.offset > 0;
-    if (showLeftArrow != _showLeftArrow || hasScrolled != _hasScrolled) {
+    final nextMilestone = _computeNextMilestone();
+    if (showLeftArrow != _showLeftArrow ||
+        hasScrolled != _hasScrolled ||
+        nextMilestone != _nextMilestone) {
       setState(() {
         _showLeftArrow = showLeftArrow;
         _hasScrolled = hasScrolled;
+        _nextMilestone = nextMilestone;
       });
     }
   }
@@ -84,6 +110,18 @@ class _RewardsTrackState extends State<RewardsTrack> {
         : _tileExtent;
     _controller.animateTo(
       target.clamp(0, _controller.position.maxScrollExtent),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  void _scrollToMilestone(int levelNumber) {
+    if (!_controller.hasClients) return;
+    _controller.animateTo(
+      _offsetForLevel(levelNumber).clamp(
+        0,
+        _controller.position.maxScrollExtent,
+      ),
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeOutCubic,
     );
@@ -137,7 +175,12 @@ class _RewardsTrackState extends State<RewardsTrack> {
       right: 80,
       bottom: 24,
       height: 300,
+      // Clip.none — превью юбилейного уровня выше обычной плитки (300 против
+      // 240) и растёт вверх за пределы этой области, чтобы его собственный
+      // ромб с номером остался на одной высоте с остальными (см.
+      // _MilestonePreview).
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           _buildTrack(),
           if (_showLeftArrow)
@@ -152,14 +195,31 @@ class _RewardsTrackState extends State<RewardsTrack> {
                 ),
               ),
             ),
+          if (_nextMilestone != null)
+            Positioned(
+              right: 0,
+              // Столько же места, сколько остаётся под обычной плиткой трека
+              // (300 высотой минус её содержимое высотой 286) — так ромб
+              // превью встаёт вровень с остальными, а не съезжает вниз.
+              bottom: 14,
+              child: _MilestonePreview(
+                level: widget.season.levels[_nextMilestone! - 1],
+                onTap: () => _scrollToMilestone(_nextMilestone!),
+              ),
+            ),
           Positioned(
-            right: 0,
+            // Пока впереди есть непройденный юбилейный уровень, стрелка
+            // сдвинута левее превью и ведёт прямиком к нему, а не листает
+            // на фиксированный шаг.
+            right: _nextMilestone != null ? 260 : 0,
             top: 0,
             bottom: 0,
             child: Center(
               child: _ArrowButton(
                 icon: Icons.chevron_right,
-                onTap: () => _scrollBy(_tileExtent * 3),
+                onTap: _nextMilestone != null
+                    ? () => _scrollToMilestone(_nextMilestone!)
+                    : () => _scrollBy(_tileExtent * 3),
               ),
             ),
           ),
@@ -200,6 +260,69 @@ class _RewardsTrackState extends State<RewardsTrack> {
       shaderCallback: (bounds) => gradient.createShader(bounds),
       blendMode: BlendMode.dstIn,
       child: listView,
+    );
+  }
+}
+
+/// Плавающее превью ближайшего непройденного юбилейного уровня (10, 20…) —
+/// закреплено у правого края трека поверх обычных плиток, увеличено и
+/// подсвечено оранжевой рамкой (#DA7128, не путать с зелёной "к клейму
+/// готово"), пока сам уровень не проскроллен в начало. Юбилейные уровни
+/// всегда легендарные (см. `BattlePassMockApi._rarityFor`), поэтому
+/// градиент этой плитки золотой, без свитча по редкости.
+class _MilestonePreview extends StatelessWidget {
+  const _MilestonePreview({required this.level, required this.onTap});
+
+  final BattlePassLevel level;
+  final VoidCallback onTap;
+
+  static const _accentColor = Color(0xFFDA7128);
+
+  @override
+  Widget build(BuildContext context) {
+    final reward = level.freeReward;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        RewardCarouselTile(
+          asset: reward?.iconAsset ?? '',
+          gradient: AppColors.rewardTileGoldGradient,
+          badge: RewardBadgeKind.gift,
+          borderColor: _accentColor,
+          showGlow: true,
+          onTap: onTap,
+          width: 268,
+          height: 268,
+        ),
+        const SizedBox(height: 12),
+        Transform.rotate(
+          angle: 0.785398, // 45°
+          child: Container(
+            width: 34,
+            height: 34,
+            // Уровень ещё не достигнут — тот же серый, что у непройденного
+            // отрезка прогресс-бара под обычными плитками.
+            decoration: const BoxDecoration(
+              color: Color(0xFF4A4A52),
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+            ),
+            child: Transform.rotate(
+              angle: -0.785398,
+              child: Center(
+                child: Text(
+                  '${level.number}',
+                  style: const TextStyle(
+                    fontFamily: 'Geologica',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
