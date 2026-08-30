@@ -84,6 +84,7 @@ class _RewardTileState extends State<RewardTile> {
           ? '×${reward.amount}'
           : null,
       borderColor: showClaimUi ? const Color(0xFF3DDC6B) : null,
+      showGlow: showClaimUi,
       claimed: claimed,
       locked: visuallyLocked,
       // Плитка всегда кликабельна. Доступная бесплатная награда открывается

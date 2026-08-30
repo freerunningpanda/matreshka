@@ -87,6 +87,7 @@ class RewardCarouselTile extends StatelessWidget {
     this.badge = RewardBadgeKind.gift,
     this.quantityLabel,
     this.borderColor,
+    this.showGlow = false,
     this.claimed = false,
     this.locked = false,
     this.onTap,
@@ -101,6 +102,12 @@ class RewardCarouselTile extends StatelessWidget {
   final RewardBadgeKind badge;
   final String? quantityLabel;
   final Color? borderColor;
+
+  /// "Backlight_BP_Card" — мягкое зелёное свечение вокруг рамки. Только для
+  /// выбранной для клейма плитки; у премиум-тизера рамка тоже есть (белая,
+  /// для подсветки выбора), но свечения к ней не полагается.
+  final bool showGlow;
+
   final bool claimed;
   final bool locked;
   final VoidCallback? onTap;
@@ -153,7 +160,7 @@ class RewardCarouselTile extends StatelessWidget {
                       // "Backlight_BP_Card" из Figma — мягкое свечение вокруг
                       // выбранной для получения плитки, того же цвета, что
                       // рамка.
-                      boxShadow: borderColor != null
+                      boxShadow: showGlow && borderColor != null
                           ? [
                               BoxShadow(
                                 color: borderColor!.withValues(alpha: 0.6),
@@ -278,7 +285,7 @@ class RewardCarouselTile extends StatelessWidget {
     return AnimatedScale(
       duration: const Duration(milliseconds: 220),
       curve: Curves.easeOut,
-      scale: borderColor != null ? 1.12 : 1,
+      scale: showGlow ? 1.12 : 1,
       child: SizedBox(
         width: width,
         height: height,
