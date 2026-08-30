@@ -25,13 +25,33 @@ class _RewardsTrackState extends State<RewardsTrack> {
   final _controller = ScrollController();
   static const double _tileExtent = 170;
 
+  bool _showLeftArrow = false;
+  bool _hasScrolled = false;
+
   double get _leadingOffset =>
       widget.season.premiumOwned ? 0 : PremiumTeaserCluster.width;
+
+  /// Ширина первого элемента списка — стрелка "назад" появляется, только
+  /// когда он целиком уходит за левый край экрана.
+  double get _firstItemExtent =>
+      widget.season.premiumOwned ? _tileExtent : PremiumTeaserCluster.width / 3;
 
   @override
   void initState() {
     super.initState();
+    _controller.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToCurrent());
+  }
+
+  void _onScroll() {
+    final showLeftArrow = _controller.offset >= _firstItemExtent;
+    final hasScrolled = _controller.offset > 0;
+    if (showLeftArrow != _showLeftArrow || hasScrolled != _hasScrolled) {
+      setState(() {
+        _showLeftArrow = showLeftArrow;
+        _hasScrolled = hasScrolled;
+      });
+    }
   }
 
   @override
@@ -70,9 +90,32 @@ class _RewardsTrackState extends State<RewardsTrack> {
 
   @override
   void dispose() {
+    _controller.removeListener(_onScroll);
     _controller.dispose();
     super.dispose();
   }
+
+  /// Плашки трека уходят под стрелки, а не обрезаются по их краю — здесь
+  /// маскируем края градиентом в прозрачность вместо жёсткого кропа.
+  /// Включается только после начала скролла (в исходном положении первая
+  /// плашка ничем не перекрыта и обрезать её нечем), но ShaderMask остаётся
+  /// в дереве всегда — если убирать его условно, ListView под ним
+  /// пересоздаётся вместе со Scrollable и роняет уже начатый жест скролла.
+  static const _edgeFadeGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    stops: [0.0, 0.07, 0.93, 1.0],
+    colors: [
+      Colors.transparent,
+      Colors.black,
+      Colors.black,
+      Colors.transparent,
+    ],
+  );
+
+  static const _noFadeGradient = LinearGradient(
+    colors: [Colors.black, Colors.black],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -81,34 +124,57 @@ class _RewardsTrackState extends State<RewardsTrack> {
       right: 80,
       bottom: 24,
       height: 300,
-      child: Row(
+      child: Stack(
         children: [
-          _ArrowButton(
-            icon: Icons.chevron_left,
-            onTap: () => _scrollBy(-_tileExtent * 3),
-          ),
-          Expanded(
-            child: ListView(
-              controller: _controller,
-              scrollDirection: Axis.horizontal,
-              children: [
-                if (!widget.season.premiumOwned)
-                  PremiumTeaserCluster(onUnlock: widget.onUnlockPremium),
-                for (final level in widget.season.levels)
-                  RewardTile(
-                    level: level,
-                    premiumOwned: widget.season.premiumOwned,
-                    onClaim: () => widget.onClaim(level.number),
-                  ),
-              ],
+          _buildTrack(),
+          if (_showLeftArrow)
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              child: Center(
+                child: _ArrowButton(
+                  icon: Icons.chevron_left,
+                  onTap: () => _scrollBy(-_tileExtent * 3),
+                ),
+              ),
             ),
-          ),
-          _ArrowButton(
-            icon: Icons.chevron_right,
-            onTap: () => _scrollBy(_tileExtent * 3),
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: _ArrowButton(
+                icon: Icons.chevron_right,
+                onTap: () => _scrollBy(_tileExtent * 3),
+              ),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTrack() {
+    final listView = ListView(
+      controller: _controller,
+      scrollDirection: Axis.horizontal,
+      children: [
+        if (!widget.season.premiumOwned)
+          PremiumTeaserCluster(onUnlock: widget.onUnlockPremium),
+        for (final level in widget.season.levels)
+          RewardTile(
+            level: level,
+            premiumOwned: widget.season.premiumOwned,
+            onClaim: () => widget.onClaim(level.number),
+          ),
+      ],
+    );
+    final gradient = _hasScrolled ? _edgeFadeGradient : _noFadeGradient;
+    return ShaderMask(
+      shaderCallback: (bounds) => gradient.createShader(bounds),
+      blendMode: BlendMode.dstIn,
+      child: listView,
     );
   }
 }
