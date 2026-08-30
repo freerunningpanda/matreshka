@@ -206,8 +206,8 @@ class RewardCarouselTile extends StatelessWidget {
               children: [
                 content,
                 const Positioned(
-                  right: 34,
-                  top: 34,
+                  right: 24,
+                  top: 44,
                   child: IgnorePointer(child: _ClaimedBadge()),
                 ),
               ],

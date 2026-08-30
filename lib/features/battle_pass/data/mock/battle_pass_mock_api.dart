@@ -84,7 +84,7 @@ class BattlePassMockApi {
     return {
       'id': level * 10 + (premium ? 1 : 0),
       'name': premium ? 'Премиум-награда $level ур.' : 'Награда $level ур.',
-      'icon_asset': _rewardIcons[level % _rewardIcons.length],
+      'icon_asset': _rewardIcons[(level - 1) % _rewardIcons.length],
       'amount': premium ? 50 : 10,
       'rarity': rarity,
       'claimed': claimed,
