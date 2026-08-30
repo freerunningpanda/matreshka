@@ -91,7 +91,7 @@ abstract final class AppColors {
   static const LinearGradient rewardTileGrayGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xFF3B3E48), Color(0xFF1A1B20)],
+    colors: [Color(0xFF1A1B20), Color(0xFF3B3E48)],
   );
 
   static const LinearGradient rewardTileBlueGradient = LinearGradient(
