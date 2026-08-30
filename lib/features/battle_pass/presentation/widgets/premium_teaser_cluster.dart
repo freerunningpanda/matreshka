@@ -143,7 +143,7 @@ class _PremiumTeaserTile extends StatelessWidget {
                   height: 184,
                   decoration: BoxDecoration(
                     gradient: gradient,
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(30),
                     border: selected
                         ? Border.all(color: AppColors.textPrimary, width: 4)
                         : null,
@@ -162,8 +162,8 @@ class _PremiumTeaserTile extends StatelessWidget {
             ),
           ),
           const Positioned(
-            left: 47,
-            top: 38,
+            left: 34,
+            top: 34,
             child: IgnorePointer(child: _RewardSticker()),
           ),
           if (quantityLabel != null)
@@ -227,7 +227,7 @@ class _RewardSticker extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: const BoxDecoration(
               gradient: AppColors.itemTagGradient,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: BorderRadius.all(Radius.circular(14)),
             ),
             child: SvgPicture.asset('assets/icons/battle_pass/premium.svg'),
           ),
@@ -258,7 +258,7 @@ class _UnlockSticker extends StatelessWidget {
                 height: 60,
                 decoration: BoxDecoration(
                   color: Color(0x4CE29432), // rgba(226,148,50,0.3)
-                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
                 ),
               ),
               const Text(
