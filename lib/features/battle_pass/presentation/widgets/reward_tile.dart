@@ -36,8 +36,6 @@ class _RewardTileState extends State<RewardTile> {
   /// тапа, а забирает уже второй.
   bool _selected = false;
 
-  bool get _isMilestone => widget.level.number % 10 == 0;
-
   @override
   void didUpdateWidget(covariant RewardTile oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -53,7 +51,6 @@ class _RewardTileState extends State<RewardTile> {
     final locked = level.state == LevelState.locked;
     final claimable = level.state == LevelState.claimable;
     final claimed = level.state == LevelState.claimed;
-    final current = level.state == LevelState.current;
     final showPremiumBadge =
         level.premiumReward != null &&
         !widget.premiumOwned &&
@@ -74,18 +71,23 @@ class _RewardTileState extends State<RewardTile> {
       quantityLabel: (reward != null && reward.amount > 1)
           ? '×${reward.amount}'
           : null,
-      borderColor: current
-          ? Colors.white
-          : showClaimUi
-          ? const Color(0xFF3DDC6B)
-          : null,
+      borderColor: showClaimUi ? const Color(0xFF3DDC6B) : null,
       claimed: claimed,
       locked: locked,
       // Плитка всегда кликабельна. Доступная бесплатная награда открывается
       // в два тапа: первый показывает рамку и кнопку "Забрать", второй —
-      // уже забирает; премиум-плитка сразу ведёт к покупке прокачки, а
-      // прочие показывают, почему награда пока недоступна.
-      onTap: showPremiumBadge
+      // уже забирает; премиум-плитка сразу ведёт к покупке прокачки, но
+      // только если уровень уже достигнут — запертый уровень (не дошли по
+      // XP) остаётся запертым независимо от короны, ведёт к покупке прокачки
+      // нельзя раньше, чем сам уровень открылся.
+      onTap: locked
+          ? () => _showTapHint(
+              context,
+              locked: true,
+              claimed: false,
+              requiredXp: level.requiredXp,
+            )
+          : showPremiumBadge
           ? widget.onUnlockPremium
           : claimable
           ? (_selected
@@ -103,7 +105,7 @@ class _RewardTileState extends State<RewardTile> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _isMilestone ? _MilestoneFrame(child: tile) : tile,
+        tile,
         const SizedBox(height: 12),
         _LevelBadge(number: level.number, reached: !locked),
       ],
@@ -136,33 +138,6 @@ class _RewardTileState extends State<RewardTile> {
     RewardRarity.rare => AppColors.rewardTileBlueGradient,
     RewardRarity.common || null => AppColors.rewardTileGrayGradient,
   };
-}
-
-/// Рамка "уровень с большой наградой" (каждый 10-й) — золотой градиентный
-/// бордер с сиянием вокруг обычной плитки трека.
-class _MilestoneFrame extends StatelessWidget {
-  const _MilestoneFrame({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: AppColors.levelUpBorderGradient,
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.glowShadow,
-            blurRadius: 40,
-            spreadRadius: 4,
-          ),
-        ],
-      ),
-      child: child,
-    );
-  }
 }
 
 /// Плашка "Забрать" на нижнем крае карточки — единственный визуальный
