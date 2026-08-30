@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../domain/entities/level.dart';
 import '../../domain/entities/season.dart';
 import 'premium_teaser_cluster.dart';
 import 'reward_tile.dart';
@@ -29,9 +30,6 @@ class _RewardsTrackState extends State<RewardsTrack> {
   bool _showLeftArrow = false;
   bool _hasScrolled = false;
 
-  double get _leadingOffset =>
-      widget.season.premiumOwned ? 0 : PremiumTeaserCluster.width;
-
   /// Ширина первого элемента списка — стрелка "назад" появляется, только
   /// когда он целиком уходит за левый край экрана.
   double get _firstItemExtent =>
@@ -55,11 +53,19 @@ class _RewardsTrackState extends State<RewardsTrack> {
     }
   }
 
+  bool _allClaimed(BattlePassSeason season) =>
+      season.levels.every((level) => level.state == LevelState.claimed);
+
   @override
   void didUpdateWidget(covariant RewardsTrack oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // "Макс. уровень" и "Завершён" совпадают по seasonId и currentLevel (оба
+    // 40) — отличаются только тем, что во втором всё уже забрано, так что
+    // это тоже нужно сравнивать, иначе переключение между ними друг в друга
+    // никогда не перезапускает скролл.
     if (oldWidget.season.seasonId != widget.season.seasonId ||
-        oldWidget.season.currentLevel != widget.season.currentLevel) {
+        oldWidget.season.currentLevel != widget.season.currentLevel ||
+        _allClaimed(oldWidget.season) != _allClaimed(widget.season)) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToCurrent());
     }
   }
@@ -67,12 +73,15 @@ class _RewardsTrackState extends State<RewardsTrack> {
   void _scrollToCurrent() {
     if (!_controller.hasClients) return;
     // Пока премиум не куплен, трек должен открываться с самого начала —
-    // с тизером премиум-наград, а не сразу проскроленным к текущему уровню.
+    // с тизером премиум-наград, а не сразу проскроленным вперёд.
     if (!widget.season.premiumOwned) return;
-    final target =
-        _leadingOffset +
-        (widget.season.currentLevel - 2).clamp(0, widget.season.levels.length) *
-            _tileExtent;
+    // Сезон завершён (все уровни забраны) — открываемся у последнего
+    // элемента; иначе (премиум куплен / макс. уровень, но ещё не всё
+    // забрано) — смещаемся только к 2-му, тизера уже нет, но и к текущему
+    // уровню, который может быть далеко, сразу прыгать не нужно.
+    final target = _allClaimed(widget.season)
+        ? _controller.position.maxScrollExtent
+        : _tileExtent;
     _controller.animateTo(
       target.clamp(0, _controller.position.maxScrollExtent),
       duration: const Duration(milliseconds: 500),

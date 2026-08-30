@@ -181,15 +181,7 @@ class RewardCarouselTile extends StatelessWidget {
             width: cardWidth - 48,
             height: cardHeight - 32,
             child: IgnorePointer(
-              child: locked
-                  ? const Center(
-                      child: Icon(
-                        Icons.lock_rounded,
-                        color: Colors.white,
-                        size: 44,
-                      ),
-                    )
-                  : Image.asset(asset, fit: BoxFit.contain),
+              child: Image.asset(asset, fit: BoxFit.contain),
             ),
           ),
           Positioned(

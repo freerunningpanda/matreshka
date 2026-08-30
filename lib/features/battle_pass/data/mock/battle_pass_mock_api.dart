@@ -97,10 +97,15 @@ class BattlePassMockApi {
     // Чип количества (×N) показываем только у леденца — у остальных наград
     // это одна штука, амаунт-чип на плитке не рисуется.
     final isLollipop = iconIndex == 0;
+    // 10-й уровень — легендарный, у него свой уникальный ассет вместо
+    // обычного цикла из четырёх иконок.
+    final iconAsset = level == 10
+        ? 'assets/images/battle_pass/case_audi.png'
+        : _rewardIcons[iconIndex];
     return {
       'id': level * 10 + (premium ? 1 : 0),
       'name': premium ? 'Премиум-награда $level ур.' : 'Награда $level ур.',
-      'icon_asset': _rewardIcons[iconIndex],
+      'icon_asset': iconAsset,
       'amount': premium ? 50 : (isLollipop ? 16 : 1),
       'rarity': _rarityFor(level),
       'claimed': claimed,
