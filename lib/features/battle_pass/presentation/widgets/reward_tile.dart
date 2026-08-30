@@ -12,17 +12,18 @@ class RewardTile extends StatefulWidget {
     required this.currentXp,
     required this.onClaim,
     required this.onUnlockPremium,
-    this.nextReached,
+    this.nextRequiredXp,
     super.key,
   });
 
   final BattlePassLevel level;
   final bool premiumOwned;
 
-  /// Достигнут ли следующий по порядку уровень — красит правую половину
-  /// соединительной линии под этим уровнем (левая красится по себе самому).
-  /// `null` для последнего уровня трека — линии дальше некуда идти.
-  final bool? nextReached;
+  /// Порог опыта следующего по порядку уровня — нужен, чтобы соединительная
+  /// линия трека красилась по реальному прогрессу (currentXp относительно
+  /// порогов), а не по грубому состоянию уровня. `null` для последнего
+  /// уровня трека — линии дальше некуда идти.
+  final int? nextRequiredXp;
 
   /// Накопленный опыт сезона — нужен, чтобы на тапе по своему текущему
   /// уровню показать реальную нехватку XP, а не общую фразу (иначе не
@@ -57,6 +58,11 @@ class _RewardTileState extends State<RewardTile> {
     final locked = level.state == LevelState.locked;
     final claimable = level.state == LevelState.claimable;
     final claimed = level.state == LevelState.claimed;
+    // Свой текущий уровень тоже не забрать — XP на него ещё не набран,
+    // поэтому визуально он ничем не должен отличаться от запертого: тот же
+    // замок вместо картинки. Тап всё равно ведёт на конкретное "не хватает
+    // N XP" через ветку ниже, а не на общее "откроется на N уровне".
+    final visuallyLocked = locked || level.state == LevelState.current;
     final showPremiumBadge =
         level.premiumReward != null &&
         !widget.premiumOwned &&
@@ -79,17 +85,17 @@ class _RewardTileState extends State<RewardTile> {
           : null,
       borderColor: showClaimUi ? const Color(0xFF3DDC6B) : null,
       claimed: claimed,
-      locked: locked,
+      locked: visuallyLocked,
       // Плитка всегда кликабельна. Доступная бесплатная награда открывается
       // в два тапа: первый показывает рамку и кнопку "Забрать", второй —
       // уже забирает; премиум-плитка сразу ведёт к покупке прокачки, но
-      // только если уровень уже достигнут — запертый уровень (не дошли по
-      // XP) остаётся запертым независимо от короны, ведёт к покупке прокачки
-      // нельзя раньше, чем сам уровень открылся.
-      onTap: locked
+      // только если уровень уже достигнут — запертый ИЛИ текущий уровень
+      // (XP ещё не набран) остаётся запертым независимо от короны, ведёт
+      // к покупке прокачки нельзя раньше, чем сам уровень открылся.
+      onTap: visuallyLocked
           ? () => _showTapHint(
               context,
-              locked: true,
+              locked: locked,
               claimed: false,
               requiredXp: level.requiredXp,
             )
@@ -115,9 +121,9 @@ class _RewardTileState extends State<RewardTile> {
         const SizedBox(height: 12),
         _LevelTrackNode(
           number: level.number,
-          reached: !locked,
-          nextReached: widget.nextReached,
-          showIncomingLine: level.number != 1,
+          requiredXp: level.requiredXp,
+          currentXp: widget.currentXp,
+          nextRequiredXp: widget.nextRequiredXp,
         ),
       ],
     );
@@ -179,37 +185,53 @@ class _ClaimButton extends StatelessWidget {
   }
 }
 
-/// Ромб уровня + соединительная линия трека под плиткой. Линия рисуется
-/// внутри самого узла (а не отдельным виджетом между плитками), чтобы не
-/// зависеть от точной ширины разделителя между ними: левая половина красится
-/// по этому же уровню, правая — по следующему, поэтому цвет на границе
-/// "достигнуто / не достигнуто" плавно переходит от красного к серому.
-/// Каждая половина заходит за границу плитки (`_overflow`) и перекрывается
-/// с такой же половиной соседнего узла — так линия остаётся сплошной, даже
-/// не зная точную ширину разделителя между плитками.
+/// Ромб уровня + соединительная линия трека под плиткой. Каждый узел рисует
+/// ТОЛЬКО отрезок ОТ своего ромба ДО следующего (а не половинки с обеих
+/// сторон) — так фактическая доля прогресса (currentXp относительно порогов
+/// requiredXp двух соседних уровней) кладётся на реальную геометрическую
+/// длину между их центрами, а не на случайную часть её. Соседний узел слева
+/// от своего ромба ничего не рисует — сегмент до него уже нарисован этим.
 class _LevelTrackNode extends StatelessWidget {
   const _LevelTrackNode({
     required this.number,
-    required this.reached,
-    required this.nextReached,
-    this.showIncomingLine = true,
+    required this.requiredXp,
+    required this.currentXp,
+    required this.nextRequiredXp,
   });
 
   final int number;
-  final bool reached;
-  final bool? nextReached;
+  final int requiredXp;
+  final int currentXp;
 
-  /// false только у самого первого уровня трека — идти линии слева не от куда.
-  final bool showIncomingLine;
+  /// Порог следующего уровня; `null` для последнего уровня трека — рисовать
+  /// отрезок дальше некуда.
+  final int? nextRequiredXp;
 
   static const _reachedColor = Color(0xFFE5484D);
   static const _unreachedColor = Color(0xFF4A4A52);
-  static const _overflow = 40.0;
+
+  /// Расстояние между центрами соседних ромбов: ширина плитки (242) плюс
+  /// ширина разделителя-стрелки между ними (см. `_TrackSeparator`, ~12 —
+  /// определяется её содержимым, явной ширины у неё нет).
+  static const _diamondStride = 254.0;
+
+  /// Ромб 34×34, повёрнутый на 45° — половина его диагонали (34·√2/2), т.е.
+  /// на сколько его левый кончик выступает влево от центра; отрезок обрезан
+  /// примерно на это расстояние до центра следующего ромба, иначе остаток
+  /// (когда прогресс близок к 100%) прячется у него под иконкой.
+  static const _diamondHalfSpan = 24.04;
+
+  /// Толщина линии — половина её нужна отдельно: у ромба острый кончик
+  /// (в точности на _diamondHalfSpan от центра его высота равна нулю), так
+  /// что при стыковке линии ровно с кончиком по бокам виден треугольный
+  /// зазор. Забираемся вглубь ромба ещё на половину толщины линии — там он
+  /// уже достаточно "вырос" по высоте, чтобы полностью перекрыть линию.
+  static const _lineThickness = 10.0;
 
   @override
   Widget build(BuildContext context) {
+    final reached = currentXp >= requiredXp;
     final ownColor = reached ? _reachedColor : _unreachedColor;
-    final outColor = (nextReached ?? reached) ? _reachedColor : _unreachedColor;
 
     return SizedBox(
       width: 242,
@@ -218,30 +240,40 @@ class _LevelTrackNode extends StatelessWidget {
         clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
-          Positioned(
-            left: -_overflow,
-            right: -_overflow,
-            child: Row(
-              children: [
-                Expanded(
-                  child: showIncomingLine
-                      ? ColoredBox(
-                          color: ownColor,
-                          child: const SizedBox(height: 4),
-                        )
-                      : const SizedBox(height: 4),
-                ),
-                Expanded(
-                  child: DecoratedBox(
+          if (nextRequiredXp != null)
+            Positioned(
+              left: 121, // от центра этой плитки — ровно на ромбе
+              width:
+                  _diamondStride -
+                  _diamondHalfSpan +
+                  _lineThickness / 2 +
+                  2, // небольшой запас поверх точного расчёта — иначе из-за
+              // сглаживания пикселей на стыке остаётся тонкий зазор
+              child: Builder(
+                builder: (context) {
+                  final nextReached = currentXp >= nextRequiredXp!;
+                  final outColor = nextReached
+                      ? _reachedColor
+                      : _unreachedColor;
+                  // currentXp/nextRequiredXp — та же доля, что показана в
+                  // XP-пилюле наверху экрана (см. battle_pass_screen.dart,
+                  // xpToNextLevel = requiredXp текущего уровня), чтобы полоса
+                  // читалась согласованно с тем числом.
+                  final fraction = nextRequiredXp! > 0
+                      ? (currentXp / nextRequiredXp!).clamp(0.0, 1.0)
+                      : (reached ? 1.0 : 0.0);
+                  return DecoratedBox(
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [ownColor, outColor]),
+                      gradient: LinearGradient(
+                        colors: [ownColor, ownColor, outColor, outColor],
+                        stops: [0, fraction, fraction, 1],
+                      ),
                     ),
-                    child: const SizedBox(height: 4),
-                  ),
-                ),
-              ],
+                    child: const SizedBox(height: _lineThickness),
+                  );
+                },
+              ),
             ),
-          ),
           Transform.rotate(
             angle: 0.785398, // 45°
             child: Container(

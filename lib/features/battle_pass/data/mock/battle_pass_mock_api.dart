@@ -64,7 +64,10 @@ class BattlePassMockApi {
       'season_name': 'Сезон «Экспедиция»',
       'premium_owned': premiumOwned,
       'current_level': currentLevel,
-      'current_xp': 450,
+      // current_level ещё не пройден — это уровень, до завершения которого
+      // осталось набрать опыт, поэтому xp должен быть чуть меньше его
+      // порога, а не константой, слабо связанной с currentLevel.
+      'current_xp': currentLevel * 1000 - 450,
       'max_level': _maxLevel,
       'levels': levels,
       'season_ends_at_ms': DateTime.now()
