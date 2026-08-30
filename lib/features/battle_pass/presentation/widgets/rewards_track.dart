@@ -190,19 +190,27 @@ class _RewardsTrackState extends State<RewardsTrack> {
 /// `PremiumTeaserCluster`, здесь используется между вообще всеми элементами.
 /// Центрируется по высоте самой плитки (RewardCarouselTile, 240), а не по
 /// всей колонке трека — иначе бейдж уровня снизу утягивает центр вниз.
+/// `Align` (не `Padding`!) — ListView задаёт дочерним элементам жёсткую
+/// (tight) высоту 300, и `Padding.deflate()` эту жёсткость сохраняет: любой
+/// внутренний SizedBox/SvgPicture с фиксированной высотой в таком контексте
+/// растягивается под оставшееся место вместо того, чтобы остаться компактным.
+/// `Align` вместо этого явно ослабляет (`loosen()`) constraints ребёнка.
 class _TrackSeparator extends StatelessWidget {
   const _TrackSeparator();
 
-  static const _tileHeight = 240;
-
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: (_tileHeight - 20) / 2),
-      child: SvgPicture.asset(
-        'assets/icons/battle_pass/arrow.svg',
-        width: 12,
-        height: 20,
+    return Align(
+      alignment: Alignment.topCenter,
+      child: SizedBox(
+        height: 240,
+        child: Center(
+          child: SvgPicture.asset(
+            'assets/icons/battle_pass/arrow.svg',
+            width: 12,
+            height: 20,
+          ),
+        ),
       ),
     );
   }
