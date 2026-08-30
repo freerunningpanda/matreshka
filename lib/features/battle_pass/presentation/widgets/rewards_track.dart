@@ -359,9 +359,10 @@ class _RewardsTrackState extends State<RewardsTrack> {
 /// Плавающее превью ближайшего непройденного юбилейного уровня (10, 20…) —
 /// закреплено у правого края трека поверх обычных плиток, увеличено и
 /// подсвечено оранжевой рамкой (#DA7128, не путать с зелёной "к клейму
-/// готово"), пока сам уровень не проскроллен в начало. Юбилейные уровни
-/// всегда легендарные (см. `BattlePassMockApi._rarityFor`), поэтому
-/// градиент этой плитки золотой, без свитча по редкости.
+/// готово") с отдельным по цвету свечением (#E23600, blur 45.1 — по спеке
+/// из Figma), пока сам уровень не проскроллен в начало. Фон карточки —
+/// обычный тёмно-серый (как у прочих плиток), градиент по редкости здесь
+/// не показателен: акцент даёт корона + рамка + свечение, а не заливка.
 class _MilestonePreview extends StatelessWidget {
   const _MilestonePreview({required this.level, required this.onTap});
 
@@ -369,6 +370,16 @@ class _MilestonePreview extends StatelessWidget {
   final VoidCallback onTap;
 
   static const _accentColor = Color(0xFFDA7128);
+  static const _glowColor = Color(0xFFE23600);
+
+  /// Заливка карточки — тёмно-серый вверху, переходящий в тот же оранжевый,
+  /// что и рамка, ближе к низу (за ящиком), а не ровный серый фон и не
+  /// сплошной оранжевый на весь фон.
+  static const _cardGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF1A1B20), _accentColor],
+  );
 
   static const _cardSize = 268.0;
   static const _spacer = 12.0;
@@ -395,10 +406,13 @@ class _MilestonePreview extends StatelessWidget {
       children: [
         RewardCarouselTile(
           asset: reward?.iconAsset ?? '',
-          gradient: AppColors.rewardTileGoldGradient,
-          badge: RewardBadgeKind.gift,
+          gradient: _cardGradient,
+          badge: RewardBadgeKind.premium,
           borderColor: _accentColor,
           showGlow: true,
+          glowColor: _glowColor,
+          glowBlurRadius: 45.1,
+          glowSpreadRadius: 0,
           onTap: onTap,
           width: _cardSize,
           height: _cardSize,

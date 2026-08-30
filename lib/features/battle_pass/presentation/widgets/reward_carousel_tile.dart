@@ -88,6 +88,9 @@ class RewardCarouselTile extends StatelessWidget {
     this.quantityLabel,
     this.borderColor,
     this.showGlow = false,
+    this.glowColor,
+    this.glowBlurRadius = 24,
+    this.glowSpreadRadius = 2,
     this.claimed = false,
     this.locked = false,
     this.onTap,
@@ -103,10 +106,17 @@ class RewardCarouselTile extends StatelessWidget {
   final String? quantityLabel;
   final Color? borderColor;
 
-  /// "Backlight_BP_Card" — мягкое зелёное свечение вокруг рамки. Только для
-  /// выбранной для клейма плитки; у премиум-тизера рамка тоже есть (белая,
-  /// для подсветки выбора), но свечения к ней не полагается.
+  /// "Backlight_BP_Card" — мягкое свечение вокруг рамки. Только для
+  /// выбранной для клейма плитки или превью юбилейного уровня; у
+  /// премиум-тизера рамка тоже есть (белая, для подсветки выбора), но
+  /// свечения к ней не полагается.
   final bool showGlow;
+
+  /// Цвет свечения — по умолчанию совпадает с рамкой, но может отличаться
+  /// (см. превью юбилейного уровня: рамка #DA7128, а свечение #E23600).
+  final Color? glowColor;
+  final double glowBlurRadius;
+  final double glowSpreadRadius;
 
   final bool claimed;
   final bool locked;
@@ -160,12 +170,18 @@ class RewardCarouselTile extends StatelessWidget {
                       // "Backlight_BP_Card" из Figma — мягкое свечение вокруг
                       // выбранной для получения плитки, того же цвета, что
                       // рамка.
-                      boxShadow: showGlow && borderColor != null
+                      boxShadow: showGlow && (glowColor ?? borderColor) != null
                           ? [
                               BoxShadow(
-                                color: borderColor!.withValues(alpha: 0.6),
-                                blurRadius: 24,
-                                spreadRadius: 2,
+                                // Явно заданный glowColor (см. превью
+                                // юбилейного уровня) берётся как есть — по
+                                // умолчанию же (обычный клейм) свечение
+                                // мягче самой рамки, поэтому притушено.
+                                color:
+                                    glowColor ??
+                                    borderColor!.withValues(alpha: 0.6),
+                                blurRadius: glowBlurRadius,
+                                spreadRadius: glowSpreadRadius,
                               ),
                             ]
                           : null,
