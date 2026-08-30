@@ -132,26 +132,37 @@ class RewardCarouselTile extends StatelessWidget {
               type: MaterialType.transparency,
               child: InkWell(
                 onTap: onTap,
-                child: SkewedBox(
-                  width: cardWidth,
-                  height: cardHeight,
-                  decoration: BoxDecoration(
-                    gradient: gradient,
-                    borderRadius: BorderRadius.circular(24),
-                    border: borderColor != null
-                        ? Border.all(color: borderColor!, width: 4)
-                        : null,
-                    // "Backlight_BP_Card" из Figma — мягкое свечение вокруг
-                    // выбранной для получения плитки, того же цвета, что рамка.
-                    boxShadow: borderColor != null
-                        ? [
-                            BoxShadow(
-                              color: borderColor!.withValues(alpha: 0.6),
-                              blurRadius: 24,
-                              spreadRadius: 2,
-                            ),
-                          ]
-                        : null,
+                child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.skewX(kRewardTileSkewAngle),
+                  // Рамка и подсветка появляются по тапу (выбор для клейма) —
+                  // AnimatedContainer вместо обычного, чтобы они плавно
+                  // проступали, а не выскакивали внезапно (раньше из-за
+                  // мгновенного boxShadow плитка визуально "выпрыгивала").
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.easeOut,
+                    width: cardWidth,
+                    height: cardHeight,
+                    decoration: BoxDecoration(
+                      gradient: gradient,
+                      borderRadius: BorderRadius.circular(24),
+                      border: borderColor != null
+                          ? Border.all(color: borderColor!, width: 4)
+                          : null,
+                      // "Backlight_BP_Card" из Figma — мягкое свечение вокруг
+                      // выбранной для получения плитки, того же цвета, что
+                      // рамка.
+                      boxShadow: borderColor != null
+                          ? [
+                              BoxShadow(
+                                color: borderColor!.withValues(alpha: 0.6),
+                                blurRadius: 24,
+                                spreadRadius: 2,
+                              ),
+                            ]
+                          : null,
+                    ),
                   ),
                 ),
               ),
@@ -214,56 +225,77 @@ class RewardCarouselTile extends StatelessWidget {
                 ),
               ),
             ),
-          if (footer != null)
-            Builder(
-              builder: (context) {
-                const margin = 8.0;
-                const footerHeight = 48.0;
-                final footerTop = 28 + cardHeight - margin - footerHeight;
-                // Наклоняем плашку footer вокруг того же центра, что и сама
-                // карточка (28 + cardHeight/2), а не вокруг своего — иначе
-                // при независимом наклоне вокруг собственного (более
-                // высокого, раз плашка ниже и у́же карточки) центра сдвиг
-                // получается меньше, чем у карточки на той же высоте, и
-                // плашка вылезает за скошенный край.
-                final origin = Offset(
-                  0,
-                  28 + cardHeight / 2 - footerTop,
-                );
-                return Positioned(
-                  left: 21 + margin,
-                  width: cardWidth - margin * 2,
-                  top: footerTop,
-                  height: footerHeight,
-                  child: IgnorePointer(
-                    child: Transform(
-                      origin: origin,
-                      transform: Matrix4.skewX(kRewardTileSkewAngle),
-                      child: footer!,
+          Builder(
+            builder: (context) {
+              const margin = 8.0;
+              const footerHeight = 48.0;
+              final footerTop = 28 + cardHeight - margin - footerHeight;
+              // Наклоняем плашку footer вокруг того же центра, что и сама
+              // карточка (28 + cardHeight/2), а не вокруг своего — иначе
+              // при независимом наклоне вокруг собственного (более
+              // высокого, раз плашка ниже и у́же карточки) центра сдвиг
+              // получается меньше, чем у карточки на той же высоте, и
+              // плашка вылезает за скошенный край.
+              final origin = Offset(0, 28 + cardHeight / 2 - footerTop);
+              final visible = footer != null;
+              return Positioned(
+                left: 21 + margin,
+                width: cardWidth - margin * 2,
+                top: footerTop,
+                height: footerHeight,
+                child: IgnorePointer(
+                  child: Transform(
+                    origin: origin,
+                    transform: Matrix4.skewX(kRewardTileSkewAngle),
+                    // Плашка не выскакивает мгновенно, а плавно проступает
+                    // и подрастает вместе с рамкой/подсветкой карточки —
+                    // держим её виджет в дереве и просто гасим/масштабируем,
+                    // а не добавляем/убираем условно (иначе анимировать
+                    // нечего, виджет появляется/исчезает мгновенно).
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOut,
+                      scale: visible ? 1 : 0.85,
+                      alignment: Alignment.center,
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 220),
+                        opacity: visible ? 1 : 0,
+                        child: footer ?? const SizedBox.shrink(),
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
-    return SizedBox(
-      width: width,
-      height: height,
-      child: claimed
-          ? Stack(
-              clipBehavior: Clip.none,
-              children: [
-                content,
-                const Positioned(
-                  right: 24,
-                  top: 44,
-                  child: IgnorePointer(child: _ClaimedBadge()),
-                ),
-              ],
-            )
-          : content,
+    // Выбранная для клейма плитка визуально подрастает целиком (картинка,
+    // бейдж, рамка — всё вместе), а не только рамка/подсветка сами по себе:
+    // Transform.scale не меняет раскладку соседей, поэтому нарочно перекрывает
+    // их — так и задумано (см. референс из Figma).
+    return AnimatedScale(
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOut,
+      scale: borderColor != null ? 1.12 : 1,
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: claimed
+            ? Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  content,
+                  const Positioned(
+                    right: 24,
+                    top: 44,
+                    child: IgnorePointer(child: _ClaimedBadge()),
+                  ),
+                ],
+              )
+            : content,
+      ),
     );
   }
 }
