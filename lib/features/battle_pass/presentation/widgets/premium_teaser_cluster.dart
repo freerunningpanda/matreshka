@@ -33,6 +33,11 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
     'assets/images/battle_pass/premium_teaser_fuel.png',
   ];
   static const _quantityLabels = [null, '×2', null];
+  static const _gradients = [
+    AppColors.rewardTileGrayGradient,
+    AppColors.rewardTileBlueGradient,
+    AppColors.rewardTilePurpleGradient,
+  ];
 
   int _selectedIndex = 2;
 
@@ -49,18 +54,19 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
               child: _PremiumTeaserTile(
                 asset: _assets[i],
                 quantityLabel: _quantityLabels[i],
+                gradient: _gradients[i],
                 selected: _selectedIndex == i,
                 onTap: () => setState(() => _selectedIndex = i),
               ),
             ),
-          const Positioned(
-            left: 660,
-            top: 90,
+          Positioned(
+            left: 670,
+            top: 100,
             child: IgnorePointer(
-              child: _SkewedBox(
+              child: SvgPicture.asset(
+                'assets/icons/battle_pass/arrow.svg',
                 width: 12,
-                height: 60,
-                decoration: BoxDecoration(color: Color(0x33E9E9F3)),
+                height: 20,
               ),
             ),
           ),
@@ -104,12 +110,14 @@ class _PremiumTeaserTile extends StatelessWidget {
   const _PremiumTeaserTile({
     required this.asset,
     required this.onTap,
+    required this.gradient,
     this.quantityLabel,
     this.selected = false,
   });
 
   final String asset;
   final VoidCallback onTap;
+  final Gradient gradient;
   final String? quantityLabel;
   final bool selected;
 
@@ -134,7 +142,7 @@ class _PremiumTeaserTile extends StatelessWidget {
                   width: 200,
                   height: 184,
                   decoration: BoxDecoration(
-                    color: AppColors.taskCardBodyBg,
+                    gradient: gradient,
                     borderRadius: BorderRadius.circular(24),
                     border: selected
                         ? Border.all(color: AppColors.textPrimary, width: 4)

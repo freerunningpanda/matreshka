@@ -85,4 +85,24 @@ abstract final class AppColors {
     ],
     stops: [0.0, 0.37, 0.40, 0.73, 1.0],
   );
+
+  /// Фоновые градиенты плиток премиум-тизера (по редкости: серый / синий /
+  /// фиолетово-розовый), см. `PremiumTeaserCluster`.
+  static const LinearGradient rewardTileGrayGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF3B3E48), Color(0xFF1A1B20)],
+  );
+
+  static const LinearGradient rewardTileBlueGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF15213A), Color(0xFF3C7C97)],
+  );
+
+  static const LinearGradient rewardTilePurpleGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF2C1440), Color(0xFFC63F9E)],
+  );
 }
