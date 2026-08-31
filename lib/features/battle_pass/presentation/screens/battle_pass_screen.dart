@@ -242,6 +242,11 @@ class _BattlePassView extends StatelessWidget {
                         startScrolledToEnd:
                             scenario ==
                             BattlePassScenario.rewardsEndedPremiumOwned,
+                        // Тизер "следующего сезона" в самом конце трека —
+                        // тоже только в "Конец наград (Куплен премиум)".
+                        showSeasonEndTeaser:
+                            scenario ==
+                            BattlePassScenario.rewardsEndedPremiumOwned,
                       ),
                     ],
                   ),

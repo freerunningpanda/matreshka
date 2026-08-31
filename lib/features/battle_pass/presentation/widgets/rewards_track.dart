@@ -19,6 +19,7 @@ class RewardsTrack extends StatefulWidget {
     this.hideGiftBadge = false,
     this.simplifyMilestonePreview = false,
     this.startScrolledToEnd = false,
+    this.showSeasonEndTeaser = false,
     super.key,
   });
 
@@ -47,6 +48,11 @@ class RewardsTrack extends StatefulWidget {
   /// независимо от того, забран сам уровень или нет. Только в сценарии
   /// "Battle Pass завершен" (см. battle_pass_screen.dart).
   final bool simplifyMilestonePreview;
+
+  /// Карточка "следующий сезон" в самом конце трека (после последнего
+  /// уровня) — только в сценарии "Конец наград (Куплен премиум)" (см.
+  /// battle_pass_screen.dart).
+  final bool showSeasonEndTeaser;
 
   @override
   State<RewardsTrack> createState() => _RewardsTrackState();
@@ -412,6 +418,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
           onUnlockPremium: widget.onUnlockPremium,
           hideGiftBadge: widget.hideGiftBadge,
         ),
+      if (widget.showSeasonEndTeaser) _SeasonEndTeaser(maxLevel: levels.length),
     ];
     final listView = ListView(
       controller: _controller,
@@ -548,6 +555,187 @@ class _MilestonePreview extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Карточка "следующий сезон" в самом конце трека (см.
+/// RewardsTrack.showSeasonEndTeaser) — колонка той же высоты, что и обычная
+/// плитка (карточка 240 + отступ 12 + ряд ромбов 34 = 286), чтобы встать в
+/// ряд с остальными элементами ListView без отдельного позиционирования.
+class _SeasonEndTeaser extends StatelessWidget {
+  const _SeasonEndTeaser({required this.maxLevel});
+
+  final int maxLevel;
+
+  /// Уровень-ориентир следующего "сезона" наград, показанный в конце
+  /// прерывистого сегмента — по референсу из Figma.
+  static const _nextSeasonLevel = 120;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _TeaserCard(maxLevel: maxLevel),
+        const SizedBox(height: 12),
+        _TeaserTrackRow(fromLevel: maxLevel, toLevel: _nextSeasonLevel),
+      ],
+    );
+  }
+}
+
+class _TeaserCard extends StatelessWidget {
+  const _TeaserCard({required this.maxLevel});
+
+  final int maxLevel;
+
+  @override
+  Widget build(BuildContext context) {
+    // Тот же наклон, что у остальных плиток трека (kRewardTileSkewAngle) —
+    // рамка наклонена вместе с фоном, текст внутри контрнаклонён отдельным
+    // слоем, чтобы остаться прямым (см. RewardCarouselTile/_ClaimButton).
+    // Высота самой рамки (184) и отступ сверху (28) — те же, что у видимой
+    // карточки обычной плитки (RewardCarouselTile.cardHeight = height-56 =
+    // 240-56=184, top:28 внутри общего слота высотой 240).
+    return SizedBox(
+      height: 240,
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 28),
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.skewX(kRewardTileSkewAngle),
+            child: Container(
+              width: 439,
+              height: 184,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: AppColors.progressRingFill,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.skewX(-kRewardTileSkewAngle),
+                child: Text.rich(
+                  TextSpan(
+                    style: const TextStyle(
+                      fontFamily: 'Geologica',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 26,
+                      height: 1.35,
+                      letterSpacing: -0.26,
+                      color: AppColors.textMuted,
+                    ),
+                    children: [
+                      const TextSpan(
+                        text: 'Награды откроются после прохождения ',
+                      ),
+                      TextSpan(
+                        text: '$maxLevel уровня',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Прерывистый сегмент трека после `fromLevel`: сам уровень, следующий за
+/// ним, затем ряд коротких чёрточек вместо промежуточных ромбов (их слишком
+/// много, чтобы рисовать каждый) и финальный ромб `toLevel` — тот же язык,
+/// что у _ProgressDashes в tasks_teaser_card.dart.
+class _TeaserTrackRow extends StatelessWidget {
+  const _TeaserTrackRow({required this.fromLevel, required this.toLevel});
+
+  final int fromLevel;
+  final int toLevel;
+
+  static const _color = Color(0xFF4A4A52);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 439,
+      height: 34,
+      child: Row(
+        children: [
+          _TeaserDiamond(number: fromLevel),
+          const Expanded(
+            child: ColoredBox(color: _color, child: SizedBox(height: 4)),
+          ),
+          _TeaserDiamond(number: fromLevel + 1),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(
+                5,
+                (_) => Container(
+                  width: 14,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: _color,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          _TeaserDiamond(number: toLevel),
+        ],
+      ),
+    );
+  }
+}
+
+class _TeaserDiamond extends StatelessWidget {
+  const _TeaserDiamond({required this.number});
+
+  final int number;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: 0.785398, // 45°
+      child: Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          color: _TeaserTrackRow._color,
+          borderRadius: const BorderRadius.all(Radius.circular(6)),
+        ),
+        child: Transform.rotate(
+          angle: -0.785398,
+          child: Center(
+            child: Text(
+              '$number',
+              style: const TextStyle(
+                fontFamily: 'Geologica',
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
