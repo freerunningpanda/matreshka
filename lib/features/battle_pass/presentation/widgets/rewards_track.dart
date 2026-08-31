@@ -574,13 +574,20 @@ class _SeasonEndTeaser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _TeaserCard(maxLevel: maxLevel),
-        const SizedBox(height: 12),
-        _TeaserTrackRow(fromLevel: maxLevel, toLevel: _nextSeasonLevel),
-      ],
+    // Тот же левый отступ (21), что у видимой карточки обычной плитки
+    // (RewardCarouselTile: left:21 внутри бокса 242 шириной) — иначе
+    // расстояние от _TrackSeparator до рамки тизера меньше, чем между ним
+    // и обычной плиткой.
+    return Padding(
+      padding: const EdgeInsets.only(left: 21),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _TeaserCard(maxLevel: maxLevel),
+          const SizedBox(height: 12),
+          _TeaserTrackRow(fromLevel: maxLevel, toLevel: _nextSeasonLevel),
+        ],
+      ),
     );
   }
 }
