@@ -10,7 +10,7 @@ class BattlePassBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Positioned.fill(
       child: ColoredBox(
-        color: AppColors.screenBackground,
+        color: context.theme.appColors.mainColors.screenBackground,
         child: Image.asset(AppAssets.imageBackground, fit: BoxFit.cover),
       ),
     );

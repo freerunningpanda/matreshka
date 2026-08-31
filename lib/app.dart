@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'core/theme/app_colors.dart';
-import 'features/battle_pass/presentation/screens/battle_pass_screen.dart';
+import 'features/exports.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -11,11 +10,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Battle Pass',
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.screenBackground,
-        fontFamily: 'Geologica',
-      ),
+      theme: AppTheme.appTheme,
       home: const BattlePassScreen(),
     );
   }

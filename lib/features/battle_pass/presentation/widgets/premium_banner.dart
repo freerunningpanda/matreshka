@@ -27,6 +27,9 @@ class PremiumBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
+
     const bannerRight = 24.0;
     const bannerTop = 0.0;
     const artLeftUnlocked = -50.0;
@@ -36,12 +39,6 @@ class PremiumBanner extends StatelessWidget {
     const contentLeft = 32.0;
     const contentRight = 32.0;
     const contentBottom = 40.0;
-    const titleFontSize = 36.0;
-    const titleLineHeight = 1.3;
-    const titleLetterSpacing = -0.36;
-    const subtitleFontSize = 22.0;
-    const subtitleLineHeight = 1.2;
-    const subtitleLetterSpacing = -0.22;
     const upgradeButtonIconHeight = 32.0;
 
     return Positioned(
@@ -79,13 +76,8 @@ class PremiumBanner extends StatelessWidget {
                         ? AppStrings.premiumBannerTitleLevelUp
                         : AppStrings.premiumBannerTitleUnlock,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: 'Geologica',
-                      fontWeight: FontWeight.w600,
-                      fontSize: titleFontSize,
-                      height: titleLineHeight,
-                      letterSpacing: titleLetterSpacing,
-                      color: AppColors.accentGold,
+                    style: theme.appTypography.mobileTypo.h4.copyWith(
+                      color: colors.accentGold,
                     ),
                   ),
                   AppSizedBoxes.verticalSizedBoxH10,
@@ -96,13 +88,8 @@ class PremiumBanner extends StatelessWidget {
                           ? AppStrings.premiumBannerSubtitleLevelUp
                           : AppStrings.premiumBannerSubtitleUnlock,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontFamily: 'Geologica',
-                        fontWeight: FontWeight.w500,
-                        fontSize: subtitleFontSize,
-                        height: subtitleLineHeight,
-                        letterSpacing: subtitleLetterSpacing,
-                        color: AppColors.textSecondary,
+                      style: theme.appTypography.mobileTypo.p1Med.copyWith(
+                        color: colors.textSecondary,
                       ),
                     ),
                   ),
@@ -151,28 +138,22 @@ class _MaxLevelReachedNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const textFontSize = 22.0;
-    const textLineHeight = 1.2;
-    const textLetterSpacing = -0.22;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     return Container(
       width: AppSizes.horizontalSize400,
       alignment: Alignment.center,
       padding: AppPadding.symmetricPaddingH24V22,
       decoration: BoxDecoration(
-        color: AppColors.buttonOverlayStrong, // #E9E9F3 @ 0.1
+        color: colors.buttonOverlayStrong, // #E9E9F3 @ 0.1
         borderRadius: AppRadius.circular30,
       ),
       child: Text(
         AppStrings.maxLevelReachedNotice,
         textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontFamily: 'Geologica',
-          fontWeight: FontWeight.w500,
-          fontSize: textFontSize,
-          height: textLineHeight,
-          letterSpacing: textLetterSpacing,
-          color: AppColors.textMuted,
+        style: theme.appTypography.mobileTypo.p1Med.copyWith(
+          color: colors.progressRingFill, // = textMuted
         ),
       ),
     );
@@ -195,36 +176,57 @@ class _UpgradeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const glowBlurRadius = 40.0;
     const glowSpreadRadius = 4.0;
     const labelFontSize = 30.0;
     const labelLineHeight = 1.2;
     const labelLetterSpacing = -0.3;
 
+    final itemTagGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [colors.itemTagGradientTop, colors.itemTagGradientBottom],
+    );
+    // Глянцевый блик поверх золотой кнопки (Rectangle 64755, blend "overlay").
+    final buttonShineGradient = LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
+      colors: [
+        colors.buttonShineStart,
+        colors.buttonShineSoft,
+        colors.buttonShineCore,
+        colors.buttonShineFade,
+        colors.buttonShineEnd,
+      ],
+    );
+
     return Container(
       height: AppSizes.verticalSize100,
       width: AppSizes.horizontalSize400,
       decoration: BoxDecoration(
         borderRadius: AppRadius.circular30,
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: AppColors.glowShadow,
+            color: colors.glowShadow,
             blurRadius: glowBlurRadius,
             spreadRadius: glowSpreadRadius,
           ),
         ],
       ),
       child: Material(
-        color: Colors.transparent,
+        color: colors.appColorTransparent,
         borderRadius: AppRadius.circular30,
         clipBehavior: Clip.antiAlias,
         child: Ink(
-          decoration: const BoxDecoration(gradient: AppColors.itemTagGradient),
+          decoration: BoxDecoration(gradient: itemTagGradient),
           child: InkWell(
             onTap: onPressed,
             child: Ink(
-              decoration: const BoxDecoration(
-                gradient: AppColors.buttonShineGradient,
+              decoration: BoxDecoration(
+                gradient: buttonShineGradient,
                 backgroundBlendMode: BlendMode.overlay,
               ),
               child: Row(
@@ -238,15 +240,18 @@ class _UpgradeButton extends StatelessWidget {
                     height: iconHeight,
                   ),
                   AppSizedBoxes.horizontalSizedBoxW27,
+                  // Токена типографики для этого сочетания (500/30/1.2) в
+                  // MobileTypo пока нет — оставлено как есть, только цвет
+                  // взят из темы.
                   Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w500,
                       fontSize: labelFontSize,
                       height: labelLineHeight,
                       letterSpacing: labelLetterSpacing,
-                      color: AppColors.itemTagText,
+                      color: colors.itemTagText,
                     ),
                   ),
                   AppSizedBoxes.horizontalSizedBoxW32,

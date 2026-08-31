@@ -29,6 +29,8 @@ class TasksTeaserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const cardLeft = 346.0;
     const cardTop = 220.0;
 
@@ -48,7 +50,7 @@ class TasksTeaserCard extends StatelessWidget {
       top: cardTop,
       width: AppSizes.horizontalSize400,
       child: Material(
-        color: Colors.transparent,
+        color: colors.appColorTransparent,
         child: InkWell(
           onTap: cardTap,
           borderRadius: AppRadius.circular30,
@@ -105,6 +107,8 @@ class _RewardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const fullOpacity = 1.0;
     const textFontSize = 26.0;
     const textLineHeight = 1.2;
@@ -120,9 +124,9 @@ class _RewardHeader extends StatelessWidget {
             height: AppSizes.verticalSize110,
             width: AppSizes.horizontalSize400,
             padding: AppPadding.horizontalPadding30,
-            decoration: const BoxDecoration(
-              color: AppColors.taskCardHeaderBg,
-              borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+              color: colors.taskCardHeaderBg,
+              borderRadius: const BorderRadius.only(
                 topLeft: AppRadius.radius30,
                 topRight: AppRadius.radius30,
               ),
@@ -135,16 +139,19 @@ class _RewardHeader extends StatelessWidget {
                   height: AppSizes.allSize96,
                 ),
                 AppSizedBoxes.horizontalSizedBoxW12,
+                // Токена типографики для этого сочетания (500/26/1.2) в
+                // MobileTypo пока нет — оставлено как есть, только цвет
+                // взят из темы.
                 Text(
                   '${AppStrings.taskRewardXpPrefix}$rewardXp',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Geologica',
                     fontWeight: FontWeight.w500,
                     fontSize: textFontSize,
                     height: textLineHeight,
                     letterSpacing: textLetterSpacing,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const Spacer(),
@@ -153,7 +160,7 @@ class _RewardHeader extends StatelessWidget {
                   height: AppSizes.verticalSize56,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: AppColors.taskChipBg,
+                    color: colors.taskChipBg,
                     borderRadius: AppRadius.circular20,
                   ),
                   // Галочка "готово" рисуется отдельным неприглушённым слоем
@@ -162,20 +169,18 @@ class _RewardHeader extends StatelessWidget {
                       ? null
                       : Text.rich(
                           TextSpan(
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'Geologica',
                               fontWeight: FontWeight.w500,
                               fontSize: textFontSize,
                               height: textLineHeight,
                               letterSpacing: textLetterSpacing,
-                              color: AppColors.textMuted,
+                              color: colors.progressRingFill, // = textMuted
                             ),
                             children: [
                               TextSpan(
                                 text: '$progressCurrent',
-                                style: const TextStyle(
-                                  color: AppColors.claimGreenTop,
-                                ),
+                                style: TextStyle(color: colors.claimGreenTop),
                               ),
                               TextSpan(
                                 text:
@@ -243,10 +248,10 @@ class _TaskBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
+
     const fullOpacity = 1.0;
-    const titleFontSize = 22.0;
-    const titleLineHeight = 1.2;
-    const titleLetterSpacing = -0.22;
 
     return SizedBox(
       width: AppSizes.horizontalSize400,
@@ -258,10 +263,10 @@ class _TaskBody extends StatelessWidget {
           Positioned.fill(
             child: Opacity(
               opacity: completed ? _kCompletedOpacity : fullOpacity,
-              child: const DecoratedBox(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: AppColors.taskCardBodyBg,
-                  borderRadius: BorderRadius.only(
+                  color: colors.taskCardBodyBg,
+                  borderRadius: const BorderRadius.only(
                     bottomLeft: AppRadius.radius30,
                     bottomRight: AppRadius.radius30,
                   ),
@@ -284,13 +289,8 @@ class _TaskBody extends StatelessWidget {
                     textAlign: centerContent
                         ? TextAlign.center
                         : TextAlign.start,
-                    style: const TextStyle(
-                      fontFamily: 'Geologica',
-                      fontWeight: FontWeight.w500,
-                      fontSize: titleFontSize,
-                      height: titleLineHeight,
-                      letterSpacing: titleLetterSpacing,
-                      color: AppColors.textMuted,
+                    style: theme.appTypography.mobileTypo.p1Med.copyWith(
+                      color: colors.progressRingFill, // = textMuted
                     ),
                   ),
                 ),
@@ -323,6 +323,8 @@ class _ProgressDashes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(target, (index) {
@@ -331,7 +333,7 @@ class _ProgressDashes extends StatelessWidget {
           width: AppSizes.horizontalSize54,
           height: AppSizes.verticalSize8,
           decoration: BoxDecoration(
-            color: filled ? AppColors.textPrimary : AppColors.progressRingTrack,
+            color: filled ? colors.textPrimary : colors.progressRingTrack,
             borderRadius: AppRadius.circular4,
           ),
         );
@@ -347,6 +349,8 @@ class _TasksButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const labelFontSize = 26.0;
     const labelLineHeight = 1.2;
     const labelLetterSpacing = -0.26;
@@ -362,7 +366,7 @@ class _TasksButton extends StatelessWidget {
           width: AppSizes.horizontalSize320,
           padding: AppPadding.ltrbPaddingL36T20R36B23,
           decoration: BoxDecoration(
-            color: AppColors.buttonOverlayStrong,
+            color: colors.buttonOverlayStrong,
             borderRadius: AppRadius.circular30,
           ),
           child: Row(
@@ -374,7 +378,10 @@ class _TasksButton extends StatelessWidget {
                 height: AppSizes.allSize30,
               ),
               AppSizedBoxes.horizontalSizedBoxW16,
-              const Text(
+              // Токена типографики для этого сочетания (500/26/1.2) в
+              // MobileTypo пока нет — оставлено как есть, только цвет
+              // взят из темы.
+              Text(
                 AppStrings.tasksButtonLabel,
                 style: TextStyle(
                   fontFamily: 'Geologica',
@@ -382,7 +389,7 @@ class _TasksButton extends StatelessWidget {
                   fontSize: labelFontSize,
                   height: labelLineHeight,
                   letterSpacing: labelLetterSpacing,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -399,9 +406,9 @@ class _TasksButton extends StatelessWidget {
               height: AppSizes.verticalSize46,
               decoration: BoxDecoration(
                 borderRadius: AppRadius.circular30,
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
-                    color: AppColors.glowShadow,
+                    color: colors.glowShadow,
                     blurRadius: badgeGlowBlurRadius,
                     spreadRadius: badgeGlowSpreadRadius,
                   ),
@@ -431,16 +438,26 @@ class _ClaimXpButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const labelFontSize = 26.0;
     const labelLineHeight = 1.2;
     const labelLetterSpacing = -0.26;
+
+    // Кнопка "Забрать опыт" тизера заданий — отдельный, более приглушённый
+    // (alpha 0.4) зелёный, не claimGreen* трека наград.
+    final claimXpButtonGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [colors.claimXpButtonTop, colors.claimXpButtonBottom],
+    );
 
     return Container(
       width: AppSizes.horizontalSize320,
       padding: AppPadding.ltrbPaddingL36T20R36B23,
       decoration: BoxDecoration(
-        gradient: claimed ? null : AppColors.claimXpButtonGradient,
-        color: claimed ? AppColors.taskChipBg : null,
+        gradient: claimed ? null : claimXpButtonGradient,
+        color: claimed ? colors.taskChipBg : null,
         borderRadius: AppRadius.circular30,
       ),
       child: Row(
@@ -454,6 +471,9 @@ class _ClaimXpButton extends StatelessWidget {
             ),
             AppSizedBoxes.horizontalSizedBoxW14,
           ],
+          // Токена типографики для этого сочетания (500/26/1.2) в
+          // MobileTypo пока нет — оставлено как есть, только цвет взят из
+          // темы.
           Text(
             claimed ? AppStrings.xpClaimedLabel : AppStrings.claimXpButtonLabel,
             style: TextStyle(
@@ -462,7 +482,8 @@ class _ClaimXpButton extends StatelessWidget {
               fontSize: labelFontSize,
               height: labelLineHeight,
               letterSpacing: labelLetterSpacing,
-              color: claimed ? AppColors.textMuted : AppColors.claimXpText,
+              // progressRingFill = textMuted.
+              color: claimed ? colors.progressRingFill : colors.claimXpText,
             ),
           ),
         ],

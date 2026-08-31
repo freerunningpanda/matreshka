@@ -32,6 +32,8 @@ class ScenarioSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const buttonBgAlpha = 0.55;
     const buttonIconSize = 22.0;
 
@@ -68,12 +70,12 @@ class ScenarioSwitcher extends StatelessWidget {
             child: Container(
               padding: AppPadding.allPadding12,
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: buttonBgAlpha),
+                color: colors.appColorBlack.withValues(alpha: buttonBgAlpha),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.swap_horiz,
-                color: Colors.white,
+                color: colors.appColorWhite,
                 size: buttonIconSize,
               ),
             ),

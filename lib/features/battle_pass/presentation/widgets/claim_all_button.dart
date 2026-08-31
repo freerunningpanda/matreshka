@@ -18,6 +18,8 @@ class ClaimAllButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const labelFontSize = 24.0;
 
     return DecoratedBox(
@@ -26,7 +28,7 @@ class ClaimAllButton extends StatelessWidget {
         borderRadius: AppRadius.circular30,
       ),
       child: Material(
-        color: Colors.transparent,
+        color: colors.appColorTransparent,
         child: InkWell(
           borderRadius: AppRadius.circular30,
           onTap: onPressed,
@@ -37,11 +39,13 @@ class ClaimAllButton extends StatelessWidget {
             child: Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              // Токена типографики для этого сочетания (600/24) в MobileTypo
+              // пока нет — оставлено как есть, только цвет взят из темы.
+              style: TextStyle(
                 fontFamily: 'Geologica',
                 fontWeight: FontWeight.w600,
                 fontSize: labelFontSize,
-                color: Colors.white,
+                color: colors.appColorWhite,
               ),
             ),
           ),

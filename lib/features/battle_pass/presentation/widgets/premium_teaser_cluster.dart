@@ -37,20 +37,50 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
     AppAssets.imagePremiumTeaserFuel,
   ];
   static const _quantityLabels = [null, AppStrings.quantityLabelX2, null];
-  static const _gradients = [
-    AppColors.rewardTileGrayGradient,
-    AppColors.rewardTileBlueGradient,
-    AppColors.rewardTilePurpleGradient,
-  ];
 
   static const _defaultSelectedIndex = 2;
   int _selectedIndex = _defaultSelectedIndex;
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const tileStride = 216.0;
     const stickerLeft = 6.0;
     const stickerTop = 236.0;
+
+    // Фоновые градиенты плиток тизера — по редкости: common / rare / epic
+    // (тот же порядок, что и у RewardTile, см. AppColors.rewardTile*Gradient
+    // до перехода на тему).
+    final gradients = [
+      LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          colors.rewardTileGrayDark,
+          colors.rewardTileGrayMid,
+          colors.rewardTileGrayLight,
+        ],
+      ),
+      LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          colors.rewardTileBlueDark,
+          colors.rewardTileBlueMid,
+          colors.rewardTileBlueLight,
+        ],
+      ),
+      LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          colors.rewardTilePurpleDark,
+          colors.rewardTilePurpleMid,
+          colors.rewardTilePurpleLight,
+        ],
+      ),
+    ];
 
     return SizedBox(
       width: PremiumTeaserCluster.width,
@@ -63,10 +93,10 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
               child: RewardCarouselTile(
                 asset: _assets[i],
                 quantityLabel: _quantityLabels[i],
-                gradient: _gradients[i],
+                gradient: gradients[i],
                 badge: RewardBadgeKind.premium,
                 showBadge: !widget.hidePremiumBadge,
-                borderColor: _selectedIndex == i ? AppColors.textPrimary : null,
+                borderColor: _selectedIndex == i ? colors.textPrimary : null,
                 onTap: () => setState(() => _selectedIndex = i),
               ),
             ),
@@ -87,11 +117,10 @@ class _UnlockSticker extends StatelessWidget {
 
   final VoidCallback onTap;
 
-  static const _stickerBgColor = Color(0x4CE29432); // rgba(226,148,50,0.3)
-  static const _textShadowColor = Color(0xFFFF5C00);
-
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const textFontSize = 30.0;
     const textLineHeight = 1.2;
     const textLetterSpacing = -1.0;
@@ -106,27 +135,30 @@ class _UnlockSticker extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const SkewedBox(
+              SkewedBox(
                 width: AppSizes.horizontalSize626,
                 height: AppSizes.verticalSize60,
                 decoration: BoxDecoration(
-                  color: _stickerBgColor,
+                  color: colors.unlockStickerBg,
                   borderRadius: AppRadius.circular20,
                 ),
               ),
               Text(
                 AppStrings.premiumTeaserUnlockAll,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                // Токена типографики для этого сочетания (500/30/1.2) в
+                // MobileTypo пока нет — оставлено как есть, только цвет
+                // взят из темы.
+                style: TextStyle(
                   fontFamily: 'Geologica',
                   fontWeight: FontWeight.w500,
                   fontSize: textFontSize,
                   height: textLineHeight,
                   letterSpacing: textLetterSpacing,
-                  color: AppColors.accentGold,
+                  color: colors.accentGold,
                   shadows: [
                     Shadow(
-                      color: _textShadowColor,
+                      color: colors.unlockStickerTextShadow,
                       blurRadius: textShadowBlurRadius,
                     ),
                   ],

@@ -126,6 +126,8 @@ class RewardCarouselTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const cardWidthInset = 42.0;
     const cardHeightInset = 56.0;
     const cardInsetLeft = 21.0;
@@ -143,7 +145,6 @@ class RewardCarouselTile extends StatelessWidget {
     const quantityChipRight = 34.0;
     const quantityChipGapAboveFooter = 7.0;
     const quantityChipBottomInset = 44.0;
-    const quantityChipBgColor = Color(0x8C000000);
     const quantityFontSize = 26.0;
     const quantityLineHeight = 1.2;
     const quantityLetterSpacing = -0.01;
@@ -254,23 +255,26 @@ class RewardCarouselTile extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      const SkewedBox(
+                      SkewedBox(
                         width: AppSizes.horizontalSize69,
                         height: AppSizes.verticalSize36,
                         decoration: BoxDecoration(
-                          color: quantityChipBgColor,
+                          color: colors.quantityChipBg,
                           borderRadius: AppRadius.circular8,
                         ),
                       ),
+                      // Токена типографики для этого сочетания (600/26/1.2)
+                      // в MobileTypo пока нет — оставлено как есть, только
+                      // цвет взят из темы.
                       Text(
                         quantityLabel!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Geologica',
                           fontWeight: FontWeight.w600,
                           fontSize: quantityFontSize,
                           height: quantityLineHeight,
                           letterSpacing: quantityLetterSpacing,
-                          color: Colors.white,
+                          color: colors.appColorWhite,
                         ),
                       ),
                     ],

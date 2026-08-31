@@ -56,16 +56,21 @@ class _Tag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tagFontSize = 22.0;
-    const tagLineHeight = 1.2;
-    const tagLetterSpacing = -0.22;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
+
+    final tagGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [colors.itemTagGradientTop, colors.itemTagGradientBottom],
+    );
 
     return Container(
       width: AppSizes.horizontalSize324,
       height: AppSizes.verticalSize39,
       padding: AppPadding.onlyPaddingL12R19,
-      decoration: const BoxDecoration(
-        gradient: AppColors.itemTagGradient,
+      decoration: BoxDecoration(
+        gradient: tagGradient,
         borderRadius: AppRadius.circular30,
       ),
       child: Row(
@@ -80,13 +85,8 @@ class _Tag extends StatelessWidget {
             child: Text(
               text,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: 'Geologica',
-                fontWeight: FontWeight.w500,
-                fontSize: tagFontSize,
-                height: tagLineHeight,
-                letterSpacing: tagLetterSpacing,
-                color: AppColors.itemTagText,
+              style: theme.appTypography.mobileTypo.p1Med.copyWith(
+                color: colors.itemTagText,
               ),
             ),
           ),
@@ -110,7 +110,7 @@ class _ItemTitle extends StatelessWidget {
           child: FittedBox(
             fit: BoxFit.scaleDown,
             child: Text.rich(
-              _titleSpan(text),
+              _titleSpan(context, text),
               textAlign: TextAlign.center,
               maxLines: 1,
             ),
@@ -128,17 +128,11 @@ class _ItemTitle extends StatelessWidget {
 
   // "или" между двумя названиями предмета подсвечивается золотым (см.
   // node-id 1-1372 в Figma) — остальной текст остаётся обычным.
-  InlineSpan _titleSpan(String text) {
-    const titleFontSize = 36.0;
-    const titleLineHeight = 1.3;
-    const titleLetterSpacing = -0.36;
-    const style = TextStyle(
-      fontFamily: 'Geologica',
-      fontWeight: FontWeight.w600,
-      fontSize: titleFontSize,
-      height: titleLineHeight,
-      letterSpacing: titleLetterSpacing,
-      color: AppColors.textPrimary,
+  InlineSpan _titleSpan(BuildContext context, String text) {
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
+    final style = theme.appTypography.mobileTypo.h4.copyWith(
+      color: colors.textPrimary,
     );
     const highlight = AppStrings.itemTitleOrConnector;
     final index = text.indexOf(highlight);
@@ -148,9 +142,9 @@ class _ItemTitle extends StatelessWidget {
       style: style,
       children: [
         TextSpan(text: text.substring(0, index)),
-        const TextSpan(
+        TextSpan(
           text: highlight,
-          style: TextStyle(color: AppColors.accentGold),
+          style: TextStyle(color: colors.accentGold),
         ),
         TextSpan(text: text.substring(index + highlight.length)),
       ],

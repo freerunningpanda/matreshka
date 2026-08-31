@@ -21,6 +21,9 @@ class XpProgressPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
+
     const fullProgress = 1.0;
     const noProgress = 0.0;
     const pillLeft = 346.0;
@@ -29,9 +32,6 @@ class XpProgressPill extends StatelessWidget {
     const levelFontSize = 42.0;
     const levelLineHeight = 1.3;
     const levelLetterSpacing = -0.42;
-    const xpFontSize = 22.0;
-    const xpLineHeight = 1.2;
-    const xpLetterSpacing = -0.22;
 
     final isMaxLevel = currentLevel >= maxLevel;
     final progress = isMaxLevel || xpToNextLevel == 0
@@ -64,10 +64,8 @@ class XpProgressPill extends StatelessWidget {
                   child: CircularProgressIndicator(
                     value: progress,
                     strokeWidth: ringStrokeWidth,
-                    backgroundColor: AppColors.progressRingTrack,
-                    valueColor: const AlwaysStoppedAnimation(
-                      AppColors.progressRingFill,
-                    ),
+                    backgroundColor: colors.progressRingTrack,
+                    valueColor: AlwaysStoppedAnimation(colors.progressRingFill),
                   ),
                 ),
                 Padding(
@@ -77,16 +75,19 @@ class XpProgressPill extends StatelessWidget {
                   padding: AppPadding.horizontalPadding8,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
+                    // Токена типографики для этого сочетания (600/42/1.3)
+                    // в MobileTypo пока нет — оставлено как есть, только
+                    // цвет взят из темы.
                     child: Text(
                       '$currentLevel',
                       maxLines: 1,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: 'Geologica',
                         fontWeight: FontWeight.w600,
                         fontSize: levelFontSize,
                         height: levelLineHeight,
                         letterSpacing: levelLetterSpacing,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -106,13 +107,8 @@ class XpProgressPill extends StatelessWidget {
                 '$currentXp${AppStrings.xpProgressSeparator}$xpLabelTarget',
                 textAlign: TextAlign.center,
                 maxLines: 1,
-                style: const TextStyle(
-                  fontFamily: 'Geologica',
-                  fontWeight: FontWeight.w500,
-                  fontSize: xpFontSize,
-                  height: xpLineHeight,
-                  letterSpacing: xpLetterSpacing,
-                  color: AppColors.progressRingFill,
+                style: theme.appTypography.mobileTypo.p1Med.copyWith(
+                  color: colors.progressRingFill,
                 ),
               ),
             ),

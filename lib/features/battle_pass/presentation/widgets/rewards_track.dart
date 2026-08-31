@@ -344,32 +344,39 @@ class _RewardsTrackState extends State<RewardsTrack> {
   /// плашка ничем не перекрыта и обрезать её нечем), но ShaderMask остаётся
   /// в дереве всегда — если убирать его условно, ListView под ним
   /// пересоздаётся вместе со Scrollable и роняет уже начатый жест скролла.
-  static const _edgeFadeGradient = LinearGradient(
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-    stops: [0.0, 0.07, 0.93, 1.0],
-    colors: [
-      Colors.transparent,
-      Colors.black,
-      Colors.black,
-      Colors.transparent,
-    ],
-  );
+  Gradient get _edgeFadeGradient {
+    final colors = context.theme.appColors.mainColors;
+    return LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      stops: const [0.0, 0.07, 0.93, 1.0],
+      colors: [
+        colors.appColorTransparent,
+        colors.appColorBlack,
+        colors.appColorBlack,
+        colors.appColorTransparent,
+      ],
+    );
+  }
 
-  static const _noFadeGradient = LinearGradient(
-    colors: [Colors.black, Colors.black],
-  );
+  Gradient get _noFadeGradient {
+    final black = context.theme.appColors.mainColors.appColorBlack;
+    return LinearGradient(colors: [black, black]);
+  }
 
   /// Тот же левый fade, что у `_edgeFadeGradient`, но без правого — только
   /// для карточки "следующий сезон" (см. showSeasonEndTeaser) на самом конце
   /// трека: она последний элемент, дальше скроллить некуда, поэтому её
   /// рамка не должна частично гаснуть у правого края.
-  static const _leftOnlyFadeGradient = LinearGradient(
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-    stops: [0.0, 0.07],
-    colors: [Colors.transparent, Colors.black],
-  );
+  Gradient get _leftOnlyFadeGradient {
+    final colors = context.theme.appColors.mainColors;
+    return LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      stops: const [0.0, 0.07],
+      colors: [colors.appColorTransparent, colors.appColorBlack],
+    );
+  }
 
   /// Расстояние от правого края трека до середины стрелки, ведущей к
   /// юбилейному уровню (см. её же `right`/паддинг ниже в build) — начиная
@@ -392,6 +399,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
     final fadeEndStop = 1 - _milestoneArrowMidpoint / width;
     final fadeStartStop =
         1 - (_milestoneArrowMidpoint + transitionWidth) / width;
+    final colors = context.theme.appColors.mainColors;
     return LinearGradient(
       begin: Alignment.centerLeft,
       end: Alignment.centerRight,
@@ -401,17 +409,19 @@ class _RewardsTrackState extends State<RewardsTrack> {
         fadeStartStop.clamp(0.0, 1.0),
         fadeEndStop.clamp(0.0, 1.0),
       ],
-      colors: const [
-        Colors.transparent,
-        Colors.black,
-        Colors.black,
-        Colors.transparent,
+      colors: [
+        colors.appColorTransparent,
+        colors.appColorBlack,
+        colors.appColorBlack,
+        colors.appColorTransparent,
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const trackLeft = 346.0;
     const trackRight = 80.0;
     const trackBottom = 24.0;
@@ -460,13 +470,13 @@ class _RewardsTrackState extends State<RewardsTrack> {
               bottom: 0,
               width: _milestoneArrowMidpoint + blurZoneWidth,
               child: ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  stops: [0.0, 0.35, 0.7, 1.0],
+                shaderCallback: (bounds) => LinearGradient(
+                  stops: const [0.0, 0.35, 0.7, 1.0],
                   colors: [
-                    Colors.transparent,
-                    Colors.black,
-                    Colors.black,
-                    Colors.transparent,
+                    colors.appColorTransparent,
+                    colors.appColorBlack,
+                    colors.appColorBlack,
+                    colors.appColorTransparent,
                   ],
                 ).createShader(bounds),
                 blendMode: BlendMode.dstIn,
@@ -503,7 +513,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
                 level: widget.season.levels[_nextMilestone! - 1],
                 onTap: () => _scrollToMilestone(_nextMilestone!),
                 diamondColor: widget.highlightMaxLevelMilestone
-                    ? AppColors.milestoneDiamondMaxLevel
+                    ? colors.milestoneDiamondMaxLevel
                     : null,
                 simplified: widget.simplifyMilestonePreview,
                 hidePremiumBadge: widget.hideMilestonePremiumBadge,
@@ -584,6 +594,17 @@ class _TrackList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+    final goldGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        colors.rewardTileGoldDark,
+        colors.rewardTileGoldMid,
+        colors.rewardTileGoldLight,
+      ],
+    );
+
     final levels = season.levels;
     final items = [
       if (!season.premiumOwned)
@@ -605,7 +626,7 @@ class _TrackList extends StatelessWidget {
           highlighted: highlightedLevelNumber == levels[i].number,
           hidePremiumBadge: hideCarouselPremiumBadge,
           gradientOverride: goldGradientLevelNumber == levels[i].number
-              ? AppColors.rewardTileGoldGradient
+              ? goldGradient
               : null,
         ),
       if (showSeasonEndTeaser)
@@ -666,19 +687,7 @@ class _MilestonePreview extends StatelessWidget {
   /// RewardsTrack.hideMilestonePremiumBadge).
   final bool hidePremiumBadge;
 
-  static const _accentColor = Color(0xFFDA7128);
-  static const _glowColor = Color(0xFFE23600);
-  static const _defaultDiamondColor = Color(0xFF4A4A52);
   static const _diamondRotationAngle = 0.785398; // 45°
-
-  /// Заливка карточки — тёмно-серый вверху, переходящий в тот же оранжевый,
-  /// что и рамка, ближе к низу (за ящиком), а не ровный серый фон и не
-  /// сплошной оранжевый на весь фон.
-  static const _cardGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [Color(0xFF1A1B20), _accentColor],
-  );
 
   static const _cardSize = 268.0;
   static const _spacer = 12.0;
@@ -699,9 +708,20 @@ class _MilestonePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const previewGlowBlurRadius = 45.1;
     const previewGlowSpreadRadius = 0.0;
     const numberFontSize = 14.0;
+
+    // Заливка карточки — тёмно-серый вверху, переходящий в тот же оранжевый,
+    // что и рамка, ближе к низу (за ящиком), а не ровный серый фон и не
+    // сплошной оранжевый на весь фон.
+    final cardGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [colors.rewardTileGrayDark, colors.milestonePreviewAccent],
+    );
 
     final reward = level.freeReward;
     // Уже забранный юбилейный уровень (просто ещё не проскроленный мимо —
@@ -715,15 +735,15 @@ class _MilestonePreview extends StatelessWidget {
       children: [
         RewardCarouselTile(
           asset: reward?.iconAsset ?? '',
-          gradient: _cardGradient,
+          gradient: cardGradient,
           badge: RewardBadgeKind.premium,
           showBadge: !claimed && !simplified && !hidePremiumBadge,
           borderColor: (claimed || simplified)
-              ? AppColors.textPrimary
-              : _accentColor,
+              ? colors.textPrimary
+              : colors.milestonePreviewAccent,
           borderIgnoresOpacity: claimed,
           showGlow: !claimed,
-          glowColor: _glowColor,
+          glowColor: colors.milestonePreviewGlow,
           glowBlurRadius: previewGlowBlurRadius,
           glowSpreadRadius: previewGlowSpreadRadius,
           claimed: claimed,
@@ -741,7 +761,7 @@ class _MilestonePreview extends StatelessWidget {
             // отрезка прогресс-бара под обычными плитками (если не
             // переопределён diamondColor — см. выше).
             decoration: BoxDecoration(
-              color: diamondColor ?? _defaultDiamondColor,
+              color: diamondColor ?? colors.trackNodeDefault,
               borderRadius: AppRadius.circular6,
             ),
             child: Transform.rotate(
@@ -749,11 +769,11 @@ class _MilestonePreview extends StatelessWidget {
               child: Center(
                 child: Text(
                   '${level.number}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Geologica',
                     fontWeight: FontWeight.w700,
                     fontSize: numberFontSize,
-                    color: Colors.white,
+                    color: colors.appColorWhite,
                   ),
                 ),
               ),
@@ -820,6 +840,8 @@ class _TeaserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     // Тот же наклон, что у остальных плиток трека (kRewardTileSkewAngle) —
     // рамка наклонена вместе с фоном, текст внутри контрнаклонён отдельным
     // слоем, чтобы остаться прямым (см. RewardCarouselTile/_ClaimButton).
@@ -847,7 +869,7 @@ class _TeaserCard extends StatelessWidget {
               padding: AppPadding.horizontalPadding40,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: AppColors.progressRingFill,
+                  color: colors.progressRingFill,
                   width: borderWidth,
                 ),
                 borderRadius: AppRadius.circular24,
@@ -857,13 +879,13 @@ class _TeaserCard extends StatelessWidget {
                 transform: Matrix4.skewX(-kRewardTileSkewAngle),
                 child: Text.rich(
                   TextSpan(
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w500,
                       fontSize: textFontSize,
                       height: textLineHeight,
                       letterSpacing: textLetterSpacing,
-                      color: AppColors.textMuted,
+                      color: colors.progressRingFill, // = textMuted
                     ),
                     children: requiresPremium
                         ? [
@@ -877,12 +899,12 @@ class _TeaserCard extends StatelessWidget {
                               text: AppStrings
                                   .seasonEndTeaserRequiresPremiumMiddle,
                             ),
-                            const TextSpan(
+                            TextSpan(
                               text: AppStrings
                                   .seasonEndTeaserRequiresPremiumSuffix,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           ]
@@ -894,9 +916,9 @@ class _TeaserCard extends StatelessWidget {
                               text:
                                   '$maxLevel'
                                   '${AppStrings.seasonEndTeaserUnlockLevelSuffix}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           ],
@@ -927,8 +949,6 @@ class _TeaserTrackRow extends StatelessWidget {
   final int nextLevel;
   final int finalLevel;
 
-  static const _color = Color(0xFF4A4A52);
-
   /// Ширины чёрточек пунктира: крайние — короткие, три средних — длиннее и
   /// одного размера между собой (см. дизайн).
   static const _dashWidths = [20.0, 32.0, 32.0, 32.0, 20.0];
@@ -937,15 +957,6 @@ class _TeaserTrackRow extends StatelessWidget {
   /// _LevelTrackNode._lineThickness в reward_tile.dart (там она приватная,
   /// значение продублировано).
   static const _lineThickness = 10.0;
-
-  /// border-image-source пунктира по дизайну: linear-gradient(90deg,
-  /// #2D2E34 0%, #5D5D6D 50%, #2D2E34 100%) — сплошной градиент через весь
-  /// ряд чёрточек (не у каждой свой), поэтому рисуется одним ShaderMask
-  /// поверх всего Row, а не покраской отдельных Container.
-  static const _dashGradient = LinearGradient(
-    colors: [Color(0xFF2D2E34), Color(0xFF5D5D6D), Color(0xFF2D2E34)],
-    stops: [0.0, 0.5, 1.0],
-  );
 
   /// Расстояние от левого края этого виджета до ПРАВОГО (видимого) края ромба
   /// настоящего последнего уровня (100), чью исходящую линию сам он не
@@ -974,6 +985,20 @@ class _TeaserTrackRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+    // border-image-source пунктира по дизайну: linear-gradient(90deg,
+    // #2D2E34 0%, #5D5D6D 50%, #2D2E34 100%) — сплошной градиент через весь
+    // ряд чёрточек (не у каждой свой), поэтому рисуется одним ShaderMask
+    // поверх всего Row, а не покраской отдельных Container.
+    final dashGradient = LinearGradient(
+      colors: [
+        colors.screenBackground,
+        colors.dashGradientMid,
+        colors.screenBackground,
+      ],
+      stops: const [0.0, 0.5, 1.0],
+    );
+
     return SizedBox(
       width: AppSizes.horizontalSize439,
       height: AppSizes.verticalSize34,
@@ -985,21 +1010,21 @@ class _TeaserTrackRow extends StatelessWidget {
             top: (AppSizes.verticalSize34 - _lineThickness) / 2,
             width: _backReach,
             height: _lineThickness,
-            child: const ColoredBox(color: _color),
+            child: ColoredBox(color: colors.trackNodeDefault),
           ),
           Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: _leadingLineWidth,
                 child: ColoredBox(
-                  color: _color,
+                  color: colors.trackNodeDefault,
                   child: AppSizedBoxes.verticalSizedBoxH10,
                 ),
               ),
               _TeaserDiamond(number: nextLevel),
               AppSizedBoxes.horizontalSizedBoxW12,
               ShaderMask(
-                shaderCallback: (bounds) => _dashGradient.createShader(bounds),
+                shaderCallback: (bounds) => dashGradient.createShader(bounds),
                 blendMode: BlendMode.srcIn,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1010,7 +1035,7 @@ class _TeaserTrackRow extends StatelessWidget {
                         width: _dashWidths[i],
                         height: _lineThickness,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: colors.appColorWhite,
                           borderRadius: BorderRadius.circular(
                             _lineThickness / 2,
                           ),
@@ -1039,6 +1064,8 @@ class _TeaserDiamond extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const numberFontSize = 14.0;
 
     return Transform.rotate(
@@ -1047,7 +1074,7 @@ class _TeaserDiamond extends StatelessWidget {
         width: AppSizes.allSize34,
         height: AppSizes.allSize34,
         decoration: BoxDecoration(
-          color: _TeaserTrackRow._color,
+          color: colors.trackNodeDefault,
           borderRadius: AppRadius.circular6,
         ),
         child: Transform.rotate(
@@ -1062,11 +1089,11 @@ class _TeaserDiamond extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   '$number',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'Geologica',
                     fontWeight: FontWeight.w700,
                     fontSize: numberFontSize,
-                    color: Colors.white,
+                    color: colors.appColorWhite,
                   ),
                 ),
               ),
@@ -1116,12 +1143,14 @@ class _ArrowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const iconSize = 56.0;
 
     return Padding(
       padding: AppPadding.horizontalPadding8,
       child: Material(
-        color: AppColors.buttonOverlayStrong,
+        color: colors.buttonOverlayStrong,
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
@@ -1129,7 +1158,7 @@ class _ArrowButton extends StatelessWidget {
           child: SizedBox(
             width: AppSizes.allSize84,
             height: AppSizes.allSize84,
-            child: Icon(icon, color: Colors.white, size: iconSize),
+            child: Icon(icon, color: colors.appColorWhite, size: iconSize),
           ),
         ),
       ),

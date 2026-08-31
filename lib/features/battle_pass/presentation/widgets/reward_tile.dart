@@ -78,10 +78,10 @@ class _RewardTileState extends State<RewardTile> {
     }
   }
 
-  static const _claimReadyBorderColor = Color(0xFF3DDC6B);
-
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     final level = widget.level;
     final reward = level.freeReward;
     final locked = level.state == LevelState.locked;
@@ -108,8 +108,8 @@ class _RewardTileState extends State<RewardTile> {
       gradient:
           widget.gradientOverride ??
           (showPremiumBadge
-              ? AppColors.rewardTilePurpleGradient
-              : _rarityGradient(reward?.rarity)),
+              ? _purpleGradient(colors)
+              : _rarityGradient(colors, reward?.rarity)),
       badge: showPremiumBadge && !widget.hidePremiumBadge
           ? RewardBadgeKind.premium
           : RewardBadgeKind.gift,
@@ -121,9 +121,9 @@ class _RewardTileState extends State<RewardTile> {
           ? '×${reward.amount}'
           : null,
       borderColor: showClaimUi
-          ? _claimReadyBorderColor
+          ? colors.claimReadyBorder
           : widget.highlighted
-          ? AppColors.textPrimary
+          ? colors.textPrimary
           : null,
       showGlow: showClaimUi,
       claimed: claimed,
@@ -192,12 +192,38 @@ class _RewardTileState extends State<RewardTile> {
 
   static const _placeholderAsset = AppAssets.imageRewardPlaceholder;
 
-  Gradient _rarityGradient(RewardRarity? rarity) => switch (rarity) {
-    RewardRarity.legendary => AppColors.rewardTileGoldGradient,
-    RewardRarity.epic => AppColors.rewardTilePurpleGradient,
-    RewardRarity.rare => AppColors.rewardTileBlueGradient,
-    RewardRarity.common || null => AppColors.rewardTileGrayGradient,
-  };
+  static LinearGradient _tileGradient(Color dark, Color mid, Color light) =>
+      LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [dark, mid, light],
+      );
+
+  Gradient _purpleGradient(MainColors colors) => _tileGradient(
+    colors.rewardTilePurpleDark,
+    colors.rewardTilePurpleMid,
+    colors.rewardTilePurpleLight,
+  );
+
+  Gradient _rarityGradient(MainColors colors, RewardRarity? rarity) =>
+      switch (rarity) {
+        RewardRarity.legendary => _tileGradient(
+          colors.rewardTileGoldDark,
+          colors.rewardTileGoldMid,
+          colors.rewardTileGoldLight,
+        ),
+        RewardRarity.epic => _purpleGradient(colors),
+        RewardRarity.rare => _tileGradient(
+          colors.rewardTileBlueDark,
+          colors.rewardTileBlueMid,
+          colors.rewardTileBlueLight,
+        ),
+        RewardRarity.common || null => _tileGradient(
+          colors.rewardTileGrayDark,
+          colors.rewardTileGrayMid,
+          colors.rewardTileGrayLight,
+        ),
+      };
 }
 
 /// Плашка "Забрать" на нижнем крае карточки — единственный визуальный
@@ -208,23 +234,33 @@ class _ClaimButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const labelFontSize = 26.0;
     const labelLineHeight = 1.2;
     const labelLetterSpacing = -0.01;
+
+    final claimGreenGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [colors.claimGreenTop, colors.claimGreenBottom],
+    );
 
     // Сам наклон вокруг общего с карточкой центра накладывает снаружи
     // RewardCarouselTile (см. footer в reward_carousel_tile.dart) — здесь
     // только компенсирующий встречный наклон, чтобы текст остался прямым.
     return Container(
       alignment: Alignment.center,
-      decoration: const BoxDecoration(
-        gradient: AppColors.claimGreenGradient,
+      decoration: BoxDecoration(
+        gradient: claimGreenGradient,
         borderRadius: AppRadius.circular14,
       ),
       child: Transform(
         alignment: Alignment.center,
         transform: Matrix4.skewX(-kRewardTileSkewAngle),
-        child: const Text(
+        // Токена типографики для этого сочетания (500/26/1.2) в MobileTypo
+        // пока нет — оставлено как есть, только цвет взят из темы.
+        child: Text(
           AppStrings.claimButtonLabel,
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -233,7 +269,7 @@ class _ClaimButton extends StatelessWidget {
             fontSize: labelFontSize,
             height: labelLineHeight,
             letterSpacing: labelLetterSpacing,
-            color: Colors.white,
+            color: colors.appColorWhite,
           ),
         ),
       ),
@@ -263,9 +299,6 @@ class _LevelTrackNode extends StatelessWidget {
   /// отрезок дальше некуда.
   final int? nextRequiredXp;
 
-  static const _reachedColor = Color(0xFFE5484D);
-  static const _unreachedColor = Color(0xFF4A4A52);
-
   /// Расстояние между центрами соседних ромбов: ширина плитки (242) плюс
   /// ширина разделителя-стрелки между ними (см. `_TrackSeparator`, ~12 —
   /// определяется её содержимым, явной ширины у неё нет).
@@ -293,11 +326,15 @@ class _LevelTrackNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const lineLeft = 121.0; // от центра этой плитки — ровно на ромбе
     const numberFontSize = 14.0;
 
     final reached = currentXp >= requiredXp;
-    final ownColor = reached ? _reachedColor : _unreachedColor;
+    final ownColor = reached
+        ? colors.trackNodeReached
+        : colors.trackNodeDefault;
 
     return SizedBox(
       width: AppSizes.horizontalSize242,
@@ -318,8 +355,8 @@ class _LevelTrackNode extends StatelessWidget {
                 builder: (context) {
                   final nextReached = currentXp >= nextRequiredXp!;
                   final outColor = nextReached
-                      ? _reachedColor
-                      : _unreachedColor;
+                      ? colors.trackNodeReached
+                      : colors.trackNodeDefault;
                   // currentXp/nextRequiredXp — та же доля, что показана в
                   // XP-пилюле наверху экрана (см. battle_pass_screen.dart,
                   // xpToNextLevel = requiredXp текущего уровня), чтобы полоса
@@ -359,11 +396,11 @@ class _LevelTrackNode extends StatelessWidget {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         '$number',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Geologica',
                           fontWeight: FontWeight.w700,
                           fontSize: numberFontSize,
-                          color: Colors.white,
+                          color: colors.appColorWhite,
                         ),
                       ),
                     ),

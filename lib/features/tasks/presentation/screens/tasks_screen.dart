@@ -10,10 +10,12 @@ class TasksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     return BlocProvider<TasksCubit>(
       create: (_) => sl<TasksCubit>(),
       child: Scaffold(
-        backgroundColor: const Color(0xFF1B131C),
+        backgroundColor: colors.tasksScreenBackground,
         body: SafeArea(
           child: Align(
             alignment: Alignment.topLeft,
@@ -21,7 +23,7 @@ class TasksScreen extends StatelessWidget {
               padding: AppPadding.allPadding24,
               child: IconButton(
                 onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                icon: Icon(Icons.arrow_back, color: colors.appColorWhite),
               ),
             ),
           ),

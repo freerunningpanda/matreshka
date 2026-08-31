@@ -5,6 +5,9 @@
 // Core
 export 'result/result.dart';
 
+// DI
+export '../core/di/injection_container.dart';
+
 // Battle Pass — data/domain/presentation (нужны injection_container.dart)
 export '../features/battle_pass/data/mock/battle_pass_mock_api.dart';
 export '../features/battle_pass/data/repositories/battle_pass_repository_impl.dart';
@@ -21,3 +24,14 @@ export '../features/tasks/domain/repositories/tasks_repository.dart';
 export '../features/tasks/domain/usecases/get_tasks.dart';
 export '../features/tasks/presentation/cubit/tasks_cubit.dart';
 export '../features/tasks/presentation/screens/tasks_screen.dart';
+
+// Typography — base
+export '../core/theme/typography/base/mobile_typo.dart';
+export '../core/theme/typography/base/base_typography.dart';
+
+// Theme
+export '../core/theme/typography/impl/app_typography.dart';
+export '../core/theme/app_theme.dart';
+
+// Extensions
+export '../core/extensions/build_context_extension.dart';

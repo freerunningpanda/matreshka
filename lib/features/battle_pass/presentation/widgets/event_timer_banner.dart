@@ -36,6 +36,8 @@ class _CountdownTimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const iconSize = 32.0;
     const textFontSize = 26.0;
     const textLineHeight = 1.2;
@@ -43,20 +45,22 @@ class _CountdownTimer extends StatelessWidget {
 
     return Row(
       children: [
-        const Icon(
+        Icon(
           Icons.access_time_rounded,
           size: iconSize,
-          color: AppColors.timerText,
+          color: colors.timerText,
         ),
         AppSizedBoxes.horizontalSizedBoxW14,
-        const EventCountdownText(
+        // Токена типографики для этого сочетания (500/26/1.2) в MobileTypo
+        // пока нет — оставлено как есть, только цвет взят из темы.
+        EventCountdownText(
           style: TextStyle(
             fontFamily: 'Geologica',
             fontWeight: FontWeight.w500,
             fontSize: textFontSize,
             height: textLineHeight,
             letterSpacing: textLetterSpacing,
-            color: AppColors.timerText,
+            color: colors.timerText,
           ),
         ),
       ],
@@ -69,6 +73,8 @@ class _EventTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const titleFontSize = 48.0;
     const titleLineHeight = 0.93;
     const titleLetterSpacing = -0.48;
@@ -76,7 +82,14 @@ class _EventTitle extends StatelessWidget {
     // реального текста: тот неизвестен заранее, а важна только высота (так
     // градиент растягивается по вертикали текста, не по горизонтали).
     const gradientShaderRect = Rect.fromLTWH(0, 0, 1, 45);
+    final titleGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [colors.eventTitleTop, colors.eventTitleBottom],
+    );
 
+    // Токена типографики для этого сочетания (600/48/0.93) в MobileTypo
+    // пока нет — оставлено как есть, только цвет взят из темы.
     return Text(
       AppStrings.eventTitle,
       style: TextStyle(
@@ -86,9 +99,7 @@ class _EventTitle extends StatelessWidget {
         height: titleLineHeight,
         letterSpacing: titleLetterSpacing,
         foreground: Paint()
-          ..shader = AppColors.eventTitleGradient.createShader(
-            gradientShaderRect,
-          ),
+          ..shader = titleGradient.createShader(gradientShaderRect),
       ),
     );
   }

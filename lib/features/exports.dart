@@ -5,15 +5,17 @@
 
 // Core
 export '../core/di/injection_container.dart';
+export '../core/extensions/build_context_extension.dart';
 export '../core/navigation/app_router.dart';
 export '../core/theme/app_assets.dart';
-export '../core/theme/app_colors.dart';
 export '../core/theme/app_dimens.dart';
 export '../core/theme/app_padding.dart';
 export '../core/theme/app_radius.dart';
 export '../core/theme/app_sized_boxes.dart';
 export '../core/theme/app_sizes.dart';
 export '../core/theme/app_strings.dart';
+export '../core/theme/app_theme.dart';
+export '../core/theme/exports.dart';
 
 // Battle Pass — domain
 export 'battle_pass/domain/entities/level.dart';
@@ -44,6 +46,7 @@ export 'battle_pass/presentation/widgets/scenario_flavor.dart';
 export 'battle_pass/presentation/widgets/scenario_switcher.dart';
 export 'battle_pass/presentation/widgets/tasks_teaser_card.dart';
 export 'battle_pass/presentation/widgets/xp_progress_pill.dart';
+export 'battle_pass/presentation/screens/battle_pass_screen.dart';
 
 // Tasks — domain
 export 'tasks/domain/entities/task.dart';

@@ -50,12 +50,17 @@ class _BattlePassView extends StatelessWidget {
     return Scaffold(
       body: BlocBuilder<BattlePassCubit, BattlePassState>(
         builder: (context, state) {
+          final colors = context.theme.appColors.mainColors;
+
           return switch (state) {
             BattlePassLoading() => const Center(
               child: CircularProgressIndicator(),
             ),
             BattlePassError(:final message) => Center(
-              child: Text(message, style: const TextStyle(color: Colors.white)),
+              child: Text(
+                message,
+                style: TextStyle(color: colors.appColorWhite),
+              ),
             ),
             BattlePassLoaded(:final season, :final scenario) => Stack(
               children: [
@@ -163,15 +168,15 @@ class _BattlePassView extends StatelessWidget {
                                 )
                             ? ClaimAllButton(
                                 label: AppStrings.claimAllRewardsButton,
-                                // Тот же зелёный, что и AppColors.claimGreen*
-                                // (см. reward_tile.dart._ClaimButton), но без
-                                // готового AppColors.claimGreenGradient — у
-                                // него другое направление (сверху вниз), тут
-                                // по умолчанию слева направо.
-                                gradient: const LinearGradient(
+                                // Тот же зелёный, что и claimGreen* в теме
+                                // (см. reward_tile.dart._ClaimButton), но
+                                // с другим направлением (сверху вниз там,
+                                // тут по умолчанию слева направо) — поэтому
+                                // не переиспользуется тот же готовый градиент.
+                                gradient: LinearGradient(
                                   colors: [
-                                    AppColors.claimGreenTop,
-                                    AppColors.claimGreenBottom,
+                                    colors.claimGreenTop,
+                                    colors.claimGreenBottom,
                                   ],
                                 ),
                                 onPressed: () => context
@@ -398,7 +403,7 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
             right: closeButtonRight,
             top: closeButtonTop,
             child: Material(
-              color: AppColors.buttonOverlayWeak,
+              color: context.theme.appColors.mainColors.buttonOverlayWeak,
               shape: const CircleBorder(),
               child: InkWell(
                 customBorder: const CircleBorder(),

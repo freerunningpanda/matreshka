@@ -20,6 +20,8 @@ class BattlePassEndedNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
+
     const noticeLeft = 346.0;
     const stickerGlowTop = -8.0;
     const stickerGlowBlurRadius = 40.0;
@@ -37,10 +39,10 @@ class BattlePassEndedNotice extends StatelessWidget {
           Positioned(
             top: stickerGlowTop,
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.glowShadow,
+                    color: theme.appColors.mainColors.glowShadow,
                     blurRadius: stickerGlowBlurRadius,
                     spreadRadius: stickerGlowSpreadRadius,
                   ),
@@ -61,41 +63,59 @@ class _Card extends StatelessWidget {
   static const _borderWidth = 4.0;
   static const _outerRadius = 40.0;
 
-  // background (Figma): сплошной rgba(117,83,27,0.6) поверх диагонального
-  // блика rgba(200,166,111,·) с прозрачными краями — два слоя, а не один
-  // цвет, поэтому рисуются отдельными DecoratedBox друг на друге, а не
-  // одним BoxDecoration (color и gradient в нём взаимно исключают друг
-  // друга).
-  static const _flatBg = Color(0x9975531B); // rgba(117,83,27,0.6)
-  static const _sheenGradient = LinearGradient(
-    begin: Alignment(-0.99, -0.14), // ≈ 97.91deg
-    end: Alignment(0.99, 0.14),
-    stops: [0.0, 0.5745, 0.7907, 0.9241, 1.0],
-    colors: [
-      Color(0x00C8A66F),
-      Color(0x00C8A66F),
-      Color(0x4DC8A66F), // rgba(200,166,111,0.3)
-      Color(0x00C8A66F),
-      Color(0x00C8A66F),
-    ],
-  );
+  // Форма диагонального блика (Figma) — сами цвета берутся из темы
+  // (см. build), здесь только геометрия градиента.
+  static const _sheenBegin = Alignment(-0.99, -0.14); // ≈ 97.91deg
+  static const _sheenEnd = Alignment(0.99, 0.14);
+  static const _sheenStops = [0.0, 0.5745, 0.7907, 0.9241, 1.0];
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
+
+    // background (Figma): сплошной rgba(117,83,27,0.6) поверх диагонального
+    // блика rgba(200,166,111,·) с прозрачными краями — два слоя, а не один
+    // цвет, поэтому рисуются отдельными DecoratedBox друг на друге, а не
+    // одним BoxDecoration (color и gradient в нём взаимно исключают друг
+    // друга).
+    final flatBg = colors.endedNoticeFlatBg; // rgba(117,83,27,0.6)
+    final sheenGradient = LinearGradient(
+      begin: _sheenBegin,
+      end: _sheenEnd,
+      stops: _sheenStops,
+      colors: [
+        colors.endedNoticeSheenTransparent,
+        colors.endedNoticeSheenTransparent,
+        colors.endedNoticeSheenHighlight, // rgba(200,166,111,0.3)
+        colors.endedNoticeSheenTransparent,
+        colors.endedNoticeSheenTransparent,
+      ],
+    );
     // Рамка (Figma border-image) — 4px кольцо, а не Border.all одним цветом:
-    // спецификация даёт два слоя — сплошной #FFB41C (AppColors.glowGold) и
-    // поверх него блик levelUpBorderGradient через blend "overlay" (тот же
-    // приём, что у золотой кнопки в premium_banner.dart). Обычный
-    // "заливка + паддинг вместо бордера" здесь не подходит: интерьер сделан
-    // прозрачным намеренно (см. _flatBg/_sheenGradient), и его прозрачные
-    // слои просвечивали бы не сквозь карточку до фона экрана, а до этой
-    // золотой заливки под ними. Поэтому кольцо рисуется отдельно поверх
-    // контента через CustomPaint — так оно не участвует в фоне интерьера.
+    // спецификация даёт два слоя — сплошной #FFB41C (glowGold) и поверх него
+    // блик из levelUpBorder*-стопов через blend "overlay" (тот же приём, что
+    // у золотой кнопки в premium_banner.dart). Обычный "заливка + паддинг
+    // вместо бордера" здесь не подходит: интерьер сделан прозрачным намеренно
+    // (см. flatBg/sheenGradient выше), и его прозрачные слои просвечивали бы
+    // не сквозь карточку до фона экрана, а до этой золотой заливки под ними.
+    // Поэтому кольцо рисуется отдельно поверх контента через CustomPaint —
+    // так оно не участвует в фоне интерьера.
+    final borderGradient = LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        colors.levelUpBorderOrange,
+        colors.levelUpBorderYellow,
+        colors.levelUpBorderLight,
+        colors.levelUpBorderAmber,
+        colors.levelUpBorderCoral,
+      ],
+      stops: const [0.0, 0.37, 0.40, 0.73, 1.0],
+    );
+
     const cardGlowBlurRadius = 40.0;
     const cardGlowSpreadRadius = 2.0;
-    const titleFontSize = 36.0;
-    const titleLineHeight = 1.3;
-    const titleLetterSpacing = -0.36;
     const subtitleFontSize = 26.0;
     const subtitleLineHeight = 1.2;
     const subtitleLetterSpacing = -0.26;
@@ -108,7 +128,7 @@ class _Card extends StatelessWidget {
         borderRadius: BorderRadius.circular(_outerRadius),
         boxShadow: [
           BoxShadow(
-            color: AppColors.glowShadow,
+            color: colors.glowShadow,
             blurRadius: cardGlowBlurRadius,
             spreadRadius: cardGlowSpreadRadius,
           ),
@@ -118,20 +138,22 @@ class _Card extends StatelessWidget {
         foregroundPainter: _GradientBorderPainter(
           radius: _outerRadius,
           borderWidth: _borderWidth,
+          borderColor: colors.glowGold,
+          borderGradient: borderGradient,
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(_outerRadius - _borderWidth),
           child: Stack(
             children: [
-              const Positioned.fill(
+              Positioned.fill(
                 child: DecoratedBox(
-                  decoration: BoxDecoration(gradient: _sheenGradient),
+                  decoration: BoxDecoration(gradient: sheenGradient),
                 ),
               ),
-              const Positioned.fill(
-                child: DecoratedBox(decoration: BoxDecoration(color: _flatBg)),
+              Positioned.fill(
+                child: DecoratedBox(decoration: BoxDecoration(color: flatBg)),
               ),
-              const Padding(
+              Padding(
                 padding: AppPadding.ltrbPaddingL40T40R40B32,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -142,13 +164,8 @@ class _Card extends StatelessWidget {
                         AppStrings.battlePassEndedTitle,
                         textAlign: TextAlign.center,
                         maxLines: 1,
-                        style: TextStyle(
-                          fontFamily: 'Geologica',
-                          fontWeight: FontWeight.w600,
-                          fontSize: titleFontSize,
-                          height: titleLineHeight,
-                          letterSpacing: titleLetterSpacing,
-                          color: Colors.white,
+                        style: theme.appTypography.mobileTypo.h4.copyWith(
+                          color: theme.appColors.mainColors.appColorWhite,
                         ),
                       ),
                     ),
@@ -156,13 +173,16 @@ class _Card extends StatelessWidget {
                     Text(
                       AppStrings.battlePassEndedSubtitle,
                       textAlign: TextAlign.center,
+                      // Токена типографики для этого сочетания (500/26/1.2)
+                      // в MobileTypo пока нет — оставлено как есть, только
+                      // цвет взят из темы.
                       style: TextStyle(
                         fontFamily: 'Geologica',
                         fontWeight: FontWeight.w500,
                         fontSize: subtitleFontSize,
                         height: subtitleLineHeight,
                         letterSpacing: subtitleLetterSpacing,
-                        color: AppColors.timerText, // #E9E9F3 @ 0.4
+                        color: colors.timerText, // #E9E9F3 @ 0.4
                       ),
                     ),
                     AppSizedBoxes.verticalSizedBoxH28,
@@ -183,17 +203,22 @@ class _Card extends StatelessWidget {
 /// минус внутренний), поэтому середина остаётся полностью непрокрашенной:
 /// в отличие от Border.all + паддинг, ничего не подмешивается под
 /// прозрачный интерьер карточки (см. комментарий в _Card.build).
-/// Два слоя, как в Figma border-image: сплошной AppColors.glowGold и поверх
-/// него блик AppColors.levelUpBorderGradient через blend "overlay" —
-/// саveLayer ограничивает блендинг только этим кольцом, не задним фоном.
+/// Два слоя, как в Figma border-image: сплошной [borderColor] и поверх него
+/// блик [borderGradient] через blend "overlay" — оба берутся из темы в
+/// _Card.build (у CustomPainter нет своего BuildContext) — саveLayer
+/// ограничивает блендинг только этим кольцом, не задним фоном.
 class _GradientBorderPainter extends CustomPainter {
   const _GradientBorderPainter({
     required this.radius,
     required this.borderWidth,
+    required this.borderColor,
+    required this.borderGradient,
   });
 
   final double radius;
   final double borderWidth;
+  final Color borderColor;
+  final Gradient borderGradient;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -211,11 +236,11 @@ class _GradientBorderPainter extends CustomPainter {
       ..addRRect(innerRRect);
 
     canvas.saveLayer(outer, Paint());
-    canvas.drawPath(ringPath, Paint()..color = AppColors.glowGold);
+    canvas.drawPath(ringPath, Paint()..color = borderColor);
     canvas.drawPath(
       ringPath,
       Paint()
-        ..shader = AppColors.levelUpBorderGradient.createShader(outer)
+        ..shader = borderGradient.createShader(outer)
         ..blendMode = BlendMode.overlay,
     );
     canvas.restore();
@@ -223,7 +248,10 @@ class _GradientBorderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _GradientBorderPainter oldDelegate) =>
-      radius != oldDelegate.radius || borderWidth != oldDelegate.borderWidth;
+      radius != oldDelegate.radius ||
+      borderWidth != oldDelegate.borderWidth ||
+      borderColor != oldDelegate.borderColor ||
+      borderGradient != oldDelegate.borderGradient;
 }
 
 class _TimerPill extends StatelessWidget {
@@ -231,9 +259,27 @@ class _TimerPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.theme.appColors.mainColors;
+
     const textFontSize = 30.0;
     const textLineHeight = 1.2;
     const textLetterSpacing = -0.3;
+
+    // Тот же набор levelUpBorder*-стопов, что и у рамки карточки (см.
+    // _Card.build), но всего 4 (без levelUpBorderLight) и по более пологой
+    // диагонали — чип широкий и невысокий, полный 45°-угол давал слишком
+    // заметный перепад по вертикали.
+    final pillGradient = LinearGradient(
+      begin: const Alignment(-1.0, -0.4),
+      end: const Alignment(1.0, 0.4),
+      colors: [
+        colors.levelUpBorderOrange,
+        colors.levelUpBorderYellow,
+        colors.levelUpBorderAmber,
+        colors.levelUpBorderCoral,
+      ],
+      stops: const [0.0, 0.28, 0.72, 1.0],
+    );
 
     return Container(
       // 214 — ширина из Figma, но это минимум, а не жёсткий лимит: она
@@ -245,17 +291,19 @@ class _TimerPill extends StatelessWidget {
       ),
       padding: AppPadding.symmetricPaddingH28V8,
       decoration: BoxDecoration(
-        gradient: AppColors.countdownPillGradient,
+        gradient: pillGradient,
         borderRadius: AppRadius.circular60,
       ),
-      child: const EventCountdownText(
+      // Токена типографики для этого сочетания (600/30/1.2) в MobileTypo
+      // пока нет — оставлено как есть, только цвет взят из темы.
+      child: EventCountdownText(
         style: TextStyle(
           fontFamily: 'Geologica',
           fontWeight: FontWeight.w600,
           fontSize: textFontSize,
           height: textLineHeight,
           letterSpacing: textLetterSpacing,
-          color: AppColors.countdownPillText,
+          color: colors.countdownPillText,
         ),
       ),
     );
