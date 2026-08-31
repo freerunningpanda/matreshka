@@ -91,18 +91,12 @@ class _ItemTitle extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
-          child: Text(
-            text,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontFamily: 'Geologica',
-              fontWeight: FontWeight.w600,
-              fontSize: 36,
-              height: 1.3,
-              letterSpacing: -0.36,
-              color: AppColors.textPrimary,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text.rich(
+              _titleSpan(text),
+              textAlign: TextAlign.center,
+              maxLines: 1,
             ),
           ),
         ),
@@ -112,6 +106,34 @@ class _ItemTitle extends StatelessWidget {
           width: 36,
           height: 36,
         ),
+      ],
+    );
+  }
+
+  // "или" между двумя названиями предмета подсвечивается золотым (см.
+  // node-id 1-1372 в Figma) — остальной текст остаётся обычным.
+  InlineSpan _titleSpan(String text) {
+    const style = TextStyle(
+      fontFamily: 'Geologica',
+      fontWeight: FontWeight.w600,
+      fontSize: 36,
+      height: 1.3,
+      letterSpacing: -0.36,
+      color: AppColors.textPrimary,
+    );
+    const highlight = ' или ';
+    final index = text.indexOf(highlight);
+    if (index == -1) return TextSpan(text: text, style: style);
+
+    return TextSpan(
+      style: style,
+      children: [
+        TextSpan(text: text.substring(0, index)),
+        const TextSpan(
+          text: highlight,
+          style: TextStyle(color: AppColors.accentGold),
+        ),
+        TextSpan(text: text.substring(index + highlight.length)),
       ],
     );
   }

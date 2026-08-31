@@ -299,8 +299,8 @@ class _TasksButton extends StatelessWidget {
             top: -10,
             child: SvgPicture.asset(
               'assets/icons/battle_pass/sticker_new.svg',
-              width: 40,
-              height: 42,
+              width: 44,
+              height: 46,
             ),
           ),
       ],
