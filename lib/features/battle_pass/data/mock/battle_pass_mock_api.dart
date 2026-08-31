@@ -3,7 +3,7 @@ import '../../domain/repositories/battle_pass_repository.dart';
 /// Мок "сервера": отдаёт JSON-подобные Map под каждый сценарий экрана,
 /// чтобы Model.fromJson реально разбирал данные, а не просто оборачивал Dart-объекты.
 class BattlePassMockApi {
-  static const int _maxLevel = 40;
+  static const int _maxLevel = 100;
 
   static const _rewardIcons = [
     'assets/images/battle_pass/reward_lollipop.png',

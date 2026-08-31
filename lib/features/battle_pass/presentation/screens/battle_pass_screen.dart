@@ -237,6 +237,11 @@ class _BattlePassView extends StatelessWidget {
                         // завершен".
                         simplifyMilestonePreview:
                             scenario == BattlePassScenario.completed,
+                        // "Конец наград (Куплен премиум)" открывается сразу
+                        // у последнего элемента трека.
+                        startScrolledToEnd:
+                            scenario ==
+                            BattlePassScenario.rewardsEndedPremiumOwned,
                       ),
                     ],
                   ),

@@ -18,12 +18,20 @@ class RewardsTrack extends StatefulWidget {
     this.highlightMaxLevelMilestone = false,
     this.hideGiftBadge = false,
     this.simplifyMilestonePreview = false,
+    this.startScrolledToEnd = false,
     super.key,
   });
 
   final BattlePassSeason season;
   final void Function(int levelNumber) onClaim;
   final VoidCallback onUnlockPremium;
+
+  /// Трек открывается сразу у последнего элемента списка — только в
+  /// сценарии "Конец наград (Куплен премиум)" (см. battle_pass_screen.dart).
+  /// Явный флаг, а не вывод из season (например season.levels.every
+  /// (claimed)): season здесь та же, что у premiumUnlockedWithReward
+  /// (тот же seasonId/currentLevel), где скроллить к концу не нужно.
+  final bool startScrolledToEnd;
 
   /// Ромб плавающего превью юбилейного уровня красится в
   /// AppColors.milestoneDiamondMaxLevel вместо обычного серого — только в
@@ -137,7 +145,8 @@ class _RewardsTrackState extends State<RewardsTrack> {
   void didUpdateWidget(covariant RewardsTrack oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.season.seasonId != widget.season.seasonId ||
-        oldWidget.season.currentLevel != widget.season.currentLevel) {
+        oldWidget.season.currentLevel != widget.season.currentLevel ||
+        oldWidget.startScrolledToEnd != widget.startScrolledToEnd) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToCurrent());
     }
   }
@@ -145,13 +154,16 @@ class _RewardsTrackState extends State<RewardsTrack> {
   void _scrollToCurrent() {
     if (!_controller.hasClients) return;
     // Пока премиум не куплен, трек должен открываться с самого начала —
-    // с тизером премиум-наград, а не сразу проскроленным вперёд. Иначе —
-    // смещаемся только к 2-му, тизера уже нет, но и к текущему уровню,
-    // который может быть далеко, сразу прыгать не нужно (ни в одном
-    // сценарии трек не должен сам скроллить к последнему элементу).
+    // с тизером премиум-наград, а не сразу проскроленным вперёд.
     if (!widget.season.premiumOwned) return;
+    // "Конец наград" — сразу к последнему элементу; иначе — смещаемся
+    // только к 2-му, тизера уже нет, но и к текущему уровню, который может
+    // быть далеко, сразу прыгать не нужно.
+    final target = widget.startScrolledToEnd
+        ? _controller.position.maxScrollExtent
+        : _tileExtent;
     _controller.animateTo(
-      _tileExtent.clamp(0, _controller.position.maxScrollExtent),
+      target.clamp(0, _controller.position.maxScrollExtent),
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeOutCubic,
     );
