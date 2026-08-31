@@ -98,6 +98,37 @@ class BattlePassMockApi {
           },
           rarityOverrides: const {5: 'common', 6: 'epic', 7: 'epic', 8: 'epic'},
         );
+      case BattlePassScenario.maxLevelNoReward:
+        return _buildSeason(
+          currentLevel: _maxLevel,
+          premiumOwned: true,
+          // По просьбе пользователя UI-база трека наград здесь —
+          // premiumUnlockedNoReward (см. выше), не maxLevel: тот же набор
+          // иконок/редкостей уровней 4-8, только currentLevel сам по себе —
+          // 40 (то, что и делает это "Макс. уровень"). allClaimed — здесь
+          // все элементы трека уже забраны, а не только эта пятёрка.
+          allClaimed: true,
+          freeRewardOverrides: const {
+            4: (
+              icon: 'assets/images/battle_pass/reward_mask_ghost.png',
+              amount: 1,
+            ),
+            5: (
+              icon: 'assets/images/battle_pass/premium_teaser_bag.png',
+              amount: 1,
+            ),
+            6: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
+            7: (icon: 'assets/images/battle_pass/green_monster.png', amount: 1),
+            8: (icon: 'assets/images/battle_pass/bull.png', amount: 1),
+          },
+          rarityOverrides: const {
+            4: 'common',
+            5: 'common',
+            6: 'epic',
+            7: 'epic',
+            8: 'epic',
+          },
+        );
       case BattlePassScenario.completed:
         return _buildSeason(
           currentLevel: _maxLevel,

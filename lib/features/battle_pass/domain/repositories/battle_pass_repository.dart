@@ -10,6 +10,11 @@ enum BattlePassScenario {
   // обрастает точечными отличиями (см. tasks_mock_api.dart — таск пока
   // общий с premiumUnlockedWithReward).
   premiumUnlockedNoReward,
+  // "Макс. уровень" по season (currentLevel=maxLevel), но в плане UI трека
+  // наград/тизера заданий/бейджей берёт за основу premiumUnlockedNoReward,
+  // а не maxLevel — см. battle_pass_mock_api.dart/tasks_mock_api.dart/
+  // battle_pass_screen.dart.
+  maxLevelNoReward,
   completed,
 }
 

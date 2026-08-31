@@ -103,8 +103,10 @@ class _BattlePassView extends StatelessWidget {
                             onTap: () => AppRouter.toTasks(context),
                             // "Забрать опыт" прямо с тизера — только в
                             // "Макс. уровень / Много наград" (см. README про
-                            // мок-схему заданий); в остальных завершённый
-                            // таск по-прежнему просто ведёт на экран заданий.
+                            // мок-схему заданий). "Макс. уровень / Нет
+                            // наград" в плане UI берёт за основу
+                            // premiumUnlockedNoReward — там обычный переход
+                            // на экран заданий, без клейма с тизера.
                             claimableInline:
                                 scenario == BattlePassScenario.maxLevel,
                             onClaimXp: task == null
@@ -125,8 +127,7 @@ class _BattlePassView extends StatelessWidget {
                         // "Повысить уровень" нечего делать, если уровень уже
                         // максимальный — баннер вместо кнопки показывает
                         // неактивную плашку (см. PremiumBanner).
-                        maxLevelReached:
-                            season.currentLevel >= season.maxLevel,
+                        maxLevelReached: season.currentLevel >= season.maxLevel,
                         // "Забрать все награды" — только в "Макс. уровень /
                         // Много наград". Не часть колонки PremiumBanner
                         // (баннер фиксированной высоты, кнопка внутри сдвигала
@@ -138,12 +139,15 @@ class _BattlePassView extends StatelessWidget {
                                 scenario !=
                                     BattlePassScenario
                                         .premiumUnlockedWithReward &&
-                                // Пока пиксель-в-пиксель повторяет
-                                // premiumUnlockedWithReward — см. комментарий
-                                // у enum-значения.
+                                // premiumUnlockedNoReward прячет эту кнопку;
+                                // maxLevelNoReward в плане UI берёт его за
+                                // основу (см. комментарий у enum-значения) —
+                                // тоже прячем.
                                 scenario !=
                                     BattlePassScenario
                                         .premiumUnlockedNoReward &&
+                                scenario !=
+                                    BattlePassScenario.maxLevelNoReward &&
                                 season.levels.any(
                                   (l) => l.state == LevelState.claimable,
                                 )
@@ -186,16 +190,30 @@ class _BattlePassView extends StatelessWidget {
                         },
                         onUnlockPremium: () =>
                             context.read<BattlePassCubit>().purchasePremium(),
+                        // Ромб превью юбилейного уровня — это про то, что
+                        // трек реально на 40-м уровне, а не про "UI-базу"
+                        // сценария (см. maxLevelNoReward ниже), поэтому
+                        // завязан на currentLevel, а не наследует
+                        // premiumUnlockedNoReward.
                         highlightMaxLevelMilestone:
-                            scenario == BattlePassScenario.maxLevel,
-                        // Пока пиксель-в-пиксель повторяет
-                        // premiumUnlockedWithReward — см. комментарий у
-                        // enum-значения.
+                            scenario == BattlePassScenario.maxLevel ||
+                            scenario == BattlePassScenario.maxLevelNoReward,
+                        // premiumUnlockedNoReward — как premiumUnlockedWith
+                        // Reward. maxLevelNoReward в плане UI берёт за
+                        // основу premiumUnlockedNoReward (см. трек наград
+                        // выше в battle_pass_mock_api.dart), в т.ч. и здесь.
                         hideGiftBadge:
                             scenario ==
                                 BattlePassScenario.premiumUnlockedWithReward ||
                             scenario ==
-                                BattlePassScenario.premiumUnlockedNoReward,
+                                BattlePassScenario.premiumUnlockedNoReward ||
+                            scenario == BattlePassScenario.maxLevelNoReward,
+                        // Только "Завершён" открывается сразу у последнего
+                        // элемента — "Макс. уровень / Нет наград" тоже
+                        // получил все уровни claimed, но открываться должен
+                        // как обычно (см. RewardsTrack.startScrolledToEnd).
+                        startScrolledToEnd:
+                            scenario == BattlePassScenario.completed,
                       ),
                     ],
                   ),

@@ -17,6 +17,7 @@ class RewardsTrack extends StatefulWidget {
     required this.onUnlockPremium,
     this.highlightMaxLevelMilestone = false,
     this.hideGiftBadge = false,
+    this.startScrolledToEnd = false,
     super.key,
   });
 
@@ -32,6 +33,13 @@ class RewardsTrack extends StatefulWidget {
   /// Значок подарка убран у всех обычных плиток трека — только в сценарии
   /// "Премиум куплен / награда" (см. battle_pass_screen.dart).
   final bool hideGiftBadge;
+
+  /// Трек открывается сразу у последнего элемента — только в сценарии
+  /// "Завершён" (см. battle_pass_screen.dart). Раньше это решалось по
+  /// season.levels.every(claimed), но с появлением "Макс. уровень / Нет
+  /// наград" (тоже все уровни claimed, но открываться должен как обычно,
+  /// без прыжка) этого сигнала стало недостаточно — нужен явный флаг.
+  final bool startScrolledToEnd;
 
   @override
   State<RewardsTrack> createState() => _RewardsTrackState();
@@ -61,7 +69,9 @@ class _RewardsTrackState extends State<RewardsTrack> {
   /// Смещение скролла, на котором начинается плитка уровня — та же
   /// приближённая арифметика, что уже использует `_scrollToCurrent`.
   double _offsetForLevel(int levelNumber) {
-    final leading = widget.season.premiumOwned ? 0.0 : PremiumTeaserCluster.width;
+    final leading = widget.season.premiumOwned
+        ? 0.0
+        : PremiumTeaserCluster.width;
     return leading + (levelNumber - 1) * _tileExtent;
   }
 
@@ -136,6 +146,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
     // никогда не перезапускает скролл.
     if (oldWidget.season.seasonId != widget.season.seasonId ||
         oldWidget.season.currentLevel != widget.season.currentLevel ||
+        oldWidget.startScrolledToEnd != widget.startScrolledToEnd ||
         _allClaimed(oldWidget.season) != _allClaimed(widget.season)) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToCurrent());
     }
@@ -146,11 +157,11 @@ class _RewardsTrackState extends State<RewardsTrack> {
     // Пока премиум не куплен, трек должен открываться с самого начала —
     // с тизером премиум-наград, а не сразу проскроленным вперёд.
     if (!widget.season.premiumOwned) return;
-    // Сезон завершён (все уровни забраны) — открываемся у последнего
-    // элемента; иначе (премиум куплен / макс. уровень, но ещё не всё
-    // забрано) — смещаемся только к 2-му, тизера уже нет, но и к текущему
-    // уровню, который может быть далеко, сразу прыгать не нужно.
-    final target = _allClaimed(widget.season)
+    // Сезон завершён — открываемся у последнего элемента; иначе (премиум
+    // куплен / макс. уровень, но экран не "Завершён") — смещаемся только
+    // к 2-му, тизера уже нет, но и к текущему уровню, который может быть
+    // далеко, сразу прыгать не нужно.
+    final target = widget.startScrolledToEnd
         ? _controller.position.maxScrollExtent
         : _tileExtent;
     _controller.animateTo(
@@ -230,7 +241,8 @@ class _RewardsTrackState extends State<RewardsTrack> {
     }
     const transitionWidth = 150.0;
     final fadeEndStop = 1 - _milestoneArrowMidpoint / width;
-    final fadeStartStop = 1 - (_milestoneArrowMidpoint + transitionWidth) / width;
+    final fadeStartStop =
+        1 - (_milestoneArrowMidpoint + transitionWidth) / width;
     return LinearGradient(
       begin: Alignment.centerLeft,
       end: Alignment.centerRight,

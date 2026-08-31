@@ -30,11 +30,13 @@ class ScenarioFlavor {
       itemTitle: '«Роковая женщина» или «Босс мафии»',
       tag: 'Доступно с прокачкой!',
     ),
-    // CentralItemDisplay для "Премиум куплен / нет наград" — такой же, как
-    // у "Макс. уровень / Много наград".
+    // CentralItemDisplay для "Премиум куплен / нет наград" и "Макс.
+    // уровень / Нет наград" — такой же, как у "Макс. уровень / Много
+    // наград".
     BattlePassScenario.maxLevel ||
     BattlePassScenario.completed ||
-    BattlePassScenario.premiumUnlockedNoReward => const ScenarioFlavor(
+    BattlePassScenario.premiumUnlockedNoReward ||
+    BattlePassScenario.maxLevelNoReward => const ScenarioFlavor(
       itemAsset: '$_assetsBase/reward_item_max_level.png',
       itemTitle: 'Мега пак',
     ),
