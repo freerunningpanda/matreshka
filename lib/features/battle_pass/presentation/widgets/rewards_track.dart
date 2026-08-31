@@ -453,6 +453,12 @@ class _MilestonePreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final reward = level.freeReward;
+    // Уже забранный юбилейный уровень (просто ещё не проскроленный мимо —
+    // см. RewardsTrack._computeNextMilestone) показывается как обычная
+    // забранная плитка: притушен, done.svg вместо короны/подарка в углу,
+    // рамка #E9E9F3 4px без свечения вместо оранжевого "к клейму готово" —
+    // и, в отличие от остального контента, не тускнеет вместе с ним.
+    final claimed = level.state == LevelState.claimed;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -460,11 +466,14 @@ class _MilestonePreview extends StatelessWidget {
           asset: reward?.iconAsset ?? '',
           gradient: _cardGradient,
           badge: RewardBadgeKind.premium,
-          borderColor: _accentColor,
-          showGlow: true,
+          showBadge: !claimed,
+          borderColor: claimed ? AppColors.textPrimary : _accentColor,
+          borderIgnoresOpacity: claimed,
+          showGlow: !claimed,
           glowColor: _glowColor,
           glowBlurRadius: 45.1,
           glowSpreadRadius: 0,
+          claimed: claimed,
           onTap: onTap,
           width: _cardSize,
           height: _cardSize,

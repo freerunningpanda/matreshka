@@ -65,6 +65,7 @@ class RewardCarouselTile extends StatelessWidget {
     required this.asset,
     required this.gradient,
     this.badge = RewardBadgeKind.gift,
+    this.showBadge = true,
     this.quantityLabel,
     this.borderColor,
     this.showGlow = false,
@@ -73,6 +74,7 @@ class RewardCarouselTile extends StatelessWidget {
     this.glowSpreadRadius = 2,
     this.claimed = false,
     this.locked = false,
+    this.borderIgnoresOpacity = false,
     this.onTap,
     this.footer,
     this.width = 242,
@@ -83,6 +85,11 @@ class RewardCarouselTile extends StatelessWidget {
   final String asset;
   final Gradient gradient;
   final RewardBadgeKind badge;
+
+  /// Награда уже забрана — значок подарка/премиума в углу уже не значит
+  /// ничего (см. превью юбилейного уровня в rewards_track.dart).
+  final bool showBadge;
+
   final String? quantityLabel;
   final Color? borderColor;
 
@@ -100,6 +107,12 @@ class RewardCarouselTile extends StatelessWidget {
 
   final bool claimed;
   final bool locked;
+
+  /// Рамка рисуется отдельным, полностью непрозрачным слоем поверх
+  /// притушенной (claimed/locked) карточки, а не тускнеет вместе с ней —
+  /// см. превью юбилейного уровня в rewards_track.dart.
+  final bool borderIgnoresOpacity;
+
   final VoidCallback? onTap;
 
   /// Плашка "Забрать" на нижнем крае карточки — рисуется только когда
@@ -155,7 +168,7 @@ class RewardCarouselTile extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: gradient,
                       borderRadius: BorderRadius.circular(24),
-                      border: borderColor != null
+                      border: borderColor != null && !borderIgnoresOpacity
                           ? Border.all(color: borderColor!, width: 4)
                           : null,
                       // "Backlight_BP_Card" из Figma — мягкое свечение вокруг
@@ -191,11 +204,12 @@ class RewardCarouselTile extends StatelessWidget {
               child: Image.asset(asset, fit: BoxFit.contain),
             ),
           ),
-          Positioned(
-            left: 40,
-            top: 40,
-            child: IgnorePointer(child: RewardBadge(kind: badge)),
-          ),
+          if (showBadge)
+            Positioned(
+              left: 40,
+              top: 40,
+              child: IgnorePointer(child: RewardBadge(kind: badge)),
+            ),
           if (quantityLabel != null)
             Positioned(
               right: 34,
@@ -290,6 +304,27 @@ class RewardCarouselTile extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   content,
+                  if (borderColor != null && borderIgnoresOpacity)
+                    Positioned(
+                      left: 21,
+                      top: 28,
+                      width: cardWidth,
+                      height: cardHeight,
+                      child: IgnorePointer(
+                        child: Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.skewX(kRewardTileSkewAngle),
+                          child: Container(
+                            width: cardWidth,
+                            height: cardHeight,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: borderColor!, width: 4),
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   const Positioned(
                     right: 24,
                     top: 44,
