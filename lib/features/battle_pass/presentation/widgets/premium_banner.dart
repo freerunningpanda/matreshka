@@ -10,7 +10,6 @@ class PremiumBanner extends StatelessWidget {
   const PremiumBanner({
     required this.premiumOwned,
     required this.onPressed,
-    this.claimAllButton,
     this.maxLevelReached = false,
     super.key,
   });
@@ -18,26 +17,21 @@ class PremiumBanner extends StatelessWidget {
   final bool premiumOwned;
   final VoidCallback onPressed;
 
-  /// "Забрать все награды" — только в сценарии "Макс. уровень / Много
-  /// наград" (см. battle_pass_screen.dart): встаёт под "Повысить уровень"
-  /// с отступом 24px, а не отдельной плашкой на экране, как раньше.
-  final Widget? claimAllButton;
-
   /// Уровень уже максимальный — "Повысить уровень" нечего делать: вместо
   /// золотой кнопки показывается неактивная плашка "Достигнут максимальный
   /// уровень" без тапа.
   final bool maxLevelReached;
 
-  static const double _width = 605;
-  static const double _height = 690;
+  static const double width = 605;
+  static const double height = 690;
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
       right: 24,
       top: 0,
-      width: _width,
-      height: _height,
+      width: width,
+      height: height,
       child: ClipRect(
         child: Stack(
           children: [
@@ -104,24 +98,14 @@ class PremiumBanner extends StatelessWidget {
                           alignment: Alignment.center,
                           child: Padding(
                             padding: const EdgeInsets.only(left: 32, top: 53),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                maxLevelReached
-                                    ? const _MaxLevelReachedNotice()
-                                    : _UpgradeButton(
-                                        label: 'Повысить уровень',
-                                        icon:
-                                            'assets/icons/battle_pass/arrow_up.svg',
-                                        iconHeight: 32,
-                                        onPressed: onPressed,
-                                      ),
-                                if (claimAllButton != null) ...[
-                                  const SizedBox(height: 24),
-                                  claimAllButton!,
-                                ],
-                              ],
-                            ),
+                            child: maxLevelReached
+                                ? const _MaxLevelReachedNotice()
+                                : _UpgradeButton(
+                                    label: 'Повысить уровень',
+                                    icon: 'assets/icons/battle_pass/arrow_up.svg',
+                                    iconHeight: 32,
+                                    onPressed: onPressed,
+                                  ),
                           ),
                         )
                       : Padding(

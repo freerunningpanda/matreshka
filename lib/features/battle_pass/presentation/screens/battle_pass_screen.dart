@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/navigation/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_dimens.dart';
 import '../../../tasks/presentation/cubit/tasks_cubit.dart';
 import '../../../tasks/presentation/cubit/tasks_state.dart';
 import '../../domain/entities/level.dart';
@@ -127,10 +128,11 @@ class _BattlePassView extends StatelessWidget {
                         maxLevelReached:
                             season.currentLevel >= season.maxLevel,
                         // "Забрать все награды" — только в "Макс. уровень /
-                        // Много наград" (тот же список сценариев, что и
-                        // раньше у отдельной плашки на экране), но теперь
-                        // встроена в баннер под "Повысить уровень" вместо
-                        // самостоятельной позиции.
+                        // Много наград". Не часть колонки PremiumBanner
+                        // (баннер фиксированной высоты, кнопка внутри сдвигала
+                        // заголовок/подзаголовок вверх) — рисуется отдельным
+                        // элементом Stack прямо под баннером, см.
+                        // _DismissiblePremiumPromoState.build.
                         claimAllButton:
                             scenario != BattlePassScenario.premiumLocked &&
                                 scenario !=
@@ -242,9 +244,26 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
             onPressed: widget.premiumOwned
                 ? widget.onIncreaseLevel
                 : widget.onUnlockPremium,
-            claimAllButton: widget.claimAllButton,
             maxLevelReached: widget.maxLevelReached,
           ),
+          // Отдельный элемент Stack, а не часть колонки баннера — баннер
+          // фиксированной высоты, и добавление кнопки внутрь неё раньше
+          // сдвигало заголовок/подзаголовок вверх (растущий снизу-вверх
+          // bottom-anchored Column). "top: height+24" (сразу под баннером)
+          // наезжал на плавающее превью юбилейного уровня из RewardsTrack —
+          // оно якорится от низа холста (Positioned(bottom:24,height:300) +
+          // сама карточка 268+12+34=314 снизу с отступом 14 в rewards_track
+          // .dart), поэтому её верхний край фиксирован в координатах холста:
+          // designHeight-24-14-314=728. Поднимаем кнопку по низу (не по
+          // верху — так не нужно знать точную высоту самой кнопки), чтобы
+          // её нижний край гарантированно оставался выше этой отметки.
+          if (widget.claimAllButton != null)
+            Positioned(
+              right: 6,
+              bottom: AppDimens.designHeight - 748 + 8,
+              width: PremiumBanner.width,
+              child: Center(child: widget.claimAllButton),
+            ),
           Positioned(
             right: 80,
             top: 50,
