@@ -13,11 +13,17 @@ class RewardTile extends StatefulWidget {
     required this.onClaim,
     required this.onUnlockPremium,
     this.nextRequiredXp,
+    this.hideGiftBadge = false,
     super.key,
   });
 
   final BattlePassLevel level;
   final bool premiumOwned;
+
+  /// Сценарий "Премиум куплен / награда" (см. battle_pass_screen.dart) —
+  /// значок подарка в углу плитки убран у всех уровней; корона за премиум
+  /// это не затрагивает.
+  final bool hideGiftBadge;
 
   /// Порог опыта следующего по порядку уровня — нужен, чтобы соединительная
   /// линия трека красилась по реальному прогрессу (currentXp относительно
@@ -80,6 +86,7 @@ class _RewardTileState extends State<RewardTile> {
           ? AppColors.rewardTilePurpleGradient
           : _rarityGradient(reward?.rarity),
       badge: showPremiumBadge ? RewardBadgeKind.premium : RewardBadgeKind.gift,
+      showBadge: showPremiumBadge || !widget.hideGiftBadge,
       quantityLabel: (reward != null && reward.amount > 1)
           ? '×${reward.amount}'
           : null,

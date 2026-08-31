@@ -16,6 +16,7 @@ class RewardsTrack extends StatefulWidget {
     required this.onClaim,
     required this.onUnlockPremium,
     this.highlightMaxLevelMilestone = false,
+    this.hideGiftBadge = false,
     super.key,
   });
 
@@ -27,6 +28,10 @@ class RewardsTrack extends StatefulWidget {
   /// AppColors.milestoneDiamondMaxLevel вместо обычного серого — только в
   /// сценарии "Макс. уровень / Много наград" (см. battle_pass_screen.dart).
   final bool highlightMaxLevelMilestone;
+
+  /// Значок подарка убран у всех обычных плиток трека — только в сценарии
+  /// "Премиум куплен / награда" (см. battle_pass_screen.dart).
+  final bool hideGiftBadge;
 
   @override
   State<RewardsTrack> createState() => _RewardsTrackState();
@@ -378,6 +383,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
               : null,
           onClaim: () => widget.onClaim(levels[i].number),
           onUnlockPremium: widget.onUnlockPremium,
+          hideGiftBadge: widget.hideGiftBadge,
         ),
     ];
     final listView = ListView(

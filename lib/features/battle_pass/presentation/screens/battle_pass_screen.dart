@@ -182,6 +182,9 @@ class _BattlePassView extends StatelessWidget {
                             context.read<BattlePassCubit>().purchasePremium(),
                         highlightMaxLevelMilestone:
                             scenario == BattlePassScenario.maxLevel,
+                        hideGiftBadge:
+                            scenario ==
+                            BattlePassScenario.premiumUnlockedWithReward,
                       ),
                     ],
                   ),

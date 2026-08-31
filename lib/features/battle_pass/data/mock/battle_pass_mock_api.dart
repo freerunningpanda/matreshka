@@ -20,15 +20,23 @@ class BattlePassMockApi {
         return _buildSeason(
           currentLevel: 12,
           premiumOwned: true,
-          // Узел из Figma для этого сценария показывает 4-й уровень как
-          // ещё не забранный "боевой" приз (пара "босс мафии" x16) —
-          // выбивается из обычного правила "claimable только 3 уровня
-          // перед текущим", поэтому уровень и его иконка/количество
-          // заданы точечным оверрайдом, а не общей формулой.
-          claimableLevels: const {4},
+          // Узел из Figma для этого сценария показывает уровни 4-8 как ещё
+          // не забранные — выбивается из обычного правила "claimable только
+          // 3 уровня перед текущим", поэтому заданы точечным оверрайдом, а
+          // не общей формулой. 4-й — "боевой" приз (пара "босс мафии" x16),
+          // 5-й — с тёмной (common) заливкой, 6-8 — с фиолетовой (epic).
+          claimableLevels: const {4, 5, 6, 7, 8},
           freeRewardOverrides: const {
             4: (icon: 'assets/images/battle_pass/boss.png', amount: 16),
+            5: (
+              icon: 'assets/images/battle_pass/premium_teaser_bag.png',
+              amount: 1,
+            ),
+            6: (icon: 'assets/images/battle_pass/filter.png', amount: 1),
+            7: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
+            8: (icon: 'assets/images/battle_pass/green_monster.png', amount: 1),
           },
+          rarityOverrides: const {5: 'common', 6: 'epic', 7: 'epic', 8: 'epic'},
         );
       case BattlePassScenario.maxLevel:
         return _buildSeason(
