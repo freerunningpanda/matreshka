@@ -64,31 +64,53 @@ class PremiumBanner extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text(
-                    premiumOwned
-                        ? 'Повышай уровень боевого пропуска и забирай новые награды!'
-                        : 'Прокачай боевой пропуск и забери чёткие скины, аксессуары и многое другое!',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontFamily: 'Geologica',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 22,
-                      height: 1.2,
-                      letterSpacing: -0.22,
-                      color: AppColors.textSecondary,
+                  SizedBox(
+                    width: 400,
+                    child: Text(
+                      premiumOwned
+                          ? 'Повышай уровень боевого пропуска и забирай новые награды!'
+                          : 'Прокачай боевой пропуск и забери чёткие скины, аксессуары и многое другое!',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: 'Geologica',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 22,
+                        height: 1.2,
+                        letterSpacing: -0.22,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 125,
-                      top: 27,
-                      right: 80,
-                    ),
-                    child: _UpgradeButton(
-                      label: premiumOwned ? 'Повысить уровень' : 'Прокачать',
-                      onPressed: onPressed,
-                    ),
-                  ),
+                  premiumOwned
+                      // Кнопка компактная (по ширине содержимого), но
+                      // прижата к левому краю баннера с отступом 32px —
+                      // фиксированные left:125/right:80 у "Прокачать" тут не
+                      // подходят (шире контент — вылезает за правый край,
+                      // см. предыдущий оверфлоу), а центрирование по Column
+                      // давало отступ ~67px вместо нужных 32.
+                      ? Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 32, top: 53),
+                            child: _UpgradeButton(
+                              label: 'Повысить уровень',
+                              icon: 'assets/icons/battle_pass/arrow_up.svg',
+                              iconHeight: 32,
+                              onPressed: onPressed,
+                            ),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.only(
+                            left: 125,
+                            top: 27,
+                            right: 80,
+                          ),
+                          child: _UpgradeButton(
+                            label: 'Прокачать',
+                            onPressed: onPressed,
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -101,15 +123,23 @@ class PremiumBanner extends StatelessWidget {
 
 /// Золотая кнопка с глянцевым бликом (Rectangle 64755, blend "overlay").
 class _UpgradeButton extends StatelessWidget {
-  const _UpgradeButton({required this.label, required this.onPressed});
+  const _UpgradeButton({
+    required this.label,
+    required this.onPressed,
+    this.icon = 'assets/icons/battle_pass/premium_icon.svg',
+    this.iconHeight = 20,
+  });
 
   final String label;
   final VoidCallback onPressed;
+  final String icon;
+  final double iconHeight;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 100,
+      width: 400,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         boxShadow: const [
@@ -135,13 +165,11 @@ class _UpgradeButton extends StatelessWidget {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SvgPicture.asset(
-                    'assets/icons/battle_pass/premium_icon.svg',
-                    width: 27,
-                    height: 20,
-                  ),
-                  const SizedBox(width: 24),
+                  const SizedBox(width: 32),
+                  SvgPicture.asset(icon, width: 27, height: iconHeight),
+                  const SizedBox(width: 27),
                   Text(
                     label,
                     style: const TextStyle(
@@ -153,6 +181,7 @@ class _UpgradeButton extends StatelessWidget {
                       color: AppColors.itemTagText,
                     ),
                   ),
+                  const SizedBox(width: 32),
                 ],
               ),
             ),
