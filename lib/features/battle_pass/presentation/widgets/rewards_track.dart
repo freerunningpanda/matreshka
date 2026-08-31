@@ -792,10 +792,19 @@ class _TeaserCard extends StatelessWidget {
                     ),
                     children: requiresPremium
                         ? [
-                            TextSpan(text: 'Награды $maxLevel+ уровней '),
-                            const TextSpan(text: 'доступны только\nс '),
+                            TextSpan(
+                              text:
+                                  '${AppStrings.seasonEndTeaserRewardsPrefix}'
+                                  '$maxLevel'
+                                  '${AppStrings.seasonEndTeaserRewardsSuffix}',
+                            ),
                             const TextSpan(
-                              text: 'прокачкой',
+                              text: AppStrings
+                                  .seasonEndTeaserRequiresPremiumMiddle,
+                            ),
+                            const TextSpan(
+                              text: AppStrings
+                                  .seasonEndTeaserRequiresPremiumSuffix,
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
@@ -804,10 +813,12 @@ class _TeaserCard extends StatelessWidget {
                           ]
                         : [
                             const TextSpan(
-                              text: 'Награды откроются после прохождения ',
+                              text: AppStrings.seasonEndTeaserUnlockPrefix,
                             ),
                             TextSpan(
-                              text: '$maxLevel уровня',
+                              text:
+                                  '$maxLevel'
+                                  '${AppStrings.seasonEndTeaserUnlockLevelSuffix}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,

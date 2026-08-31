@@ -91,7 +91,7 @@ class XpProgressPill extends StatelessWidget {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                '$currentXp / $xpLabelTarget',
+                '$currentXp${AppStrings.xpProgressSeparator}$xpLabelTarget',
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 style: const TextStyle(

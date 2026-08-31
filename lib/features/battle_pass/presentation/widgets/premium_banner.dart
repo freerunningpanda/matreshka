@@ -58,7 +58,9 @@ class PremiumBanner extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    premiumOwned ? 'Повышение уровня' : 'Элитный пропуск',
+                    premiumOwned
+                        ? AppStrings.premiumBannerTitleLevelUp
+                        : AppStrings.premiumBannerTitleUnlock,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontFamily: 'Geologica',
@@ -74,8 +76,8 @@ class PremiumBanner extends StatelessWidget {
                     width: 400,
                     child: Text(
                       premiumOwned
-                          ? 'Повышай уровень боевого пропуска и забирай новые награды!'
-                          : 'Прокачай боевой пропуск и забери чёткие скины, аксессуары и многое другое!',
+                          ? AppStrings.premiumBannerSubtitleLevelUp
+                          : AppStrings.premiumBannerSubtitleUnlock,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontFamily: 'Geologica',
@@ -101,7 +103,7 @@ class PremiumBanner extends StatelessWidget {
                             child: maxLevelReached
                                 ? const _MaxLevelReachedNotice()
                                 : _UpgradeButton(
-                                    label: 'Повысить уровень',
+                                    label: AppStrings.increaseLevelButton,
                                     icon:
                                         'assets/icons/battle_pass/arrow_up.svg',
                                     iconHeight: 32,
@@ -112,7 +114,7 @@ class PremiumBanner extends StatelessWidget {
                       : Padding(
                           padding: AppPadding.onlyPaddingL125T27R80,
                           child: _UpgradeButton(
-                            label: 'Прокачать',
+                            label: AppStrings.unlockPremiumButton,
                             onPressed: onPressed,
                           ),
                         ),
@@ -142,7 +144,7 @@ class _MaxLevelReachedNotice extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
       ),
       child: const Text(
-        'Достигнут максимальный уровень',
+        AppStrings.maxLevelReachedNotice,
         textAlign: TextAlign.center,
         style: TextStyle(
           fontFamily: 'Geologica',

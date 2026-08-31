@@ -177,10 +177,12 @@ class _RewardTileState extends State<RewardTile> {
   }) {
     final missingXp = requiredXp - widget.currentXp;
     final message = locked
-        ? 'Откроется на ${widget.level.number} уровне'
+        ? '${AppStrings.levelLockedHintPrefix}${widget.level.number}'
+              '${AppStrings.levelLockedHintSuffix}'
         : claimed
-        ? 'Уже получено'
-        : 'Наберите ещё $missingXp XP, чтобы открыть';
+        ? AppStrings.rewardAlreadyClaimedHint
+        : '${AppStrings.levelMissingXpHintPrefix}$missingXp'
+              '${AppStrings.levelMissingXpHintSuffix}';
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
@@ -218,7 +220,7 @@ class _ClaimButton extends StatelessWidget {
         alignment: Alignment.center,
         transform: Matrix4.skewX(-kRewardTileSkewAngle),
         child: const Text(
-          'Забрать',
+          AppStrings.claimButtonLabel,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: 'Geologica',

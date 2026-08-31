@@ -127,7 +127,7 @@ class _Card extends StatelessWidget {
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                        'Battle Pass завершен',
+                        AppStrings.battlePassEndedTitle,
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         style: TextStyle(
@@ -142,7 +142,7 @@ class _Card extends StatelessWidget {
                     ),
                     AppSizedBoxes.verticalSizedBoxH4,
                     Text(
-                      'Успей забрать оставшиеся награды!',
+                      AppStrings.battlePassEndedSubtitle,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Geologica',

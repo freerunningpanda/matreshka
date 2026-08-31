@@ -16,16 +16,18 @@ class ScenarioSwitcher extends StatelessWidget {
   final ValueChanged<BattlePassScenario> onChanged;
 
   static const _labels = {
-    BattlePassScenario.premiumLocked: 'Премиум не куплен',
-    BattlePassScenario.premiumUnlockedWithReward: 'Премиум куплен / награда',
-    BattlePassScenario.maxLevel: 'Макс. уровень / Много наград',
-    BattlePassScenario.premiumUnlockedNoReward: 'Премиум куплен / нет наград',
-    BattlePassScenario.maxLevelNoReward: 'Макс. уровень / Нет наград',
-    BattlePassScenario.completed: 'Battle Pass завершен',
+    BattlePassScenario.premiumLocked: AppStrings.devScenarioPremiumLocked,
+    BattlePassScenario.premiumUnlockedWithReward:
+        AppStrings.devScenarioPremiumUnlockedWithReward,
+    BattlePassScenario.maxLevel: AppStrings.devScenarioMaxLevel,
+    BattlePassScenario.premiumUnlockedNoReward:
+        AppStrings.devScenarioPremiumUnlockedNoReward,
+    BattlePassScenario.maxLevelNoReward: AppStrings.devScenarioMaxLevelNoReward,
+    BattlePassScenario.completed: AppStrings.battlePassEndedTitle,
     BattlePassScenario.rewardsEndedPremiumOwned:
-        'Конец наград (Куплен премиум)',
+        AppStrings.devScenarioRewardsEndedPremiumOwned,
     BattlePassScenario.rewardsEndedPremiumNotOwned:
-        'Конец наград (Не куплен премиум)',
+        AppStrings.devScenarioRewardsEndedPremiumNotOwned,
   };
 
   @override
@@ -38,7 +40,7 @@ class ScenarioSwitcher extends StatelessWidget {
           child: PopupMenuButton<BattlePassScenario>(
             initialValue: current,
             onSelected: onChanged,
-            tooltip: 'Переключить сценарий (dev)',
+            tooltip: AppStrings.devScenarioSwitcherTooltip,
             itemBuilder: (context) => [
               for (final scenario in BattlePassScenario.values)
                 PopupMenuItem(

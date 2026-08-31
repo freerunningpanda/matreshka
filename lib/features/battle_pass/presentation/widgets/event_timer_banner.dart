@@ -62,7 +62,7 @@ class _EventTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Дай пять!',
+      AppStrings.eventTitle,
       style: TextStyle(
         fontFamily: 'Geologica',
         fontWeight: FontWeight.w600,

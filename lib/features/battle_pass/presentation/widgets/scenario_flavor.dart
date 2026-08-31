@@ -32,13 +32,13 @@ class ScenarioFlavor {
   static ScenarioFlavor of(BattlePassScenario scenario) => switch (scenario) {
     BattlePassScenario.premiumLocked => const ScenarioFlavor(
       itemAsset: '$_assetsBase/reward_item_locked.png',
-      itemTitle: 'Мега пак',
-      tag: 'Доступно с прокачкой!',
+      itemTitle: AppStrings.itemTitleMegaPack,
+      tag: AppStrings.itemTagAvailableWithPremium,
     ),
     BattlePassScenario.premiumUnlockedWithReward => const ScenarioFlavor(
       itemAsset: '$_assetsBase/reward_item_purchased.png',
-      itemTitle: '«Роковая женщина» или «Босс мафии»',
-      tag: 'Доступно с прокачкой!',
+      itemTitle: AppStrings.itemTitleFatalWomanOrMafiaBoss,
+      tag: AppStrings.itemTagAvailableWithPremium,
       itemScale: 1.22,
     ),
     // Та же картинка/тег, что и у premiumUnlockedWithReward — только
@@ -48,8 +48,8 @@ class ScenarioFlavor {
     BattlePassScenario.rewardsEndedPremiumOwned ||
     BattlePassScenario.rewardsEndedPremiumNotOwned => const ScenarioFlavor(
       itemAsset: '$_assetsBase/bullets.png',
-      itemTitle: 'Мега пак',
-      tag: 'Доступно с прокачкой!',
+      itemTitle: AppStrings.itemTitleMegaPack,
+      tag: AppStrings.itemTagAvailableWithPremium,
       itemScale: 1.12,
     ),
     // CentralItemDisplay для "Премиум куплен / нет наград" и "Макс.
@@ -60,7 +60,7 @@ class ScenarioFlavor {
     BattlePassScenario.premiumUnlockedNoReward ||
     BattlePassScenario.maxLevelNoReward => const ScenarioFlavor(
       itemAsset: '$_assetsBase/reward_item_max_level.png',
-      itemTitle: 'Мега пак',
+      itemTitle: AppStrings.itemTitleMegaPack,
       itemOffsetY: -70,
       itemScale: 1.06,
     ),

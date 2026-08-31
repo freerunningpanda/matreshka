@@ -129,7 +129,7 @@ class _ItemTitle extends StatelessWidget {
       letterSpacing: -0.36,
       color: AppColors.textPrimary,
     );
-    const highlight = ' или ';
+    const highlight = AppStrings.itemTitleOrConnector;
     final index = text.indexOf(highlight);
     if (index == -1) return TextSpan(text: text, style: style);
 

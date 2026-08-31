@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
+import '../../../exports.dart';
+
 /// Дедлайн ивента "Дай пять!" — мок (см. README), общий для EventTimerBanner
 /// и BattlePassEndedNotice: вычисляется один раз за сессию (lazy top-level
 /// final), а не заново в каждом виджете — иначе их таймеры расходились бы
@@ -46,6 +48,11 @@ class _EventCountdownTextState extends State<EventCountdownText> {
     final days = _remaining.inDays;
     final hours = _remaining.inHours % 24;
     final minutes = _remaining.inMinutes % 60;
-    return Text('$daysд $hoursч $minutesм', style: widget.style);
+    return Text(
+      '$days${AppStrings.countdownDaysUnit} '
+      '$hours${AppStrings.countdownHoursUnit} '
+      '$minutes${AppStrings.countdownMinutesUnit}',
+      style: widget.style,
+    );
   }
 }

@@ -36,7 +36,7 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
     'assets/images/battle_pass/premium_teaser_bracelet.png',
     'assets/images/battle_pass/premium_teaser_fuel.png',
   ];
-  static const _quantityLabels = [null, '×2', null];
+  static const _quantityLabels = [null, AppStrings.quantityLabelX2, null];
   static const _gradients = [
     AppColors.rewardTileGrayGradient,
     AppColors.rewardTileBlueGradient,
@@ -102,7 +102,7 @@ class _UnlockSticker extends StatelessWidget {
                 ),
               ),
               const Text(
-                'Получи все сразу!',
+                AppStrings.premiumTeaserUnlockAll,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Geologica',

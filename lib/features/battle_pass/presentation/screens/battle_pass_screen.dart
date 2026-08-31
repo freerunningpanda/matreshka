@@ -156,7 +156,7 @@ class _BattlePassView extends StatelessWidget {
                                   (l) => l.state == LevelState.claimable,
                                 )
                             ? ClaimAllButton(
-                                label: 'Забрать все награды',
+                                label: AppStrings.claimAllRewardsButton,
                                 gradient: const LinearGradient(
                                   colors: [
                                     Color(0xFF56B877),

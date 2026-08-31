@@ -126,7 +126,7 @@ class _RewardHeader extends StatelessWidget {
                 ),
                 AppSizedBoxes.horizontalSizedBoxW12,
                 Text(
-                  'x $rewardXp',
+                  '${AppStrings.taskRewardXpPrefix}$rewardXp',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: 'Geologica',
@@ -167,7 +167,11 @@ class _RewardHeader extends StatelessWidget {
                                   color: AppColors.claimGreenTop,
                                 ),
                               ),
-                              TextSpan(text: ' / $progressTarget'),
+                              TextSpan(
+                                text:
+                                    '${AppStrings.taskProgressSeparator}'
+                                    '$progressTarget',
+                              ),
                             ],
                           ),
                         ),
@@ -346,7 +350,7 @@ class _TasksButton extends StatelessWidget {
               ),
               AppSizedBoxes.horizontalSizedBoxW16,
               const Text(
-                'Задания',
+                AppStrings.tasksButtonLabel,
                 style: TextStyle(
                   fontFamily: 'Geologica',
                   fontWeight: FontWeight.w500,
@@ -422,7 +426,7 @@ class _ClaimXpButton extends StatelessWidget {
             AppSizedBoxes.horizontalSizedBoxW14,
           ],
           Text(
-            claimed ? 'Получено' : 'Забрать опыт',
+            claimed ? AppStrings.xpClaimedLabel : AppStrings.claimXpButtonLabel,
             style: TextStyle(
               fontFamily: 'Geologica',
               fontWeight: FontWeight.w500,
