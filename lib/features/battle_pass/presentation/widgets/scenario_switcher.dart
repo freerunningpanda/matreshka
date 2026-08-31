@@ -18,7 +18,7 @@ class ScenarioSwitcher extends StatelessWidget {
   static const _labels = {
     BattlePassScenario.premiumLocked: 'Премиум не куплен',
     BattlePassScenario.premiumUnlockedWithReward: 'Премиум куплен / награда',
-    BattlePassScenario.maxLevel: 'Макс. уровень',
+    BattlePassScenario.maxLevel: 'Макс. уровень / Много наград',
     BattlePassScenario.completed: 'Завершён',
   };
 

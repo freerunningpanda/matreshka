@@ -34,7 +34,7 @@ class PremiumBanner extends StatelessWidget {
             // изображение, вписанное в карточку.
             Positioned(
               left: 0,
-              top: -169,
+              top: premiumOwned ? -74 : -169,
               width: 668,
               height: 1304,
               child: Image.asset(
