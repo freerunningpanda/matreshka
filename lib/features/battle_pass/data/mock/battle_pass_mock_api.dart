@@ -143,7 +143,11 @@ class BattlePassMockApi {
           // без этого он уходил бы в 'claimed' точно так же, а должен
           // выглядеть обычной ещё не забранной плиткой (см.
           // RewardTile._selected). 6-8 — фиолетовая (epic), тоже claimable.
+          // 10-й (плавающее превью юбилейного уровня) — уже забран: без
+          // короны, без свечения, белая рамка — иначе по дефолтной формуле
+          // (currentLevel-number<=3) он тоже уходил бы в 'claimable'.
           claimableLevels: const {5, 6, 7, 8},
+          claimedLevels: const {10},
           freeRewardOverrides: const {
             4: (
               icon: 'assets/images/battle_pass/reward_mask_ghost.png',
@@ -259,12 +263,19 @@ class BattlePassMockApi {
     required bool premiumOwned,
     bool allClaimed = false,
     Set<int> claimableLevels = const {},
+    // Точечный оверрайд конкретных уровней под 'claimed' — симметрично
+    // claimableLevels, для случаев, когда уровень должен выглядеть уже
+    // забранным вопреки дефолтной формуле (см. premiumUnlockedNoReward,
+    // 10-й уровень).
+    Set<int> claimedLevels = const {},
     Map<int, ({String icon, int amount})> freeRewardOverrides = const {},
     Map<int, String> rarityOverrides = const {},
   }) {
     final levels = List.generate(_maxLevel, (index) {
       final number = index + 1;
       final state = allClaimed
+          ? 'claimed'
+          : claimedLevels.contains(number)
           ? 'claimed'
           // claimableLevels — точечный оверрайд конкретных уровней под
           // claimable, поэтому проверяется раньше locked/current: иначе

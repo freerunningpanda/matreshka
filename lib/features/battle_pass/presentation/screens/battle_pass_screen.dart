@@ -289,15 +289,27 @@ class _BattlePassView extends StatelessWidget {
                             ? 97
                             : null,
                         // Плавающее превью юбилейного уровня — без короны
-                        // (premium.svg) тоже в обоих. В rewardsEndedPremium
-                        // NotOwned премиум не куплен, поэтому список наград
-                        // корону всё же показывает — тут отключена только
-                        // она, у самого плавающего превью.
+                        // (premium.svg) тоже в обоих.
                         hideMilestonePremiumBadge:
                             scenario ==
                                 BattlePassScenario.rewardsEndedPremiumOwned ||
                             scenario ==
                                 BattlePassScenario.rewardsEndedPremiumNotOwned,
+                        // Короны убраны со всей карусели (обычные плитки +
+                        // премиум-тизер в начале) — только тут: премиум не
+                        // куплен, но в этом сценарии его всё равно не
+                        // рекламируем через плитки трека.
+                        hideCarouselPremiumBadge:
+                            scenario ==
+                            BattlePassScenario.rewardsEndedPremiumNotOwned,
+                        // 100-й уровень — золотой градиент вместо
+                        // фиолетового "тут премиум" — тоже только тут (см.
+                        // RewardTile.gradientOverride).
+                        goldGradientLevelNumber:
+                            scenario ==
+                                BattlePassScenario.rewardsEndedPremiumNotOwned
+                            ? 100
+                            : null,
                       ),
                     ],
                   ),

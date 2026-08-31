@@ -23,6 +23,8 @@ class RewardsTrack extends StatefulWidget {
     this.showSeasonEndTeaserRequiresPremium = false,
     this.highlightedLevelNumber,
     this.hideMilestonePremiumBadge = false,
+    this.hideCarouselPremiumBadge = false,
+    this.goldGradientLevelNumber,
     super.key,
   });
 
@@ -73,6 +75,20 @@ class RewardsTrack extends StatefulWidget {
   /// simplifyMilestonePreview. Только в сценарии "Конец наград (Куплен
   /// премиум)" (см. battle_pass_screen.dart).
   final bool hideMilestonePremiumBadge;
+
+  /// Значок короны (premium.svg) убран у всех элементов карусели — обычных
+  /// плиток трека и премиум-тизера в начале (PremiumTeaserCluster). Только
+  /// в сценарии "Конец наград (Не куплен премиум)" (см.
+  /// battle_pass_screen.dart).
+  final bool hideCarouselPremiumBadge;
+
+  /// Номер уровня, чья плитка красится в rewardTileGoldGradient независимо
+  /// от rarity/премиум-апгрейда — точечно 100-й уровень сценария "Конец
+  /// наград (Не куплен премиум)" (см. battle_pass_screen.dart): его rarity
+  /// и так 'legendary' (золотой), но premiumOwned: false перекрашивает его
+  /// в фиолетовый "тут премиум" без этого оверрайда. `null` (по умолчанию)
+  /// — ни одна плитка не переопределена.
+  final int? goldGradientLevelNumber;
 
   @override
   State<RewardsTrack> createState() => _RewardsTrackState();
@@ -511,7 +527,10 @@ class _RewardsTrackState extends State<RewardsTrack> {
     final levels = widget.season.levels;
     final items = [
       if (!widget.season.premiumOwned)
-        PremiumTeaserCluster(onUnlock: widget.onUnlockPremium),
+        PremiumTeaserCluster(
+          onUnlock: widget.onUnlockPremium,
+          hidePremiumBadge: widget.hideCarouselPremiumBadge,
+        ),
       for (var i = 0; i < levels.length; i++)
         RewardTile(
           level: levels[i],
@@ -524,6 +543,10 @@ class _RewardsTrackState extends State<RewardsTrack> {
           onUnlockPremium: widget.onUnlockPremium,
           hideGiftBadge: widget.hideGiftBadge,
           highlighted: widget.highlightedLevelNumber == levels[i].number,
+          hidePremiumBadge: widget.hideCarouselPremiumBadge,
+          gradientOverride: widget.goldGradientLevelNumber == levels[i].number
+              ? AppColors.rewardTileGoldGradient
+              : null,
         ),
       if (widget.showSeasonEndTeaser)
         _SeasonEndTeaser(

@@ -15,6 +15,8 @@ class RewardTile extends StatefulWidget {
     this.nextRequiredXp,
     this.hideGiftBadge = false,
     this.highlighted = false,
+    this.hidePremiumBadge = false,
+    this.gradientOverride,
     super.key,
   });
 
@@ -32,6 +34,20 @@ class RewardTile extends StatefulWidget {
   /// battle_pass_screen.dart). Активная рамка "к клейму готово" (зелёная)
   /// всё равно перевешивает — см. showClaimUi ниже.
   final bool highlighted;
+
+  /// Значок короны (premium.svg) не показывается совсем, даже у уровней с
+  /// доступным премиум-апгрейдом — сама плитка (фиолетовая заливка, переход
+  /// на покупку прокачки по тапу) не меняется. Только в сценарии "Конец
+  /// наград (Не куплен премиум)" (см. battle_pass_screen.dart).
+  final bool hidePremiumBadge;
+
+  /// Принудительный градиент плитки — перевешивает и заливку по редкости, и
+  /// фиолетовую "тут премиум" (showPremiumBadge). Точечно для 100-го уровня
+  /// сценария "Конец наград (Не куплен премиум)" (см.
+  /// battle_pass_screen.dart): его rarity уже 'legendary' (золотой), но
+  /// premiumOwned: false у этого уровня делает showPremiumBadge истинным и
+  /// без оверрайда перекрашивает плитку в фиолетовый.
+  final Gradient? gradientOverride;
 
   /// Порог опыта следующего по порядку уровня — нужен, чтобы соединительная
   /// линия трека красилась по реальному прогрессу (currentXp относительно
@@ -90,12 +106,18 @@ class _RewardTileState extends State<RewardTile> {
       asset: reward?.iconAsset ?? _placeholderAsset,
       // Уровни с доступным премиум-апгрейдом всегда красим в фиолетовый —
       // тот же цвет, что у fuel в премиум-тизере, это общий язык "тут премиум".
-      gradient: showPremiumBadge
-          ? AppColors.rewardTilePurpleGradient
-          : _rarityGradient(reward?.rarity),
-      badge: showPremiumBadge ? RewardBadgeKind.premium : RewardBadgeKind.gift,
+      gradient:
+          widget.gradientOverride ??
+          (showPremiumBadge
+              ? AppColors.rewardTilePurpleGradient
+              : _rarityGradient(reward?.rarity)),
+      badge: showPremiumBadge && !widget.hidePremiumBadge
+          ? RewardBadgeKind.premium
+          : RewardBadgeKind.gift,
       showBadge:
-          showPremiumBadge || widget.highlighted || !widget.hideGiftBadge,
+          (showPremiumBadge && !widget.hidePremiumBadge) ||
+          widget.highlighted ||
+          !widget.hideGiftBadge,
       quantityLabel: (reward != null && reward.amount > 1)
           ? '×${reward.amount}'
           : null,

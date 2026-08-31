@@ -11,9 +11,19 @@ import 'reward_carousel_tile.dart';
 /// Сами иконки кликабельны — можно выбрать (подсветить), какая из наград
 /// интересна, ровно один элемент одновременно.
 class PremiumTeaserCluster extends StatefulWidget {
-  const PremiumTeaserCluster({required this.onUnlock, super.key});
+  const PremiumTeaserCluster({
+    required this.onUnlock,
+    this.hidePremiumBadge = false,
+    super.key,
+  });
 
   final VoidCallback onUnlock;
+
+  /// Значок короны (premium.svg) не показывается ни у одной из 3 наград
+  /// блока — сама плитка (заливка, переход на покупку прокачки по тапу) не
+  /// меняется. Только в сценарии "Конец наград (Не куплен премиум)" (см.
+  /// battle_pass_screen.dart).
+  final bool hidePremiumBadge;
 
   static const double width = 676;
 
@@ -51,6 +61,7 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
                 quantityLabel: _quantityLabels[i],
                 gradient: _gradients[i],
                 badge: RewardBadgeKind.premium,
+                showBadge: !widget.hidePremiumBadge,
                 borderColor: _selectedIndex == i ? AppColors.textPrimary : null,
                 onTap: () => setState(() => _selectedIndex = i),
               ),
