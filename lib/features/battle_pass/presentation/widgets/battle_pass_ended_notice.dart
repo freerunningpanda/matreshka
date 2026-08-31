@@ -20,8 +20,13 @@ class BattlePassEndedNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const noticeLeft = 346.0;
+    const stickerGlowTop = -8.0;
+    const stickerGlowBlurRadius = 40.0;
+    const stickerGlowSpreadRadius = 1.0;
+
     return Positioned(
-      left: 346,
+      left: noticeLeft,
       top: _stickerTop,
       width: _cardWidth,
       child: Stack(
@@ -30,14 +35,14 @@ class BattlePassEndedNotice extends StatelessWidget {
         children: [
           const Padding(padding: AppPadding.topPadding46, child: _Card()),
           Positioned(
-            top: -8,
+            top: stickerGlowTop,
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.glowShadow,
-                    blurRadius: 40,
-                    spreadRadius: 1,
+                    blurRadius: stickerGlowBlurRadius,
+                    spreadRadius: stickerGlowSpreadRadius,
                   ),
                 ],
               ),
@@ -86,17 +91,26 @@ class _Card extends StatelessWidget {
     // слои просвечивали бы не сквозь карточку до фона экрана, а до этой
     // золотой заливки под ними. Поэтому кольцо рисуется отдельно поверх
     // контента через CustomPaint — так оно не участвует в фоне интерьера.
+    const cardGlowBlurRadius = 40.0;
+    const cardGlowSpreadRadius = 2.0;
+    const titleFontSize = 36.0;
+    const titleLineHeight = 1.3;
+    const titleLetterSpacing = -0.36;
+    const subtitleFontSize = 26.0;
+    const subtitleLineHeight = 1.2;
+    const subtitleLetterSpacing = -0.26;
+
     return Container(
       width: BattlePassEndedNotice._cardWidth,
       // Только тень — заливки/бордера здесь нет, кольцо рисует CustomPaint
       // ниже (отдельно от контента, см. комментарий выше).
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(_outerRadius),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.glowShadow,
-            blurRadius: 40,
-            spreadRadius: 2,
+            blurRadius: cardGlowBlurRadius,
+            spreadRadius: cardGlowSpreadRadius,
           ),
         ],
       ),
@@ -131,9 +145,9 @@ class _Card extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Geologica',
                           fontWeight: FontWeight.w600,
-                          fontSize: 36,
-                          height: 1.3,
-                          letterSpacing: -0.36,
+                          fontSize: titleFontSize,
+                          height: titleLineHeight,
+                          letterSpacing: titleLetterSpacing,
                           color: Colors.white,
                         ),
                       ),
@@ -145,9 +159,9 @@ class _Card extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Geologica',
                         fontWeight: FontWeight.w500,
-                        fontSize: 26,
-                        height: 1.2,
-                        letterSpacing: -0.26,
+                        fontSize: subtitleFontSize,
+                        height: subtitleLineHeight,
+                        letterSpacing: subtitleLetterSpacing,
                         color: AppColors.timerText, // #E9E9F3 @ 0.4
                       ),
                     ),
@@ -217,6 +231,10 @@ class _TimerPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const textFontSize = 30.0;
+    const textLineHeight = 1.2;
+    const textLetterSpacing = -0.3;
+
     return Container(
       // 214 — ширина из Figma, но это минимум, а не жёсткий лимит: она
       // измерена под короткий пример ("6д 13ч 55м"), а реальный мок-дедлайн
@@ -234,9 +252,9 @@ class _TimerPill extends StatelessWidget {
         style: TextStyle(
           fontFamily: 'Geologica',
           fontWeight: FontWeight.w600,
-          fontSize: 30,
-          height: 1.2,
-          letterSpacing: -0.3,
+          fontSize: textFontSize,
+          height: textLineHeight,
+          letterSpacing: textLetterSpacing,
           color: AppColors.countdownPillText,
         ),
       ),

@@ -32,6 +32,9 @@ class ScenarioSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const buttonBgAlpha = 0.55;
+    const buttonIconSize = 22.0;
+
     return SafeArea(
       child: Align(
         alignment: Alignment.bottomRight,
@@ -48,7 +51,7 @@ class ScenarioSwitcher extends StatelessWidget {
                   child: Row(
                     children: [
                       if (scenario == current)
-                        const Icon(Icons.check, size: 18)
+                        const Icon(Icons.check, size: AppSizes.allSize18)
                       else
                         AppSizedBoxes.horizontalSizedBoxW18,
                       AppSizedBoxes.horizontalSizedBoxW8,
@@ -65,13 +68,13 @@ class ScenarioSwitcher extends StatelessWidget {
             child: Container(
               padding: AppPadding.allPadding12,
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.55),
+                color: Colors.black.withValues(alpha: buttonBgAlpha),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.swap_horiz,
                 color: Colors.white,
-                size: 22,
+                size: buttonIconSize,
               ),
             ),
           ),

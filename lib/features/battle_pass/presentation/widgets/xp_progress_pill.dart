@@ -21,10 +21,22 @@ class XpProgressPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const fullProgress = 1.0;
+    const noProgress = 0.0;
+    const pillLeft = 346.0;
+    const pillTop = 37.0;
+    const ringStrokeWidth = 8.0;
+    const levelFontSize = 42.0;
+    const levelLineHeight = 1.3;
+    const levelLetterSpacing = -0.42;
+    const xpFontSize = 22.0;
+    const xpLineHeight = 1.2;
+    const xpLetterSpacing = -0.22;
+
     final isMaxLevel = currentLevel >= maxLevel;
     final progress = isMaxLevel || xpToNextLevel == 0
-        ? 1.0
-        : (currentXp / xpToNextLevel).clamp(0.0, 1.0);
+        ? fullProgress
+        : (currentXp / xpToNextLevel).clamp(noProgress, fullProgress);
     // На макс. уровне экран не присылает следующий порог (xpToNextLevel=0,
     // идти дальше некуда) — раньше здесь был текст "Максимальный уровень",
     // но он шире кольца (100px) и ломает вёрстку. Вместо него тот же формат
@@ -32,8 +44,8 @@ class XpProgressPill extends StatelessWidget {
     // набранный опыт (кольцо и так полное).
     final xpLabelTarget = xpToNextLevel == 0 ? currentXp : xpToNextLevel;
     return Positioned(
-      left: 346,
-      top: 37,
+      left: pillLeft,
+      top: pillTop,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -51,7 +63,7 @@ class XpProgressPill extends StatelessWidget {
                 SizedBox.expand(
                   child: CircularProgressIndicator(
                     value: progress,
-                    strokeWidth: 8,
+                    strokeWidth: ringStrokeWidth,
                     backgroundColor: AppColors.progressRingTrack,
                     valueColor: const AlwaysStoppedAnimation(
                       AppColors.progressRingFill,
@@ -71,9 +83,9 @@ class XpProgressPill extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: 'Geologica',
                         fontWeight: FontWeight.w600,
-                        fontSize: 42,
-                        height: 1.3,
-                        letterSpacing: -0.42,
+                        fontSize: levelFontSize,
+                        height: levelLineHeight,
+                        letterSpacing: levelLetterSpacing,
                         color: AppColors.textPrimary,
                       ),
                     ),
@@ -97,9 +109,9 @@ class XpProgressPill extends StatelessWidget {
                 style: const TextStyle(
                   fontFamily: 'Geologica',
                   fontWeight: FontWeight.w500,
-                  fontSize: 22,
-                  height: 1.2,
-                  letterSpacing: -0.22,
+                  fontSize: xpFontSize,
+                  height: xpLineHeight,
+                  letterSpacing: xpLetterSpacing,
                   color: AppColors.progressRingFill,
                 ),
               ),

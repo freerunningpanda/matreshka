@@ -11,9 +11,12 @@ class EventTimerBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const bannerLeft = 513.0;
+    const bannerTop = 56.0;
+
     return const Positioned(
-      left: 513,
-      top: 56,
+      left: bannerLeft,
+      top: bannerTop,
       width: AppSizes.horizontalSize439,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,11 +36,16 @@ class _CountdownTimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const iconSize = 32.0;
+    const textFontSize = 26.0;
+    const textLineHeight = 1.2;
+    const textLetterSpacing = -0.26;
+
     return Row(
       children: [
         const Icon(
           Icons.access_time_rounded,
-          size: 32,
+          size: iconSize,
           color: AppColors.timerText,
         ),
         AppSizedBoxes.horizontalSizedBoxW14,
@@ -45,9 +53,9 @@ class _CountdownTimer extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Geologica',
             fontWeight: FontWeight.w500,
-            fontSize: 26,
-            height: 1.2,
-            letterSpacing: -0.26,
+            fontSize: textFontSize,
+            height: textLineHeight,
+            letterSpacing: textLetterSpacing,
             color: AppColors.timerText,
           ),
         ),
@@ -61,17 +69,25 @@ class _EventTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const titleFontSize = 48.0;
+    const titleLineHeight = 0.93;
+    const titleLetterSpacing = -0.48;
+    // Прямоугольник шейдера градиента заголовка — 1×45, а не размер
+    // реального текста: тот неизвестен заранее, а важна только высота (так
+    // градиент растягивается по вертикали текста, не по горизонтали).
+    const gradientShaderRect = Rect.fromLTWH(0, 0, 1, 45);
+
     return Text(
       AppStrings.eventTitle,
       style: TextStyle(
         fontFamily: 'Geologica',
         fontWeight: FontWeight.w600,
-        fontSize: 48,
-        height: 0.93,
-        letterSpacing: -0.48,
+        fontSize: titleFontSize,
+        height: titleLineHeight,
+        letterSpacing: titleLetterSpacing,
         foreground: Paint()
           ..shader = AppColors.eventTitleGradient.createShader(
-            const Rect.fromLTWH(0, 0, 1, 45),
+            gradientShaderRect,
           ),
       ),
     );

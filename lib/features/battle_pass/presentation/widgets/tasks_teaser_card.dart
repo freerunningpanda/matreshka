@@ -29,6 +29,9 @@ class TasksTeaserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const cardLeft = 346.0;
+    const cardTop = 220.0;
+
     final task = this.task;
     if (task == null) return const SizedBox.shrink();
 
@@ -41,9 +44,9 @@ class TasksTeaserCard extends StatelessWidget {
     final cardTap = claimMode ? (task.claimed ? null : onClaimXp) : onTap;
 
     return Positioned(
-      left: 346,
-      top: 220,
-      width: 400,
+      left: cardLeft,
+      top: cardTop,
+      width: AppSizes.horizontalSize400,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -102,10 +105,17 @@ class _RewardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const fullOpacity = 1.0;
+    const textFontSize = 26.0;
+    const textLineHeight = 1.2;
+    const textLetterSpacing = -0.26;
+    const doneBadgeLeft = 294.0;
+    const doneBadgeTop = 44.0;
+
     return Stack(
       children: [
         Opacity(
-          opacity: completed ? _kCompletedOpacity : 1,
+          opacity: completed ? _kCompletedOpacity : fullOpacity,
           child: Container(
             height: AppSizes.verticalSize110,
             width: AppSizes.horizontalSize400,
@@ -131,9 +141,9 @@ class _RewardHeader extends StatelessWidget {
                   style: const TextStyle(
                     fontFamily: 'Geologica',
                     fontWeight: FontWeight.w500,
-                    fontSize: 26,
-                    height: 1.2,
-                    letterSpacing: -0.26,
+                    fontSize: textFontSize,
+                    height: textLineHeight,
+                    letterSpacing: textLetterSpacing,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -155,9 +165,9 @@ class _RewardHeader extends StatelessWidget {
                             style: const TextStyle(
                               fontFamily: 'Geologica',
                               fontWeight: FontWeight.w500,
-                              fontSize: 26,
-                              height: 1.2,
-                              letterSpacing: -0.26,
+                              fontSize: textFontSize,
+                              height: textLineHeight,
+                              letterSpacing: textLetterSpacing,
                               color: AppColors.textMuted,
                             ),
                             children: [
@@ -190,8 +200,8 @@ class _RewardHeader extends StatelessWidget {
         // 40×22 центрирована в плашке 112×56.
         if (completed)
           Positioned(
-            left: 294,
-            top: 44,
+            left: doneBadgeLeft,
+            top: doneBadgeTop,
             child: IgnorePointer(
               child: SvgPicture.asset(
                 AppAssets.iconDone,
@@ -233,6 +243,11 @@ class _TaskBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const fullOpacity = 1.0;
+    const titleFontSize = 22.0;
+    const titleLineHeight = 1.2;
+    const titleLetterSpacing = -0.22;
+
     return SizedBox(
       width: AppSizes.horizontalSize400,
       child: Stack(
@@ -242,7 +257,7 @@ class _TaskBody extends StatelessWidget {
           // _kCompletedOpacity).
           Positioned.fill(
             child: Opacity(
-              opacity: completed ? _kCompletedOpacity : 1,
+              opacity: completed ? _kCompletedOpacity : fullOpacity,
               child: const DecoratedBox(
                 decoration: BoxDecoration(
                   color: AppColors.taskCardBodyBg,
@@ -263,7 +278,7 @@ class _TaskBody extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Opacity(
-                  opacity: completed ? _kCompletedOpacity : 1,
+                  opacity: completed ? _kCompletedOpacity : fullOpacity,
                   child: Text(
                     title,
                     textAlign: centerContent
@@ -272,16 +287,18 @@ class _TaskBody extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w500,
-                      fontSize: 22,
-                      height: 1.2,
-                      letterSpacing: -0.22,
+                      fontSize: titleFontSize,
+                      height: titleLineHeight,
+                      letterSpacing: titleLetterSpacing,
                       color: AppColors.textMuted,
                     ),
                   ),
                 ),
                 AppSizedBoxes.verticalSizedBoxH50,
                 Opacity(
-                  opacity: (completed || dimProgress) ? _kCompletedOpacity : 1,
+                  opacity: (completed || dimProgress)
+                      ? _kCompletedOpacity
+                      : fullOpacity,
                   child: _ProgressDashes(
                     current: progressCurrent,
                     target: progressTarget,
@@ -330,6 +347,14 @@ class _TasksButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const labelFontSize = 26.0;
+    const labelLineHeight = 1.2;
+    const labelLetterSpacing = -0.26;
+    const badgeRight = -12.0;
+    const badgeTop = -10.0;
+    const badgeGlowBlurRadius = 10.0;
+    const badgeGlowSpreadRadius = 2.0;
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -354,9 +379,9 @@ class _TasksButton extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Geologica',
                   fontWeight: FontWeight.w500,
-                  fontSize: 26,
-                  height: 1.2,
-                  letterSpacing: -0.26,
+                  fontSize: labelFontSize,
+                  height: labelLineHeight,
+                  letterSpacing: labelLetterSpacing,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -367,8 +392,8 @@ class _TasksButton extends StatelessWidget {
         // углу кнопки, слегка выходя за её границы.
         if (showRewardBadge)
           Positioned(
-            right: -12,
-            top: -10,
+            right: badgeRight,
+            top: badgeTop,
             child: Container(
               width: AppSizes.horizontalSize44,
               height: AppSizes.verticalSize46,
@@ -377,8 +402,8 @@ class _TasksButton extends StatelessWidget {
                 boxShadow: const [
                   BoxShadow(
                     color: AppColors.glowShadow,
-                    blurRadius: 10,
-                    spreadRadius: 2,
+                    blurRadius: badgeGlowBlurRadius,
+                    spreadRadius: badgeGlowSpreadRadius,
                   ),
                 ],
               ),
@@ -406,6 +431,10 @@ class _ClaimXpButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const labelFontSize = 26.0;
+    const labelLineHeight = 1.2;
+    const labelLetterSpacing = -0.26;
+
     return Container(
       width: AppSizes.horizontalSize320,
       padding: AppPadding.ltrbPaddingL36T20R36B23,
@@ -430,9 +459,9 @@ class _ClaimXpButton extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Geologica',
               fontWeight: FontWeight.w500,
-              fontSize: 26,
-              height: 1.2,
-              letterSpacing: -0.26,
+              fontSize: labelFontSize,
+              height: labelLineHeight,
+              letterSpacing: labelLetterSpacing,
               color: claimed ? AppColors.textMuted : AppColors.claimXpText,
             ),
           ),

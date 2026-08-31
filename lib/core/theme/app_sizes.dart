@@ -56,6 +56,7 @@ abstract final class AppSizes {
   static const verticalSize1304 = 1304.0;
 
   // All (width == height, квадрат)
+  static const allSize18 = 18.0;
   static const allSize30 = 30.0;
   static const allSize34 = 34.0;
   static const allSize36 = 36.0;

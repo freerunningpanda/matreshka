@@ -412,10 +412,20 @@ class _RewardsTrackState extends State<RewardsTrack> {
 
   @override
   Widget build(BuildContext context) {
+    const trackLeft = 346.0;
+    const trackRight = 80.0;
+    const trackBottom = 24.0;
+    const blurZoneWidth = 150.0;
+    const blurSigma = 12.0;
+    const arrowVerticalOffset = 32.0;
+    const milestoneArrowGap = 13.0;
+    const arrowButtonInset = 8.0;
+    const arrowScrollTileCount = 3;
+
     return Positioned(
-      left: 346,
-      right: 80,
-      bottom: 24,
+      left: trackLeft,
+      right: trackRight,
+      bottom: trackBottom,
       height: AppSizes.verticalSize300,
       // Clip.none — превью юбилейного уровня выше обычной плитки (300 против
       // 240) и растёт вверх за пределы этой области, чтобы его собственный
@@ -435,7 +445,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
               right: 0,
               top: 0,
               bottom: 0,
-              width: _milestoneArrowMidpoint + 150,
+              width: _milestoneArrowMidpoint + blurZoneWidth,
               child: ShaderMask(
                 shaderCallback: (bounds) => const LinearGradient(
                   stops: [0.0, 0.35, 0.7, 1.0],
@@ -449,7 +459,10 @@ class _RewardsTrackState extends State<RewardsTrack> {
                 blendMode: BlendMode.dstIn,
                 child: ClipRect(
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    filter: ImageFilter.blur(
+                      sigmaX: blurSigma,
+                      sigmaY: blurSigma,
+                    ),
                     child: const SizedBox.expand(),
                   ),
                 ),
@@ -460,10 +473,10 @@ class _RewardsTrackState extends State<RewardsTrack> {
               // На одной линии со стрелкой к юбилейному уровню — обе
               // стрелки трека должны стоять на одной высоте.
               left: 0,
-              top: _MilestonePreview.cardCenterY - 32,
+              top: _MilestonePreview.cardCenterY - arrowVerticalOffset,
               child: _ArrowButton(
                 icon: Icons.chevron_left,
-                onTap: () => _scrollBy(-_tileExtent * 3),
+                onTap: () => _scrollBy(-_tileExtent * arrowScrollTileCount),
               ),
             ),
           if (_nextMilestone != null)
@@ -494,8 +507,11 @@ class _RewardsTrackState extends State<RewardsTrack> {
               // Positioned) и превью: ширина карточки превью + 13 минус
               // собственный горизонтальный паддинг _ArrowButton (8), на
               // который её видимый круг уже отступает от границ Positioned.
-              right: _MilestonePreview._cardSize + 13 - 8,
-              top: _MilestonePreview.cardCenterY - 32,
+              right:
+                  _MilestonePreview._cardSize +
+                  milestoneArrowGap -
+                  arrowButtonInset,
+              top: _MilestonePreview.cardCenterY - arrowVerticalOffset,
               child: _ArrowButton(
                 icon: Icons.chevron_right,
                 onTap: () => _scrollToMilestone(_nextMilestone!),
@@ -509,7 +525,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
               child: Center(
                 child: _ArrowButton(
                   icon: Icons.chevron_right,
-                  onTap: () => _scrollBy(_tileExtent * 3),
+                  onTap: () => _scrollBy(_tileExtent * arrowScrollTileCount),
                 ),
               ),
             ),
@@ -604,6 +620,7 @@ class _MilestonePreview extends StatelessWidget {
   static const _accentColor = Color(0xFFDA7128);
   static const _glowColor = Color(0xFFE23600);
   static const _defaultDiamondColor = Color(0xFF4A4A52);
+  static const _diamondRotationAngle = 0.785398; // 45°
 
   /// Заливка карточки — тёмно-серый вверху, переходящий в тот же оранжевый,
   /// что и рамка, ближе к низу (за ящиком), а не ровный серый фон и не
@@ -626,13 +643,17 @@ class _MilestonePreview extends StatelessWidget {
   /// указывала на центр карточки, а не терялась ниже неё.
   static double get cardCenterY {
     const columnHeight = _cardSize + _spacer + _diamondSize;
-    const columnBottom = 300 - _bottomMargin;
+    const columnBottom = AppSizes.verticalSize300 - _bottomMargin;
     const columnTop = columnBottom - columnHeight;
     return columnTop + _cardSize / 2;
   }
 
   @override
   Widget build(BuildContext context) {
+    const previewGlowBlurRadius = 45.1;
+    const previewGlowSpreadRadius = 0.0;
+    const numberFontSize = 14.0;
+
     final reward = level.freeReward;
     // Уже забранный юбилейный уровень (просто ещё не проскроленный мимо —
     // см. RewardsTrack._computeNextMilestone) показывается как обычная
@@ -654,8 +675,8 @@ class _MilestonePreview extends StatelessWidget {
           borderIgnoresOpacity: claimed,
           showGlow: !claimed,
           glowColor: _glowColor,
-          glowBlurRadius: 45.1,
-          glowSpreadRadius: 0,
+          glowBlurRadius: previewGlowBlurRadius,
+          glowSpreadRadius: previewGlowSpreadRadius,
           claimed: claimed,
           onTap: onTap,
           width: _cardSize,
@@ -663,7 +684,7 @@ class _MilestonePreview extends StatelessWidget {
         ),
         AppSizedBoxes.verticalSizedBoxH12,
         Transform.rotate(
-          angle: 0.785398, // 45°
+          angle: _diamondRotationAngle,
           child: Container(
             width: _diamondSize,
             height: _diamondSize,
@@ -675,14 +696,14 @@ class _MilestonePreview extends StatelessWidget {
               borderRadius: AppRadius.circular6,
             ),
             child: Transform.rotate(
-              angle: -0.785398,
+              angle: -_diamondRotationAngle,
               child: Center(
                 child: Text(
                   '${level.number}',
                   style: const TextStyle(
                     fontFamily: 'Geologica',
                     fontWeight: FontWeight.w700,
-                    fontSize: 14,
+                    fontSize: numberFontSize,
                     color: Colors.white,
                   ),
                 ),
@@ -756,6 +777,11 @@ class _TeaserCard extends StatelessWidget {
     // Высота самой рамки (184) и отступ сверху (28) — те же, что у видимой
     // карточки обычной плитки (RewardCarouselTile.cardHeight = height-56 =
     // 240-56=184, top:28 внутри общего слота высотой 240).
+    const borderWidth = 1.5;
+    const textFontSize = 26.0;
+    const textLineHeight = 1.35;
+    const textLetterSpacing = -0.26;
+
     return SizedBox(
       height: AppSizes.verticalSize240,
       child: Align(
@@ -773,7 +799,7 @@ class _TeaserCard extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border.all(
                   color: AppColors.progressRingFill,
-                  width: 1.5,
+                  width: borderWidth,
                 ),
                 borderRadius: AppRadius.circular24,
               ),
@@ -785,9 +811,9 @@ class _TeaserCard extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w500,
-                      fontSize: 26,
-                      height: 1.35,
-                      letterSpacing: -0.26,
+                      fontSize: textFontSize,
+                      height: textLineHeight,
+                      letterSpacing: textLetterSpacing,
                       color: AppColors.textMuted,
                     ),
                     children: requiresPremium
@@ -907,7 +933,7 @@ class _TeaserTrackRow extends StatelessWidget {
         children: [
           Positioned(
             left: -_backReach,
-            top: (34 - _lineThickness) / 2,
+            top: (AppSizes.verticalSize34 - _lineThickness) / 2,
             width: _backReach,
             height: _lineThickness,
             child: const ColoredBox(color: _color),
@@ -960,10 +986,14 @@ class _TeaserDiamond extends StatelessWidget {
 
   final int number;
 
+  static const _diamondRotationAngle = 0.785398; // 45°
+
   @override
   Widget build(BuildContext context) {
+    const numberFontSize = 14.0;
+
     return Transform.rotate(
-      angle: 0.785398, // 45°
+      angle: _diamondRotationAngle,
       child: Container(
         width: AppSizes.allSize34,
         height: AppSizes.allSize34,
@@ -972,7 +1002,7 @@ class _TeaserDiamond extends StatelessWidget {
           borderRadius: AppRadius.circular6,
         ),
         child: Transform.rotate(
-          angle: -0.785398,
+          angle: -_diamondRotationAngle,
           child: Center(
             child: Padding(
               // Трёхзначные уровни (100+) не помещаются в ромб на полный
@@ -986,7 +1016,7 @@ class _TeaserDiamond extends StatelessWidget {
                   style: const TextStyle(
                     fontFamily: 'Geologica',
                     fontWeight: FontWeight.w700,
-                    fontSize: 14,
+                    fontSize: numberFontSize,
                     color: Colors.white,
                   ),
                 ),
@@ -1037,6 +1067,8 @@ class _ArrowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const iconSize = 56.0;
+
     return Padding(
       padding: AppPadding.horizontalPadding8,
       child: Material(
@@ -1048,7 +1080,7 @@ class _ArrowButton extends StatelessWidget {
           child: SizedBox(
             width: AppSizes.allSize84,
             height: AppSizes.allSize84,
-            child: Icon(icon, color: Colors.white, size: 56),
+            child: Icon(icon, color: Colors.white, size: iconSize),
           ),
         ),
       ),

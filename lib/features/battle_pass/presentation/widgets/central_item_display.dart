@@ -11,14 +11,18 @@ class CentralItemDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const itemLeft = 960.0;
+    const itemTop = 140.0;
+    const switchDuration = Duration(milliseconds: 350);
+
     final flavor = ScenarioFlavor.of(scenario);
     return Positioned(
-      left: 960,
-      top: 140,
+      left: itemLeft,
+      top: itemTop,
       width: AppSizes.horizontalSize600,
       height: AppSizes.verticalSize550,
       child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 350),
+        duration: switchDuration,
         child: Column(
           key: ValueKey(scenario),
           mainAxisAlignment: MainAxisAlignment.end,
@@ -52,6 +56,10 @@ class _Tag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const tagFontSize = 22.0;
+    const tagLineHeight = 1.2;
+    const tagLetterSpacing = -0.22;
+
     return Container(
       width: AppSizes.horizontalSize324,
       height: AppSizes.verticalSize39,
@@ -75,9 +83,9 @@ class _Tag extends StatelessWidget {
               style: const TextStyle(
                 fontFamily: 'Geologica',
                 fontWeight: FontWeight.w500,
-                fontSize: 22,
-                height: 1.2,
-                letterSpacing: -0.22,
+                fontSize: tagFontSize,
+                height: tagLineHeight,
+                letterSpacing: tagLetterSpacing,
                 color: AppColors.itemTagText,
               ),
             ),
@@ -121,12 +129,15 @@ class _ItemTitle extends StatelessWidget {
   // "или" между двумя названиями предмета подсвечивается золотым (см.
   // node-id 1-1372 в Figma) — остальной текст остаётся обычным.
   InlineSpan _titleSpan(String text) {
+    const titleFontSize = 36.0;
+    const titleLineHeight = 1.3;
+    const titleLetterSpacing = -0.36;
     const style = TextStyle(
       fontFamily: 'Geologica',
       fontWeight: FontWeight.w600,
-      fontSize: 36,
-      height: 1.3,
-      letterSpacing: -0.36,
+      fontSize: titleFontSize,
+      height: titleLineHeight,
+      letterSpacing: titleLetterSpacing,
       color: AppColors.textPrimary,
     );
     const highlight = AppStrings.itemTitleOrConnector;

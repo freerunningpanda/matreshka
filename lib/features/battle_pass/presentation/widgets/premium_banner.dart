@@ -27,9 +27,26 @@ class PremiumBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const bannerRight = 24.0;
+    const bannerTop = 0.0;
+    const artLeftUnlocked = -50.0;
+    const artLeftLocked = 20.0;
+    const artTopUnlocked = -278.0;
+    const artTopLocked = -169.0;
+    const contentLeft = 32.0;
+    const contentRight = 32.0;
+    const contentBottom = 40.0;
+    const titleFontSize = 36.0;
+    const titleLineHeight = 1.3;
+    const titleLetterSpacing = -0.36;
+    const subtitleFontSize = 22.0;
+    const subtitleLineHeight = 1.2;
+    const subtitleLetterSpacing = -0.22;
+    const upgradeButtonIconHeight = 32.0;
+
     return Positioned(
-      right: 24,
-      top: 0,
+      right: bannerRight,
+      top: bannerTop,
       width: width,
       height: height,
       child: ClipRect(
@@ -39,8 +56,8 @@ class PremiumBanner extends StatelessWidget {
             // и обрезается по её границам — намеренный портретный bleed, а не
             // изображение, вписанное в карточку.
             Positioned(
-              left: premiumOwned ? -50 : 20,
-              top: premiumOwned ? -278 : -169,
+              left: premiumOwned ? artLeftUnlocked : artLeftLocked,
+              top: premiumOwned ? artTopUnlocked : artTopLocked,
               width: AppSizes.horizontalSize668,
               height: AppSizes.verticalSize1304,
               child: Image.asset(
@@ -51,9 +68,9 @@ class PremiumBanner extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: 32,
-              right: 32,
-              bottom: 40,
+              left: contentLeft,
+              right: contentRight,
+              bottom: contentBottom,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -65,9 +82,9 @@ class PremiumBanner extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w600,
-                      fontSize: 36,
-                      height: 1.3,
-                      letterSpacing: -0.36,
+                      fontSize: titleFontSize,
+                      height: titleLineHeight,
+                      letterSpacing: titleLetterSpacing,
                       color: AppColors.accentGold,
                     ),
                   ),
@@ -82,9 +99,9 @@ class PremiumBanner extends StatelessWidget {
                       style: const TextStyle(
                         fontFamily: 'Geologica',
                         fontWeight: FontWeight.w500,
-                        fontSize: 22,
-                        height: 1.2,
-                        letterSpacing: -0.22,
+                        fontSize: subtitleFontSize,
+                        height: subtitleLineHeight,
+                        letterSpacing: subtitleLetterSpacing,
                         color: AppColors.textSecondary,
                       ),
                     ),
@@ -105,7 +122,7 @@ class PremiumBanner extends StatelessWidget {
                                 : _UpgradeButton(
                                     label: AppStrings.increaseLevelButton,
                                     icon: AppAssets.iconArrowUp,
-                                    iconHeight: 32,
+                                    iconHeight: upgradeButtonIconHeight,
                                     onPressed: onPressed,
                                   ),
                           ),
@@ -134,23 +151,27 @@ class _MaxLevelReachedNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const textFontSize = 22.0;
+    const textLineHeight = 1.2;
+    const textLetterSpacing = -0.22;
+
     return Container(
       width: AppSizes.horizontalSize400,
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 24),
+      padding: AppPadding.symmetricPaddingH24V22,
       decoration: BoxDecoration(
         color: AppColors.buttonOverlayStrong, // #E9E9F3 @ 0.1
         borderRadius: AppRadius.circular30,
       ),
-      child: const Text(
+      child: Text(
         AppStrings.maxLevelReachedNotice,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           fontFamily: 'Geologica',
           fontWeight: FontWeight.w500,
-          fontSize: 22,
-          height: 1.2,
-          letterSpacing: -0.22,
+          fontSize: textFontSize,
+          height: textLineHeight,
+          letterSpacing: textLetterSpacing,
           color: AppColors.textMuted,
         ),
       ),
@@ -174,6 +195,12 @@ class _UpgradeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const glowBlurRadius = 40.0;
+    const glowSpreadRadius = 4.0;
+    const labelFontSize = 30.0;
+    const labelLineHeight = 1.2;
+    const labelLetterSpacing = -0.3;
+
     return Container(
       height: AppSizes.verticalSize100,
       width: AppSizes.horizontalSize400,
@@ -182,8 +209,8 @@ class _UpgradeButton extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             color: AppColors.glowShadow,
-            blurRadius: 40,
-            spreadRadius: 4,
+            blurRadius: glowBlurRadius,
+            spreadRadius: glowSpreadRadius,
           ),
         ],
       ),
@@ -216,9 +243,9 @@ class _UpgradeButton extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w500,
-                      fontSize: 30,
-                      height: 1.2,
-                      letterSpacing: -0.3,
+                      fontSize: labelFontSize,
+                      height: labelLineHeight,
+                      letterSpacing: labelLetterSpacing,
                       color: AppColors.itemTagText,
                     ),
                   ),

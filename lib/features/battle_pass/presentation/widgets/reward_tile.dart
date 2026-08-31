@@ -78,6 +78,8 @@ class _RewardTileState extends State<RewardTile> {
     }
   }
 
+  static const _claimReadyBorderColor = Color(0xFF3DDC6B);
+
   @override
   Widget build(BuildContext context) {
     final level = widget.level;
@@ -119,7 +121,7 @@ class _RewardTileState extends State<RewardTile> {
           ? '×${reward.amount}'
           : null,
       borderColor: showClaimUi
-          ? const Color(0xFF3DDC6B)
+          ? _claimReadyBorderColor
           : widget.highlighted
           ? AppColors.textPrimary
           : null,
@@ -206,6 +208,10 @@ class _ClaimButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const labelFontSize = 26.0;
+    const labelLineHeight = 1.2;
+    const labelLetterSpacing = -0.01;
+
     // Сам наклон вокруг общего с карточкой центра накладывает снаружи
     // RewardCarouselTile (см. footer в reward_carousel_tile.dart) — здесь
     // только компенсирующий встречный наклон, чтобы текст остался прямым.
@@ -224,9 +230,9 @@ class _ClaimButton extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Geologica',
             fontWeight: FontWeight.w500,
-            fontSize: 26,
-            height: 1.2,
-            letterSpacing: -0.01,
+            fontSize: labelFontSize,
+            height: labelLineHeight,
+            letterSpacing: labelLetterSpacing,
             color: Colors.white,
           ),
         ),
@@ -278,8 +284,18 @@ class _LevelTrackNode extends StatelessWidget {
   /// уже достаточно "вырос" по высоте, чтобы полностью перекрыть линию.
   static const _lineThickness = 10.0;
 
+  /// 45° — угол поворота ромба (и обратный поворот его содержимого).
+  static const _diamondRotationAngle = 0.785398;
+
+  /// Небольшой запас поверх точного расчёта ширины соединительной линии —
+  /// иначе из-за сглаживания пикселей на стыке остаётся тонкий зазор.
+  static const _lineWidthPadding = 2.0;
+
   @override
   Widget build(BuildContext context) {
+    const lineLeft = 121.0; // от центра этой плитки — ровно на ромбе
+    const numberFontSize = 14.0;
+
     final reached = currentXp >= requiredXp;
     final ownColor = reached ? _reachedColor : _unreachedColor;
 
@@ -292,13 +308,12 @@ class _LevelTrackNode extends StatelessWidget {
         children: [
           if (nextRequiredXp != null)
             Positioned(
-              left: 121, // от центра этой плитки — ровно на ромбе
+              left: lineLeft,
               width:
                   _diamondStride -
                   _diamondHalfSpan +
                   _lineThickness / 2 +
-                  2, // небольшой запас поверх точного расчёта — иначе из-за
-              // сглаживания пикселей на стыке остаётся тонкий зазор
+                  _lineWidthPadding,
               child: Builder(
                 builder: (context) {
                   final nextReached = currentXp >= nextRequiredXp!;
@@ -325,7 +340,7 @@ class _LevelTrackNode extends StatelessWidget {
               ),
             ),
           Transform.rotate(
-            angle: 0.785398, // 45°
+            angle: _diamondRotationAngle,
             child: Container(
               width: AppSizes.allSize34,
               height: AppSizes.allSize34,
@@ -334,7 +349,7 @@ class _LevelTrackNode extends StatelessWidget {
                 borderRadius: AppRadius.circular6,
               ),
               child: Transform.rotate(
-                angle: -0.785398,
+                angle: -_diamondRotationAngle,
                 child: Center(
                   child: Padding(
                     // Трёхзначные уровни (100+) не помещаются в ромб на
@@ -347,7 +362,7 @@ class _LevelTrackNode extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: 'Geologica',
                           fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                          fontSize: numberFontSize,
                           color: Colors.white,
                         ),
                       ),

@@ -43,10 +43,15 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
     AppColors.rewardTilePurpleGradient,
   ];
 
-  int _selectedIndex = 2;
+  static const _defaultSelectedIndex = 2;
+  int _selectedIndex = _defaultSelectedIndex;
 
   @override
   Widget build(BuildContext context) {
+    const tileStride = 216.0;
+    const stickerLeft = 6.0;
+    const stickerTop = 236.0;
+
     return SizedBox(
       width: PremiumTeaserCluster.width,
       child: Stack(
@@ -54,7 +59,7 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
         children: [
           for (var i = 0; i < _assets.length; i++)
             Positioned(
-              left: i * 216,
+              left: i * tileStride,
               child: RewardCarouselTile(
                 asset: _assets[i],
                 quantityLabel: _quantityLabels[i],
@@ -66,8 +71,8 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
               ),
             ),
           Positioned(
-            left: 6,
-            top: 236,
+            left: stickerLeft,
+            top: stickerTop,
             width: AppSizes.horizontalSize626,
             child: _UnlockSticker(onTap: widget.onUnlock),
           ),
@@ -82,8 +87,16 @@ class _UnlockSticker extends StatelessWidget {
 
   final VoidCallback onTap;
 
+  static const _stickerBgColor = Color(0x4CE29432); // rgba(226,148,50,0.3)
+  static const _textShadowColor = Color(0xFFFF5C00);
+
   @override
   Widget build(BuildContext context) {
+    const textFontSize = 30.0;
+    const textLineHeight = 1.2;
+    const textLetterSpacing = -1.0;
+    const textShadowBlurRadius = 14.4;
+
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
@@ -97,21 +110,26 @@ class _UnlockSticker extends StatelessWidget {
                 width: AppSizes.horizontalSize626,
                 height: AppSizes.verticalSize60,
                 decoration: BoxDecoration(
-                  color: Color(0x4CE29432), // rgba(226,148,50,0.3)
+                  color: _stickerBgColor,
                   borderRadius: AppRadius.circular20,
                 ),
               ),
-              const Text(
+              Text(
                 AppStrings.premiumTeaserUnlockAll,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Geologica',
                   fontWeight: FontWeight.w500,
-                  fontSize: 30,
-                  height: 1.2,
-                  letterSpacing: -1,
+                  fontSize: textFontSize,
+                  height: textLineHeight,
+                  letterSpacing: textLetterSpacing,
                   color: AppColors.accentGold,
-                  shadows: [Shadow(color: Color(0xFFFF5C00), blurRadius: 14.4)],
+                  shadows: [
+                    Shadow(
+                      color: _textShadowColor,
+                      blurRadius: textShadowBlurRadius,
+                    ),
+                  ],
                 ),
               ),
             ],

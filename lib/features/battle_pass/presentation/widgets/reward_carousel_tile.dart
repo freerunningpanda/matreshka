@@ -126,27 +126,58 @@ class RewardCarouselTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardWidth = width - 42;
-    final cardHeight = height - 56;
+    const cardWidthInset = 42.0;
+    const cardHeightInset = 56.0;
+    const cardInsetLeft = 21.0;
+    const cardInsetTop = 28.0;
+    const claimedOpacity = 0.5;
+    const fullOpacity = 1.0;
+    const borderWidth = 4.0;
+    const glowAlphaFallback = 0.6;
+    const imageInsetLeft = 45.0;
+    const imageInsetTop = 44.0;
+    const imageWidthInset = 48.0;
+    const imageHeightInset = 32.0;
+    const badgeLeft = 40.0;
+    const badgeTop = 40.0;
+    const quantityChipRight = 34.0;
+    const quantityChipGapAboveFooter = 7.0;
+    const quantityChipBottomInset = 44.0;
+    const quantityChipBgColor = Color(0x8C000000);
+    const quantityFontSize = 26.0;
+    const quantityLineHeight = 1.2;
+    const quantityLetterSpacing = -0.01;
+    const animationDuration = Duration(milliseconds: 220);
+    const footerScaleHidden = 0.85;
+    const footerScaleVisible = 1.0;
+    const footerOpacityHidden = 0.0;
+    const footerOpacityVisible = 1.0;
+    const glowScale = 1.12;
+    const normalScale = 1.0;
+    const claimedBadgeRight = 24.0;
+    const claimedBadgeTop = 44.0;
+
+    final cardWidth = width - cardWidthInset;
+    final cardHeight = height - cardHeightInset;
     const footerMargin = 8.0;
     const footerHeight = 48.0;
-    final footerTop = 28 + cardHeight - footerMargin - footerHeight;
+    final footerTop = cardInsetTop + cardHeight - footerMargin - footerHeight;
     const quantityChipHeight = 36.0;
     // Когда снизу есть плашка "Забрать", чип количества не может стоять на
     // своём обычном месте (у нижнего края карточки) — она его перекрывает.
     // Сдвигаем чип строго над плашкой с отступом 7px, а без плашки
     // оставляем прежнее место у низа карточки.
     final quantityChipTop = footer != null
-        ? footerTop - 7 - quantityChipHeight
-        : height - 44 - quantityChipHeight;
+        ? footerTop - quantityChipGapAboveFooter - quantityChipHeight
+        : height - quantityChipBottomInset - quantityChipHeight;
     final content = Opacity(
-      opacity: claimed ? 0.5 : 1,
+      opacity: claimed ? claimedOpacity : fullOpacity,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Positioned(
-            left: 21,
-            top: 28,
+            left: cardInsetLeft,
+            top: cardInsetTop,
             width: cardWidth,
             height: cardHeight,
             child: Material(
@@ -161,7 +192,7 @@ class RewardCarouselTile extends StatelessWidget {
                   // проступали, а не выскакивали внезапно (раньше из-за
                   // мгновенного boxShadow плитка визуально "выпрыгивала").
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 220),
+                    duration: animationDuration,
                     curve: Curves.easeOut,
                     width: cardWidth,
                     height: cardHeight,
@@ -169,7 +200,7 @@ class RewardCarouselTile extends StatelessWidget {
                       gradient: gradient,
                       borderRadius: AppRadius.circular24,
                       border: borderColor != null && !borderIgnoresOpacity
-                          ? Border.all(color: borderColor!, width: 4)
+                          ? Border.all(color: borderColor!, width: borderWidth)
                           : null,
                       // "Backlight_BP_Card" из Figma — мягкое свечение вокруг
                       // выбранной для получения плитки, того же цвета, что
@@ -183,7 +214,9 @@ class RewardCarouselTile extends StatelessWidget {
                                 // мягче самой рамки, поэтому притушено.
                                 color:
                                     glowColor ??
-                                    borderColor!.withValues(alpha: 0.6),
+                                    borderColor!.withValues(
+                                      alpha: glowAlphaFallback,
+                                    ),
                                 blurRadius: glowBlurRadius,
                                 spreadRadius: glowSpreadRadius,
                               ),
@@ -196,23 +229,23 @@ class RewardCarouselTile extends StatelessWidget {
             ),
           ),
           Positioned(
-            left: 45,
-            top: 44,
-            width: cardWidth - 48,
-            height: cardHeight - 32,
+            left: imageInsetLeft,
+            top: imageInsetTop,
+            width: cardWidth - imageWidthInset,
+            height: cardHeight - imageHeightInset,
             child: IgnorePointer(
               child: Image.asset(asset, fit: BoxFit.contain),
             ),
           ),
           if (showBadge)
             Positioned(
-              left: 40,
-              top: 40,
+              left: badgeLeft,
+              top: badgeTop,
               child: IgnorePointer(child: RewardBadge(kind: badge)),
             ),
           if (quantityLabel != null)
             Positioned(
-              right: 34,
+              right: quantityChipRight,
               top: quantityChipTop,
               child: IgnorePointer(
                 child: SizedBox(
@@ -225,7 +258,7 @@ class RewardCarouselTile extends StatelessWidget {
                         width: AppSizes.horizontalSize69,
                         height: AppSizes.verticalSize36,
                         decoration: BoxDecoration(
-                          color: Color(0x8C000000),
+                          color: quantityChipBgColor,
                           borderRadius: AppRadius.circular8,
                         ),
                       ),
@@ -234,9 +267,9 @@ class RewardCarouselTile extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: 'Geologica',
                           fontWeight: FontWeight.w600,
-                          fontSize: 26,
-                          height: 1.2,
-                          letterSpacing: -0.01,
+                          fontSize: quantityFontSize,
+                          height: quantityLineHeight,
+                          letterSpacing: quantityLetterSpacing,
                           color: Colors.white,
                         ),
                       ),
@@ -253,10 +286,13 @@ class RewardCarouselTile extends StatelessWidget {
               // высокого, раз плашка ниже и у́же карточки) центра сдвиг
               // получается меньше, чем у карточки на той же высоте, и
               // плашка вылезает за скошенный край.
-              final origin = Offset(0, 28 + cardHeight / 2 - footerTop);
+              final origin = Offset(
+                0,
+                cardInsetTop + cardHeight / 2 - footerTop,
+              );
               final visible = footer != null;
               return Positioned(
-                left: 21 + footerMargin,
+                left: cardInsetLeft + footerMargin,
                 width: cardWidth - footerMargin * 2,
                 top: footerTop,
                 height: footerHeight,
@@ -270,13 +306,15 @@ class RewardCarouselTile extends StatelessWidget {
                     // а не добавляем/убираем условно (иначе анимировать
                     // нечего, виджет появляется/исчезает мгновенно).
                     child: AnimatedScale(
-                      duration: const Duration(milliseconds: 220),
+                      duration: animationDuration,
                       curve: Curves.easeOut,
-                      scale: visible ? 1 : 0.85,
+                      scale: visible ? footerScaleVisible : footerScaleHidden,
                       alignment: Alignment.center,
                       child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 220),
-                        opacity: visible ? 1 : 0,
+                        duration: animationDuration,
+                        opacity: visible
+                            ? footerOpacityVisible
+                            : footerOpacityHidden,
                         child: footer ?? const SizedBox.shrink(),
                       ),
                     ),
@@ -293,9 +331,9 @@ class RewardCarouselTile extends StatelessWidget {
     // Transform.scale не меняет раскладку соседей, поэтому нарочно перекрывает
     // их — так и задумано (см. референс из Figma).
     return AnimatedScale(
-      duration: const Duration(milliseconds: 220),
+      duration: animationDuration,
       curve: Curves.easeOut,
-      scale: showGlow ? 1.12 : 1,
+      scale: showGlow ? glowScale : normalScale,
       child: SizedBox(
         width: width,
         height: height,
@@ -306,8 +344,8 @@ class RewardCarouselTile extends StatelessWidget {
                   content,
                   if (borderColor != null && borderIgnoresOpacity)
                     Positioned(
-                      left: 21,
-                      top: 28,
+                      left: cardInsetLeft,
+                      top: cardInsetTop,
                       width: cardWidth,
                       height: cardHeight,
                       child: IgnorePointer(
@@ -318,7 +356,10 @@ class RewardCarouselTile extends StatelessWidget {
                             width: cardWidth,
                             height: cardHeight,
                             decoration: BoxDecoration(
-                              border: Border.all(color: borderColor!, width: 4),
+                              border: Border.all(
+                                color: borderColor!,
+                                width: borderWidth,
+                              ),
                               borderRadius: AppRadius.circular24,
                             ),
                           ),
@@ -326,8 +367,8 @@ class RewardCarouselTile extends StatelessWidget {
                       ),
                     ),
                   const Positioned(
-                    right: 24,
-                    top: 44,
+                    right: claimedBadgeRight,
+                    top: claimedBadgeTop,
                     child: IgnorePointer(child: _ClaimedBadge()),
                   ),
                 ],

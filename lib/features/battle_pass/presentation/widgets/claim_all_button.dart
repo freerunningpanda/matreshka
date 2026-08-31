@@ -18,6 +18,8 @@ class ClaimAllButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const labelFontSize = 24.0;
+
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: gradient,
@@ -38,7 +40,7 @@ class ClaimAllButton extends StatelessWidget {
               style: const TextStyle(
                 fontFamily: 'Geologica',
                 fontWeight: FontWeight.w600,
-                fontSize: 24,
+                fontSize: labelFontSize,
                 color: Colors.white,
               ),
             ),

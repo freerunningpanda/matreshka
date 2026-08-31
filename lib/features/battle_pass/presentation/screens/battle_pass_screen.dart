@@ -41,6 +41,12 @@ class _BattlePassView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Уровни-ориентиры сценария "Конец наград" — точечная подсветка (белая
+    // рамка + значок подарка) и золотой градиент вместо фиолетового "тут
+    // премиум" (см. RewardsTrack.highlightedLevelNumber/goldGradientLevelNumber).
+    const highlightedTeaserLevel = 97;
+    const goldGradientLevel = 100;
+
     return Scaffold(
       body: BlocBuilder<BattlePassCubit, BattlePassState>(
         builder: (context, state) {
@@ -157,10 +163,15 @@ class _BattlePassView extends StatelessWidget {
                                 )
                             ? ClaimAllButton(
                                 label: AppStrings.claimAllRewardsButton,
+                                // Тот же зелёный, что и AppColors.claimGreen*
+                                // (см. reward_tile.dart._ClaimButton), но без
+                                // готового AppColors.claimGreenGradient — у
+                                // него другое направление (сверху вниз), тут
+                                // по умолчанию слева направо.
                                 gradient: const LinearGradient(
                                   colors: [
-                                    Color(0xFF56B877),
-                                    Color(0xFF449660),
+                                    AppColors.claimGreenTop,
+                                    AppColors.claimGreenBottom,
                                   ],
                                 ),
                                 onPressed: () => context
@@ -265,7 +276,7 @@ class _BattlePassView extends StatelessWidget {
                                 scenario ==
                                     BattlePassScenario
                                         .rewardsEndedPremiumNotOwned
-                            ? 97
+                            ? highlightedTeaserLevel
                             : null,
                         // Плавающее превью юбилейного уровня — без короны
                         // (premium.svg) тоже в обоих.
@@ -287,7 +298,7 @@ class _BattlePassView extends StatelessWidget {
                         goldGradientLevelNumber:
                             scenario ==
                                 BattlePassScenario.rewardsEndedPremiumNotOwned
-                            ? 100
+                            ? goldGradientLevel
                             : null,
                       ),
                     ],
@@ -339,6 +350,15 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
     if (!_visible) return const SizedBox.shrink();
     void dismiss() => setState(() => _visible = false);
 
+    const claimAllButtonRight = 6.0;
+    // Нижний край кнопки "Забрать все награды" должен оставаться выше
+    // плавающего превью юбилейного уровня в RewardsTrack — см. комментарий
+    // ниже про Positioned(bottom: AppDimens.designHeight - ...).
+    const claimAllButtonBottomAnchor = 748.0;
+    const claimAllButtonBottomMargin = 8.0;
+    const closeButtonRight = 80.0;
+    const closeButtonTop = 50.0;
+
     return Positioned.fill(
       child: Stack(
         children: [
@@ -366,14 +386,17 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
           // её нижний край гарантированно оставался выше этой отметки.
           if (widget.claimAllButton != null)
             Positioned(
-              right: 6,
-              bottom: AppDimens.designHeight - 748 + 8,
+              right: claimAllButtonRight,
+              bottom:
+                  AppDimens.designHeight -
+                  claimAllButtonBottomAnchor +
+                  claimAllButtonBottomMargin,
               width: PremiumBanner.width,
               child: Center(child: widget.claimAllButton),
             ),
           Positioned(
-            right: 80,
-            top: 50,
+            right: closeButtonRight,
+            top: closeButtonTop,
             child: Material(
               color: AppColors.buttonOverlayWeak,
               shape: const CircleBorder(),
