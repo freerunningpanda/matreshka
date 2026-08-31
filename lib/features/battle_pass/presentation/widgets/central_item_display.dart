@@ -62,11 +62,7 @@ class _Tag extends StatelessWidget {
       ),
       child: Row(
         children: [
-          SvgPicture.asset(
-            'assets/icons/battle_pass/premium_icon.svg',
-            width: 30,
-            height: 22,
-          ),
+          SvgPicture.asset(AppAssets.iconPremiumIcon, width: 30, height: 22),
           AppSizedBoxes.horizontalSizedBoxW10,
           Expanded(
             child: Text(
@@ -109,11 +105,7 @@ class _ItemTitle extends StatelessWidget {
           ),
         ),
         AppSizedBoxes.horizontalSizedBoxW16,
-        SvgPicture.asset(
-          'assets/icons/battle_pass/info.svg',
-          width: 36,
-          height: 36,
-        ),
+        SvgPicture.asset(AppAssets.iconInfo, width: 36, height: 36),
       ],
     );
   }

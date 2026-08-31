@@ -6,6 +6,7 @@
 // Core
 export '../core/di/injection_container.dart';
 export '../core/navigation/app_router.dart';
+export '../core/theme/app_assets.dart';
 export '../core/theme/app_colors.dart';
 export '../core/theme/app_dimens.dart';
 export '../core/theme/app_padding.dart';

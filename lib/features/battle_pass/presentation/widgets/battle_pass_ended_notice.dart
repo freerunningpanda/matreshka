@@ -41,9 +41,7 @@ class BattlePassEndedNotice extends StatelessWidget {
                   ),
                 ],
               ),
-              child: SvgPicture.asset(
-                'assets/icons/battle_pass/sticker_big.svg',
-              ),
+              child: SvgPicture.asset(AppAssets.iconStickerBig),
             ),
           ),
         ],

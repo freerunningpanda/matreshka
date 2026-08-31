@@ -32,9 +32,9 @@ class PremiumTeaserCluster extends StatefulWidget {
 
 class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
   static const _assets = [
-    'assets/images/battle_pass/premium_teaser_bag.png',
-    'assets/images/battle_pass/premium_teaser_bracelet.png',
-    'assets/images/battle_pass/premium_teaser_fuel.png',
+    AppAssets.imagePremiumTeaserBag,
+    AppAssets.imagePremiumTeaserBracelet,
+    AppAssets.imagePremiumTeaserFuel,
   ];
   static const _quantityLabels = [null, AppStrings.quantityLabelX2, null];
   static const _gradients = [

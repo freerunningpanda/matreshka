@@ -188,8 +188,7 @@ class _RewardTileState extends State<RewardTile> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  static const _placeholderAsset =
-      'assets/images/battle_pass/reward_placeholder.png';
+  static const _placeholderAsset = AppAssets.imageRewardPlaceholder;
 
   Gradient _rarityGradient(RewardRarity? rarity) => switch (rarity) {
     RewardRarity.legendary => AppColors.rewardTileGoldGradient,

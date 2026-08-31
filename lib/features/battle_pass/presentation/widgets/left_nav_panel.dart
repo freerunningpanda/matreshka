@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../exports.dart';
+
 /// Левая панель навигации (иконки разделов игры) — статичная картинка из
 /// макета: одинакова во всех состояниях экрана БП, поэтому не требует
 /// динамической вёрстки (см. README, раздел "спорные места").
@@ -14,7 +16,7 @@ class LeftNavPanel extends StatelessWidget {
       bottom: 0,
       width: 295,
       child: Image(
-        image: AssetImage('assets/images/battle_pass/left_nav_bar.png'),
+        image: AssetImage(AppAssets.imageLeftNavBar),
         fit: BoxFit.fitHeight,
         alignment: Alignment.centerLeft,
       ),

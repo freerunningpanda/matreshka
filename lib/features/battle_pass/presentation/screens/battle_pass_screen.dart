@@ -385,7 +385,7 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
                   height: 100,
                   padding: AppPadding.allPadding32,
                   child: SvgPicture.asset(
-                    'assets/icons/battle_pass/icn_x.svg',
+                    AppAssets.iconClose,
                     width: 36,
                     height: 36,
                   ),

@@ -27,16 +27,14 @@ class ScenarioFlavor {
   /// bullets.png (rewardsEndedPremiumOwned) увеличена на 8%.
   final double itemScale;
 
-  static const _assetsBase = 'assets/images/battle_pass';
-
   static ScenarioFlavor of(BattlePassScenario scenario) => switch (scenario) {
     BattlePassScenario.premiumLocked => const ScenarioFlavor(
-      itemAsset: '$_assetsBase/reward_item_locked.png',
+      itemAsset: AppAssets.imageItemLocked,
       itemTitle: AppStrings.itemTitleMegaPack,
       tag: AppStrings.itemTagAvailableWithPremium,
     ),
     BattlePassScenario.premiumUnlockedWithReward => const ScenarioFlavor(
-      itemAsset: '$_assetsBase/reward_item_purchased.png',
+      itemAsset: AppAssets.imageItemPurchased,
       itemTitle: AppStrings.itemTitleFatalWomanOrMafiaBoss,
       tag: AppStrings.itemTagAvailableWithPremium,
       itemScale: 1.22,
@@ -47,7 +45,7 @@ class ScenarioFlavor {
     // (см. battle_pass_mock_api.dart — наполнение оттуда же).
     BattlePassScenario.rewardsEndedPremiumOwned ||
     BattlePassScenario.rewardsEndedPremiumNotOwned => const ScenarioFlavor(
-      itemAsset: '$_assetsBase/bullets.png',
+      itemAsset: AppAssets.imageBullets,
       itemTitle: AppStrings.itemTitleMegaPack,
       tag: AppStrings.itemTagAvailableWithPremium,
       itemScale: 1.12,
@@ -59,7 +57,7 @@ class ScenarioFlavor {
     BattlePassScenario.completed ||
     BattlePassScenario.premiumUnlockedNoReward ||
     BattlePassScenario.maxLevelNoReward => const ScenarioFlavor(
-      itemAsset: '$_assetsBase/reward_item_max_level.png',
+      itemAsset: AppAssets.imageItemMaxLevel,
       itemTitle: AppStrings.itemTitleMegaPack,
       itemOffsetY: -70,
       itemScale: 1.06,

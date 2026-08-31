@@ -119,11 +119,7 @@ class _RewardHeader extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Image.asset(
-                  'assets/images/battle_pass/icon_xp_bp.png',
-                  width: 96,
-                  height: 96,
-                ),
+                Image.asset(AppAssets.imageIconXpBp, width: 96, height: 96),
                 AppSizedBoxes.horizontalSizedBoxW12,
                 Text(
                   '${AppStrings.taskRewardXpPrefix}$rewardXp',
@@ -194,7 +190,7 @@ class _RewardHeader extends StatelessWidget {
             top: 44,
             child: IgnorePointer(
               child: SvgPicture.asset(
-                'assets/icons/battle_pass/done.svg',
+                AppAssets.iconDone,
                 width: 40,
                 height: 22,
               ),
@@ -343,11 +339,7 @@ class _TasksButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(
-                'assets/icons/battle_pass/icn_tasks.svg',
-                width: 30,
-                height: 30,
-              ),
+              SvgPicture.asset(AppAssets.iconTasks, width: 30, height: 30),
               AppSizedBoxes.horizontalSizedBoxW16,
               const Text(
                 AppStrings.tasksButtonLabel,
@@ -383,7 +375,7 @@ class _TasksButton extends StatelessWidget {
                 ],
               ),
               child: SvgPicture.asset(
-                'assets/icons/battle_pass/sticker_new.svg',
+                AppAssets.iconStickerNew,
                 width: 44,
                 height: 46,
               ),
@@ -418,11 +410,7 @@ class _ClaimXpButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (claimed) ...[
-            SvgPicture.asset(
-              'assets/icons/battle_pass/done.svg',
-              width: 26,
-              height: 14,
-            ),
+            SvgPicture.asset(AppAssets.iconDone, width: 26, height: 14),
             AppSizedBoxes.horizontalSizedBoxW14,
           ],
           Text(

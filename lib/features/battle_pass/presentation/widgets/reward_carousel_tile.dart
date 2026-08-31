@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../exports.dart';
+
 /// Общий наклон (shear) для всех "боевых" элементов трека — плитки,
 /// значок награды, чип количества, рамка кнопки, стрелка. Иконки/текст
 /// внутри остаются прямыми — это отдельный неповёрнутый слой поверх.
@@ -49,8 +51,8 @@ class RewardBadge extends StatelessWidget {
     final premium = kind == RewardBadgeKind.premium;
     return SvgPicture.asset(
       premium
-          ? 'assets/icons/battle_pass/premium.svg'
-          : 'assets/icons/battle_pass/reward.svg',
+          ? AppAssets.iconRewardBadgePremium
+          : AppAssets.iconRewardBadgeGift,
     );
   }
 }
@@ -343,10 +345,6 @@ class _ClaimedBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      'assets/icons/battle_pass/done.svg',
-      width: 48,
-      height: 26,
-    );
+    return SvgPicture.asset(AppAssets.iconDone, width: 48, height: 26);
   }
 }

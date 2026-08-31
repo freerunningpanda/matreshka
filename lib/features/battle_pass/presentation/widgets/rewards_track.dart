@@ -1018,11 +1018,7 @@ class _TrackSeparator extends StatelessWidget {
       child: SizedBox(
         height: 240,
         child: Center(
-          child: SvgPicture.asset(
-            'assets/icons/battle_pass/arrow.svg',
-            width: 12,
-            height: 20,
-          ),
+          child: SvgPicture.asset(AppAssets.iconArrow, width: 12, height: 20),
         ),
       ),
     );

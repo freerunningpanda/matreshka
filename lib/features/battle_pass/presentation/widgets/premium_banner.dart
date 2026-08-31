@@ -45,8 +45,8 @@ class PremiumBanner extends StatelessWidget {
               height: 1304,
               child: Image.asset(
                 premiumOwned
-                    ? 'assets/images/battle_pass/premium_banner_unlocked_art.png'
-                    : 'assets/images/battle_pass/premium_banner_locked_art.png',
+                    ? AppAssets.imagePremiumBannerUnlockedArt
+                    : AppAssets.imagePremiumBannerLockedArt,
                 fit: BoxFit.contain,
               ),
             ),
@@ -104,8 +104,7 @@ class PremiumBanner extends StatelessWidget {
                                 ? const _MaxLevelReachedNotice()
                                 : _UpgradeButton(
                                     label: AppStrings.increaseLevelButton,
-                                    icon:
-                                        'assets/icons/battle_pass/arrow_up.svg',
+                                    icon: AppAssets.iconArrowUp,
                                     iconHeight: 32,
                                     onPressed: onPressed,
                                   ),
@@ -164,7 +163,7 @@ class _UpgradeButton extends StatelessWidget {
   const _UpgradeButton({
     required this.label,
     required this.onPressed,
-    this.icon = 'assets/icons/battle_pass/premium_icon.svg',
+    this.icon = AppAssets.iconPremiumIcon,
     this.iconHeight = 20,
   });
 
