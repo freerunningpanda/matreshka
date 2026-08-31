@@ -16,29 +16,28 @@ class ClaimAllButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      left: 346,
-      bottom: 340,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(100),
-            onTap: onPressed,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 22),
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontFamily: 'Geologica',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 22,
-                  color: Colors.white,
-                ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(30),
+          onTap: onPressed,
+          child: Container(
+            width: 400,
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(vertical: 22),
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'Geologica',
+                fontWeight: FontWeight.w600,
+                fontSize: 24,
+                color: Colors.white,
               ),
             ),
           ),

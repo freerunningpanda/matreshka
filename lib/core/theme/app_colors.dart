@@ -41,6 +41,11 @@ abstract final class AppColors {
     colors: [claimXpButtonTop, claimXpButtonBottom],
   );
 
+  // Ромб плавающего превью юбилейного уровня (см. _MilestonePreview в
+  // rewards_track.dart) в сценарии "Макс. уровень / Много наград" — вместо
+  // обычного серого только там.
+  static const Color milestoneDiamondMaxLevel = Color(0xFFD137DF);
+
   static const Color glowGold = Color(0xFFFFB41C);
   static const Color glowShadow = Color(0x52FFB800); // rgba(255,184,0,0.32)
 

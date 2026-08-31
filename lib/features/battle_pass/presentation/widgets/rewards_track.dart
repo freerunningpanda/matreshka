@@ -15,6 +15,7 @@ class RewardsTrack extends StatefulWidget {
     required this.season,
     required this.onClaim,
     required this.onUnlockPremium,
+    this.highlightMaxLevelMilestone = false,
     super.key,
   });
 
@@ -22,13 +23,26 @@ class RewardsTrack extends StatefulWidget {
   final void Function(int levelNumber) onClaim;
   final VoidCallback onUnlockPremium;
 
+  /// Ромб плавающего превью юбилейного уровня красится в
+  /// AppColors.milestoneDiamondMaxLevel вместо обычного серого — только в
+  /// сценарии "Макс. уровень / Много наград" (см. battle_pass_screen.dart).
+  final bool highlightMaxLevelMilestone;
+
   @override
   State<RewardsTrack> createState() => _RewardsTrackState();
 }
 
 class _RewardsTrackState extends State<RewardsTrack> {
   final _controller = ScrollController();
-  static const double _tileExtent = 170;
+
+  // Реальный шаг между соседними уровнями в списке: ширина плитки (242,
+  // RewardCarouselTile.width по умолчанию) плюс ширина разделителя-стрелки
+  // между ними (~12, см. _TrackSeparator/_LevelTrackNode._diamondStride в
+  // reward_tile.dart — те же 254). Заниженное значение почти не заметно на
+  // первом прыжке (к 10-му уровню), но накапливается с каждым следующим
+  // юбилейным — к 40-му промах достигал (254-170)*39 ≈ 3276px, и прыжок
+  // останавливался далеко до цели.
+  static const double _tileExtent = 254;
 
   bool _showLeftArrow = false;
   bool _hasScrolled = false;
@@ -46,12 +60,36 @@ class _RewardsTrackState extends State<RewardsTrack> {
     return leading + (levelNumber - 1) * _tileExtent;
   }
 
+  /// Половина разницы между шириной вьюпорта и шагом плитки — на столько
+  /// _scrollToMilestone недокручивает от _offsetForLevel, чтобы плитка
+  /// вставала по центру, а не впритык к левому краю. Тот же порог нужен и
+  /// здесь: иначе после центрированного прыжка на уровень m «пройденным»
+  /// он не считается (offset после прыжка меньше offsetForLevel(m)), ромб
+  /// предпросмотра залипает и дальнейшие прыжки не работают.
+  double get _viewportHalfGap {
+    if (!_controller.hasClients) return 0;
+    return (_controller.position.viewportDimension - _tileExtent) / 2;
+  }
+
+  double _centeredOffsetForLevel(int levelNumber) =>
+      _offsetForLevel(levelNumber) - _viewportHalfGap;
+
   /// Ближайший ещё не пройденный юбилейный уровень (10, 20, 30…) — пока он
   /// не проскроллен в начало трека, к нему ведут стрелка вправо и оверлей.
   int? _computeNextMilestone() {
     final maxLevel = widget.season.levels.length;
+    // Центрированный порог последнего уровня физически недостижим — под
+    // ним нет содержимого, чтобы дотянуть его до середины вьюпорта, и
+    // список упирается в maxScrollExtent раньше. Без клампа порог остаётся
+    // недостижим сколько ни скролль — превью 40-го уровня зависает навсегда
+    // и закрывает собой финальную плитку. Клампим порог до реально
+    // доступного конца скролла: дошли до конца — уровень пройден.
+    final maxScrollExtent = _controller.hasClients
+        ? _controller.position.maxScrollExtent
+        : double.infinity;
     for (var m = 10; m <= maxLevel; m += 10) {
-      if (_controller.offset < _offsetForLevel(m)) return m;
+      final threshold = _centeredOffsetForLevel(m).clamp(0, maxScrollExtent);
+      if (_controller.offset < threshold) return m;
     }
     return null;
   }
@@ -119,11 +157,13 @@ class _RewardsTrackState extends State<RewardsTrack> {
 
   void _scrollToMilestone(int levelNumber) {
     if (!_controller.hasClients) return;
+    // Целевая плитка встаёт примерно по центру видимой области трека, а не
+    // впритык к её левому краю (см. _centeredOffsetForLevel — тот же порог
+    // использует _computeNextMilestone, иначе после прыжка ромб предпросмотра
+    // не продвигается дальше).
+    final target = _centeredOffsetForLevel(levelNumber);
     _controller.animateTo(
-      _offsetForLevel(levelNumber).clamp(
-        0,
-        _controller.position.maxScrollExtent,
-      ),
+      target.clamp(0, _controller.position.maxScrollExtent),
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeOutCubic,
     );
@@ -283,6 +323,9 @@ class _RewardsTrackState extends State<RewardsTrack> {
               child: _MilestonePreview(
                 level: widget.season.levels[_nextMilestone! - 1],
                 onTap: () => _scrollToMilestone(_nextMilestone!),
+                diamondColor: widget.highlightMaxLevelMilestone
+                    ? AppColors.milestoneDiamondMaxLevel
+                    : null,
               ),
             ),
           if (_nextMilestone != null)
@@ -364,13 +407,22 @@ class _RewardsTrackState extends State<RewardsTrack> {
 /// обычный тёмно-серый (как у прочих плиток), градиент по редкости здесь
 /// не показателен: акцент даёт корона + рамка + свечение, а не заливка.
 class _MilestonePreview extends StatelessWidget {
-  const _MilestonePreview({required this.level, required this.onTap});
+  const _MilestonePreview({
+    required this.level,
+    required this.onTap,
+    this.diamondColor,
+  });
 
   final BattlePassLevel level;
   final VoidCallback onTap;
 
+  /// Переопределяет цвет ромба ниже (по умолчанию — обычный серый
+  /// _defaultDiamondColor); см. RewardsTrack.highlightMaxLevelMilestone.
+  final Color? diamondColor;
+
   static const _accentColor = Color(0xFFDA7128);
   static const _glowColor = Color(0xFFE23600);
+  static const _defaultDiamondColor = Color(0xFF4A4A52);
 
   /// Заливка карточки — тёмно-серый вверху, переходящий в тот же оранжевый,
   /// что и рамка, ближе к низу (за ящиком), а не ровный серый фон и не
@@ -424,10 +476,11 @@ class _MilestonePreview extends StatelessWidget {
             width: _diamondSize,
             height: _diamondSize,
             // Уровень ещё не достигнут — тот же серый, что у непройденного
-            // отрезка прогресс-бара под обычными плитками.
-            decoration: const BoxDecoration(
-              color: Color(0xFF4A4A52),
-              borderRadius: BorderRadius.all(Radius.circular(6)),
+            // отрезка прогресс-бара под обычными плитками (если не
+            // переопределён diamondColor — см. выше).
+            decoration: BoxDecoration(
+              color: diamondColor ?? _defaultDiamondColor,
+              borderRadius: const BorderRadius.all(Radius.circular(6)),
             ),
             child: Transform.rotate(
               angle: -0.785398,

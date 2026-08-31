@@ -121,6 +121,37 @@ class _BattlePassView extends StatelessWidget {
                             context.read<BattlePassCubit>().purchasePremium(),
                         onIncreaseLevel: () =>
                             context.read<BattlePassCubit>().increaseLevel(),
+                        // "Повысить уровень" нечего делать, если уровень уже
+                        // максимальный — баннер вместо кнопки показывает
+                        // неактивную плашку (см. PremiumBanner).
+                        maxLevelReached:
+                            season.currentLevel >= season.maxLevel,
+                        // "Забрать все награды" — только в "Макс. уровень /
+                        // Много наград" (тот же список сценариев, что и
+                        // раньше у отдельной плашки на экране), но теперь
+                        // встроена в баннер под "Повысить уровень" вместо
+                        // самостоятельной позиции.
+                        claimAllButton:
+                            scenario != BattlePassScenario.premiumLocked &&
+                                scenario !=
+                                    BattlePassScenario
+                                        .premiumUnlockedWithReward &&
+                                season.levels.any(
+                                  (l) => l.state == LevelState.claimable,
+                                )
+                            ? ClaimAllButton(
+                                label: 'Забрать все награды',
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFF56B877),
+                                    Color(0xFF449660),
+                                  ],
+                                ),
+                                onPressed: () => context
+                                    .read<BattlePassCubit>()
+                                    .claimAllRewards(),
+                              )
+                            : null,
                       ),
                       RewardsTrack(
                         season: season,
@@ -147,21 +178,9 @@ class _BattlePassView extends StatelessWidget {
                         },
                         onUnlockPremium: () =>
                             context.read<BattlePassCubit>().purchasePremium(),
+                        highlightMaxLevelMilestone:
+                            scenario == BattlePassScenario.maxLevel,
                       ),
-                      if (scenario != BattlePassScenario.premiumLocked &&
-                          scenario !=
-                              BattlePassScenario.premiumUnlockedWithReward &&
-                          season.levels.any(
-                            (l) => l.state == LevelState.claimable,
-                          ))
-                        ClaimAllButton(
-                          label: 'Забрать все награды',
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF56B877), Color(0xFF449660)],
-                          ),
-                          onPressed: () =>
-                              context.read<BattlePassCubit>().claimAllRewards(),
-                        ),
                     ],
                   ),
                 ),
@@ -188,11 +207,15 @@ class _DismissiblePremiumPromo extends StatefulWidget {
     required this.premiumOwned,
     required this.onUnlockPremium,
     required this.onIncreaseLevel,
+    this.claimAllButton,
+    this.maxLevelReached = false,
   });
 
   final bool premiumOwned;
   final VoidCallback onUnlockPremium;
   final VoidCallback onIncreaseLevel;
+  final Widget? claimAllButton;
+  final bool maxLevelReached;
 
   @override
   State<_DismissiblePremiumPromo> createState() =>
@@ -219,6 +242,8 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
             onPressed: widget.premiumOwned
                 ? widget.onIncreaseLevel
                 : widget.onUnlockPremium,
+            claimAllButton: widget.claimAllButton,
+            maxLevelReached: widget.maxLevelReached,
           ),
           Positioned(
             right: 80,

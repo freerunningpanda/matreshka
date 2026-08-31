@@ -10,11 +10,23 @@ class PremiumBanner extends StatelessWidget {
   const PremiumBanner({
     required this.premiumOwned,
     required this.onPressed,
+    this.claimAllButton,
+    this.maxLevelReached = false,
     super.key,
   });
 
   final bool premiumOwned;
   final VoidCallback onPressed;
+
+  /// "Забрать все награды" — только в сценарии "Макс. уровень / Много
+  /// наград" (см. battle_pass_screen.dart): встаёт под "Повысить уровень"
+  /// с отступом 24px, а не отдельной плашкой на экране, как раньше.
+  final Widget? claimAllButton;
+
+  /// Уровень уже максимальный — "Повысить уровень" нечего делать: вместо
+  /// золотой кнопки показывается неактивная плашка "Достигнут максимальный
+  /// уровень" без тапа.
+  final bool maxLevelReached;
 
   static const double _width = 605;
   static const double _height = 690;
@@ -92,11 +104,23 @@ class PremiumBanner extends StatelessWidget {
                           alignment: Alignment.center,
                           child: Padding(
                             padding: const EdgeInsets.only(left: 32, top: 53),
-                            child: _UpgradeButton(
-                              label: 'Повысить уровень',
-                              icon: 'assets/icons/battle_pass/arrow_up.svg',
-                              iconHeight: 32,
-                              onPressed: onPressed,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                maxLevelReached
+                                    ? const _MaxLevelReachedNotice()
+                                    : _UpgradeButton(
+                                        label: 'Повысить уровень',
+                                        icon:
+                                            'assets/icons/battle_pass/arrow_up.svg',
+                                        iconHeight: 32,
+                                        onPressed: onPressed,
+                                      ),
+                                if (claimAllButton != null) ...[
+                                  const SizedBox(height: 24),
+                                  claimAllButton!,
+                                ],
+                              ],
                             ),
                           ),
                         )
@@ -115,6 +139,37 @@ class PremiumBanner extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Неактивная плашка вместо "Повысить уровень", когда повышать уже некуда —
+/// без градиента/иконки/тапа, только приглушённый текст на стеклянном фоне.
+class _MaxLevelReachedNotice extends StatelessWidget {
+  const _MaxLevelReachedNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 400,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 24),
+      decoration: BoxDecoration(
+        color: AppColors.taskCardBodyBg,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: const Text(
+        'Достигнут максимальный уровень',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: 'Geologica',
+          fontWeight: FontWeight.w500,
+          fontSize: 22,
+          height: 1.2,
+          letterSpacing: -0.22,
+          color: AppColors.textMuted,
         ),
       ),
     );
