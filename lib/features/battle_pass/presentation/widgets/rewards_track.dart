@@ -752,12 +752,24 @@ class _TeaserTrackRow extends StatelessWidget {
   final int finalLevel;
 
   static const _color = Color(0xFF4A4A52);
-  static const _dashCount = 4;
+
+  /// Ширины чёрточек пунктира: крайние — короткие, три средних — длиннее и
+  /// одного размера между собой (см. дизайн).
+  static const _dashWidths = [16.0, 38.0, 38.0, 38.0, 16.0];
 
   /// Толщина линии — та же, что у обычных соединительных линий трека, см.
   /// _LevelTrackNode._lineThickness в reward_tile.dart (там она приватная,
   /// значение продублировано).
   static const _lineThickness = 10.0;
+
+  /// border-image-source пунктира по дизайну: linear-gradient(90deg,
+  /// #2D2E34 0%, #5D5D6D 50%, #2D2E34 100%) — сплошной градиент через весь
+  /// ряд чёрточек (не у каждой свой), поэтому рисуется одним ShaderMask
+  /// поверх всего Row, а не покраской отдельных Container.
+  static const _dashGradient = LinearGradient(
+    colors: [Color(0xFF2D2E34), Color(0xFF5D5D6D), Color(0xFF2D2E34)],
+    stops: [0.0, 0.5, 1.0],
+  );
 
   /// Расстояние от левого края этого виджета до ПРАВОГО (видимого) края ромба
   /// настоящего последнего уровня (100), чью исходящую линию сам он не
@@ -809,25 +821,30 @@ class _TeaserTrackRow extends StatelessWidget {
                 ),
               ),
               _TeaserDiamond(number: nextLevel),
-              const SizedBox(width: 16),
-              SizedBox(
-                width: _standardSegmentGap - 32,
+              const SizedBox(width: 6),
+              ShaderMask(
+                shaderCallback: (bounds) => _dashGradient.createShader(bounds),
+                blendMode: BlendMode.srcIn,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(
-                    _dashCount,
-                    (_) => Container(
-                      width: 14,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: _color,
-                        borderRadius: BorderRadius.circular(2),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (var i = 0; i < _dashWidths.length; i++) ...[
+                      if (i > 0) const SizedBox(width: 6),
+                      Container(
+                        width: _dashWidths[i],
+                        height: _lineThickness,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(
+                            _lineThickness / 2,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    ],
+                  ],
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 6),
               _TeaserDiamond(number: finalLevel),
             ],
           ),
