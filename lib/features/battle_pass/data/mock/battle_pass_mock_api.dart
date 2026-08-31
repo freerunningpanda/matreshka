@@ -43,12 +43,13 @@ class BattlePassMockApi {
           currentLevel: 12,
           premiumOwned: true,
           // Свой набор точечных оверрайдов, отдельный от
-          // premiumUnlockedWithReward: 4-й — тёмная (common) заливка,
-          // 5-й тоже тёмный, 6-8 — фиолетовая (epic). Все claimable — без
-          // этого 5-й по дефолтной формуле уходит в 'claimed' (притух +
-          // галочка), а он должен выглядеть обычной ещё не забранной
-          // плиткой, просто до первого тапа (см. RewardTile._selected).
-          claimableLevels: const {4, 5, 6, 7, 8},
+          // premiumUnlockedWithReward: 4-й — тёмная (common) заливка, уже
+          // забран (не в claimableLevels — по дефолтной формуле уходит в
+          // 'claimed', притух + галочка). 5-й тоже тёмный, но claimable —
+          // без этого он уходил бы в 'claimed' точно так же, а должен
+          // выглядеть обычной ещё не забранной плиткой (см.
+          // RewardTile._selected). 6-8 — фиолетовая (epic), тоже claimable.
+          claimableLevels: const {5, 6, 7, 8},
           freeRewardOverrides: const {
             4: (
               icon: 'assets/images/battle_pass/reward_mask_ghost.png',
