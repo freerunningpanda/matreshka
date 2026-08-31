@@ -25,7 +25,14 @@ class CentralItemDisplay extends StatelessWidget {
           key: ValueKey(scenario),
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Expanded(child: Image.asset(flavor.itemAsset, fit: BoxFit.contain)),
+            Expanded(
+              child: Transform.translate(
+                offset: Offset(0, flavor.itemOffsetY),
+                child: Image.asset(flavor.itemAsset, fit: BoxFit.contain,
+                
+                ),
+              ),
+            ),
             const SizedBox(height: 20),
             if (flavor.tag case final tag?) ...[
               _Tag(text: tag),

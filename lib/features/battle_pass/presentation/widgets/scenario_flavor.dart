@@ -8,6 +8,7 @@ class ScenarioFlavor {
     required this.itemAsset,
     required this.itemTitle,
     this.tag,
+    this.itemOffsetY = 0,
   });
 
   final String itemAsset;
@@ -16,6 +17,10 @@ class ScenarioFlavor {
   /// null — плашки-тега над названием предмета нет (см. "Макс. уровень /
   /// Много наград": она конфликтует с названием по месту, ей там не быть).
   final String? tag;
+
+  /// Сдвиг картинки предмета по вертикали (отрицательное — выше). У
+  /// reward_item_max_level.png композиция ниже остальных, поднята на 30px.
+  final double itemOffsetY;
 
   static const _assetsBase = 'assets/images/battle_pass';
 
@@ -39,6 +44,7 @@ class ScenarioFlavor {
     BattlePassScenario.maxLevelNoReward => const ScenarioFlavor(
       itemAsset: '$_assetsBase/reward_item_max_level.png',
       itemTitle: 'Мега пак',
+      itemOffsetY: -70,
     ),
   };
 }
