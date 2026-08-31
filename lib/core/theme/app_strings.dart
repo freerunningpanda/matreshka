@@ -39,6 +39,15 @@ abstract final class AppStrings {
   /// для поиска и золотой подсветки слова "или" внутри itemTitle.
   static const itemTitleOrConnector = ' или ';
 
+  // Диалог по инфо-иконке рядом с названием центрального предмета
+  static const itemInfoMegaPackBody =
+      'Набор из брони, аксессуаров и косметических предметов сезона. '
+      'Открывается прокачкой боевого пропуска.';
+  static const itemInfoFatalWomanOrMafiaBossBody =
+      'Эксклюзивный образ ивента «Пять лет вместе» — на выбор роковая '
+      'женщина или босс мафии. Доступен только с прокачанным боевым '
+      'пропуском.';
+
   // Dev-переключатель сценариев
   static const devScenarioSwitcherTooltip = 'Переключить сценарий (dev)';
   static const devScenarioPremiumLocked = 'Премиум не куплен';

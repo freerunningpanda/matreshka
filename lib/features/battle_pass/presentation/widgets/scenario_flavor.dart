@@ -7,6 +7,7 @@ class ScenarioFlavor {
   const ScenarioFlavor({
     required this.itemAsset,
     required this.itemTitle,
+    required this.infoText,
     this.tag,
     this.itemOffsetY = 0,
     this.itemScale = 1,
@@ -14,6 +15,10 @@ class ScenarioFlavor {
 
   final String itemAsset;
   final String itemTitle;
+
+  /// Текст диалога по тапу на инфо-иконку рядом с названием — свой для
+  /// каждого варианта itemTitle (см. CentralItemDisplay._ItemTitle).
+  final String infoText;
 
   /// null — плашки-тега над названием предмета нет (см. "Макс. уровень /
   /// Много наград": она конфликтует с названием по месту, ей там не быть).
@@ -31,11 +36,13 @@ class ScenarioFlavor {
     BattlePassScenario.premiumLocked => const ScenarioFlavor(
       itemAsset: AppAssets.imageItemLocked,
       itemTitle: AppStrings.itemTitleMegaPack,
+      infoText: AppStrings.itemInfoMegaPackBody,
       tag: AppStrings.itemTagAvailableWithPremium,
     ),
     BattlePassScenario.premiumUnlockedWithReward => const ScenarioFlavor(
       itemAsset: AppAssets.imageItemPurchased,
       itemTitle: AppStrings.itemTitleFatalWomanOrMafiaBoss,
+      infoText: AppStrings.itemInfoFatalWomanOrMafiaBossBody,
       tag: AppStrings.itemTagAvailableWithPremium,
       itemScale: 1.22,
     ),
@@ -47,6 +54,7 @@ class ScenarioFlavor {
     BattlePassScenario.rewardsEndedPremiumNotOwned => const ScenarioFlavor(
       itemAsset: AppAssets.imageBullets,
       itemTitle: AppStrings.itemTitleMegaPack,
+      infoText: AppStrings.itemInfoMegaPackBody,
       tag: AppStrings.itemTagAvailableWithPremium,
       itemScale: 1.12,
     ),
@@ -59,6 +67,7 @@ class ScenarioFlavor {
     BattlePassScenario.maxLevelNoReward => const ScenarioFlavor(
       itemAsset: AppAssets.imageItemMaxLevel,
       itemTitle: AppStrings.itemTitleMegaPack,
+      infoText: AppStrings.itemInfoMegaPackBody,
       itemOffsetY: -70,
       itemScale: 1.06,
     ),

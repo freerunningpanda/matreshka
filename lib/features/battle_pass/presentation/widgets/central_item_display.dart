@@ -41,7 +41,11 @@ class CentralItemDisplay extends StatelessWidget {
               _Tag(text: tag),
               AppSizedBoxes.verticalSizedBoxH10,
             ],
-            _ItemTitle(text: flavor.itemTitle),
+            _ItemTitle(
+              text: flavor.itemTitle,
+              infoAsset: flavor.itemAsset,
+              infoText: flavor.infoText,
+            ),
           ],
         ),
       ),
@@ -97,9 +101,19 @@ class _Tag extends StatelessWidget {
 }
 
 class _ItemTitle extends StatelessWidget {
-  const _ItemTitle({required this.text});
+  const _ItemTitle({
+    required this.text,
+    required this.infoAsset,
+    required this.infoText,
+  });
 
   final String text;
+
+  /// Картинка предмета — переиспользуется как превью в диалоге по тапу на
+  /// инфо-иконку, чтобы не грузить отдельный ассет.
+  final String infoAsset;
+
+  final String infoText;
 
   @override
   Widget build(BuildContext context) {
@@ -117,10 +131,21 @@ class _ItemTitle extends StatelessWidget {
           ),
         ),
         AppSizedBoxes.horizontalSizedBoxW16,
-        SvgPicture.asset(
-          AppAssets.iconInfo,
-          width: AppSizes.allSize36,
-          height: AppSizes.allSize36,
+        InkWell(
+          customBorder: const CircleBorder(),
+          onTap: () => showDialog<void>(
+            context: context,
+            builder: (_) => _ItemInfoDialog(
+              title: text,
+              asset: infoAsset,
+              description: infoText,
+            ),
+          ),
+          child: SvgPicture.asset(
+            AppAssets.iconInfo,
+            width: AppSizes.allSize36,
+            height: AppSizes.allSize36,
+          ),
         ),
       ],
     );
@@ -148,6 +173,129 @@ class _ItemTitle extends StatelessWidget {
         ),
         TextSpan(text: text.substring(index + highlight.length)),
       ],
+    );
+  }
+}
+
+/// Карточка предмета по тапу на инфо-иконку рядом с названием — превью,
+/// заголовок и описание. Тот же язык оформления (золотая рамка + мягкое
+/// свечение), что и у выноски дев-переключателя сценариев
+/// (см. scenario_switcher.dart._ScenarioSwitcherHint).
+class _ItemInfoDialog extends StatelessWidget {
+  const _ItemInfoDialog({
+    required this.title,
+    required this.asset,
+    required this.description,
+  });
+
+  final String title;
+  final String asset;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
+
+    const dialogMaxWidth = 480.0;
+    const previewSize = 160.0;
+    const borderWidth = 1.5;
+    const glowBlurRadius = 24.0;
+    const glowSpreadRadius = 1.0;
+    // Верхний паддинг больше остальных — освобождает место под крестик,
+    // который плавает поверх скролла отдельным слоем (см. Stack ниже) и не
+    // должен наезжать на превью/заголовок в самом верху контента.
+    const contentPadding = EdgeInsets.fromLTRB(32, 52, 32, 32);
+    const closeButtonInset = 8.0;
+    const closeButtonPadding = 8.0;
+    // Диалог живёт в реальных координатах экрана устройства (а не в 1080px
+    // дизайн-канвасе — showDialog кладёт его выше DesignCanvas, поверх
+    // всего MaterialApp), на невысоком landscape-экране превью+текст могут
+    // не влезть по высоте — отсюда и maxHeight, и скролл контента ниже.
+    final dialogMaxHeight = MediaQuery.sizeOf(context).height * 0.8;
+
+    return Dialog(
+      backgroundColor: colors.appColorTransparent,
+      insetPadding: AppPadding.allPadding24,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: dialogMaxWidth,
+          maxHeight: dialogMaxHeight,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: colors.taskCardHeaderBg,
+            borderRadius: AppRadius.circular24,
+            border: Border.all(color: colors.glowGold, width: borderWidth),
+            boxShadow: [
+              BoxShadow(
+                color: colors.glowShadow,
+                blurRadius: glowBlurRadius,
+                spreadRadius: glowSpreadRadius,
+              ),
+            ],
+          ),
+          // ClipRRect — скроллбар и контент не должны вылезать за скруглённые
+          // углы карточки при прокрутке.
+          child: ClipRRect(
+            borderRadius: AppRadius.circular24,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: contentPadding,
+                  child: Scrollbar(
+                    thumbVisibility: true,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: previewSize,
+                            height: previewSize,
+                            child: Image.asset(asset, fit: BoxFit.contain),
+                          ),
+                          AppSizedBoxes.verticalSizedBoxH12,
+                          Text(
+                            title,
+                            textAlign: TextAlign.center,
+                            style: theme.appTypography.mobileTypo.p1Med
+                                .copyWith(color: colors.accentGold),
+                          ),
+                          AppSizedBoxes.verticalSizedBoxH8,
+                          Text(
+                            description,
+                            textAlign: TextAlign.center,
+                            style: theme.appTypography.mobileTypo.p4Reg
+                                .copyWith(color: colors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // Отдельным слоем поверх скролла — не прокручивается вместе
+                // с контентом.
+                Positioned(
+                  top: closeButtonInset,
+                  right: closeButtonInset,
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(closeButtonPadding),
+                      child: Icon(
+                        Icons.close,
+                        color: colors.textSecondary,
+                        size: AppSizes.allSize18,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
