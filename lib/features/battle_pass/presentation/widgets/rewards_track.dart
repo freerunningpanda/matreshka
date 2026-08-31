@@ -773,12 +773,16 @@ class _TeaserTrackRow extends StatelessWidget {
   /// кончик, без запаса между линией и видимым краем оставался зазор.
   static const _backReach = 121.0 - 24.04 + 12.0 + 21.0 + 6.0;
 
-  /// Видимая (в пределах этого виджета) часть ведущей линии — вместе с
-  /// _backReach должна давать тот же промежуток между видимыми краями
-  /// соседних ромбов, что и у обычных сегментов трека (99→100 и т.п.):
-  /// _diamondStride − 2·_diamondHalfSpan ≈ 254 − 48.08 ≈ 205.92 (те же
-  /// константы, что в reward_tile.dart). 205.92 − _backReach ≈ 64.
-  static const _leadingLineWidth = 64.0;
+  /// Промежуток между видимыми краями соседних ромбов у обычного сегмента
+  /// трека (99→100 и т.п.): _diamondStride − 2·_diamondHalfSpan ≈
+  /// 254 − 48.08 ≈ 205.92 (те же константы, что в reward_tile.dart). Обе
+  /// линии этого ряда (100→101 и 101→120) — той же длины, несмотря на то что
+  /// вторая символически пропускает уровни 102-119.
+  static const _standardSegmentGap = 205.92;
+
+  /// Видимая (в пределах этого виджета) часть ведущей линии к 101-му — вместе
+  /// с _backReach должна давать _standardSegmentGap.
+  static const _leadingLineWidth = _standardSegmentGap - _backReach;
 
   @override
   Widget build(BuildContext context) {
@@ -806,7 +810,8 @@ class _TeaserTrackRow extends StatelessWidget {
               ),
               _TeaserDiamond(number: nextLevel),
               const SizedBox(width: 16),
-              Expanded(
+              SizedBox(
+                width: _standardSegmentGap - 32,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
