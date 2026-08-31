@@ -708,11 +708,11 @@ class _MilestonePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     const previewGlowBlurRadius = 45.1;
     const previewGlowSpreadRadius = 0.0;
-    const numberFontSize = 14.0;
 
     // Заливка карточки — тёмно-серый вверху, переходящий в тот же оранжевый,
     // что и рамка, ближе к низу (за ящиком), а не ровный серый фон и не
@@ -769,10 +769,7 @@ class _MilestonePreview extends StatelessWidget {
               child: Center(
                 child: Text(
                   '${level.number}',
-                  style: TextStyle(
-                    fontFamily: 'Geologica',
-                    fontWeight: FontWeight.w700,
-                    fontSize: numberFontSize,
+                  style: theme.appTypography.mobileTypo.bold14.copyWith(
                     color: colors.appColorWhite,
                   ),
                 ),
@@ -840,7 +837,8 @@ class _TeaserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     // Тот же наклон, что у остальных плиток трека (kRewardTileSkewAngle) —
     // рамка наклонена вместе с фоном, текст внутри контрнаклонён отдельным
@@ -849,9 +847,6 @@ class _TeaserCard extends StatelessWidget {
     // карточки обычной плитки (RewardCarouselTile.cardHeight = height-56 =
     // 240-56=184, top:28 внутри общего слота высотой 240).
     const borderWidth = 1.5;
-    const textFontSize = 26.0;
-    const textLineHeight = 1.35;
-    const textLetterSpacing = -0.26;
 
     return SizedBox(
       height: AppSizes.verticalSize240,
@@ -879,12 +874,7 @@ class _TeaserCard extends StatelessWidget {
                 transform: Matrix4.skewX(-kRewardTileSkewAngle),
                 child: Text.rich(
                   TextSpan(
-                    style: TextStyle(
-                      fontFamily: 'Geologica',
-                      fontWeight: FontWeight.w500,
-                      fontSize: textFontSize,
-                      height: textLineHeight,
-                      letterSpacing: textLetterSpacing,
+                    style: theme.appTypography.mobileTypo.medium26Tall.copyWith(
                       color: colors.progressRingFill, // = textMuted
                     ),
                     children: requiresPremium
@@ -1064,9 +1054,8 @@ class _TeaserDiamond extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
-
-    const numberFontSize = 14.0;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     return Transform.rotate(
       angle: _diamondRotationAngle,
@@ -1089,10 +1078,7 @@ class _TeaserDiamond extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 child: Text(
                   '$number',
-                  style: TextStyle(
-                    fontFamily: 'Geologica',
-                    fontWeight: FontWeight.w700,
-                    fontSize: numberFontSize,
+                  style: theme.appTypography.mobileTypo.bold14.copyWith(
                     color: colors.appColorWhite,
                   ),
                 ),

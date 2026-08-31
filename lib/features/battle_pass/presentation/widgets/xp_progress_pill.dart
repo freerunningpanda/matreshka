@@ -29,9 +29,6 @@ class XpProgressPill extends StatelessWidget {
     const pillLeft = 346.0;
     const pillTop = 37.0;
     const ringStrokeWidth = 8.0;
-    const levelFontSize = 42.0;
-    const levelLineHeight = 1.3;
-    const levelLetterSpacing = -0.42;
 
     final isMaxLevel = currentLevel >= maxLevel;
     final progress = isMaxLevel || xpToNextLevel == 0
@@ -75,18 +72,10 @@ class XpProgressPill extends StatelessWidget {
                   padding: AppPadding.horizontalPadding8,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
-                    // Токена типографики для этого сочетания (600/42/1.3)
-                    // в MobileTypo пока нет — оставлено как есть, только
-                    // цвет взят из темы.
                     child: Text(
                       '$currentLevel',
                       maxLines: 1,
-                      style: TextStyle(
-                        fontFamily: 'Geologica',
-                        fontWeight: FontWeight.w600,
-                        fontSize: levelFontSize,
-                        height: levelLineHeight,
-                        letterSpacing: levelLetterSpacing,
+                      style: theme.appTypography.mobileTypo.semibold42.copyWith(
                         color: colors.textPrimary,
                       ),
                     ),

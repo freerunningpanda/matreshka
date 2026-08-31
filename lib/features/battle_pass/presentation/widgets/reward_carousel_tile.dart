@@ -126,7 +126,8 @@ class RewardCarouselTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     const cardWidthInset = 42.0;
     const cardHeightInset = 56.0;
@@ -145,9 +146,6 @@ class RewardCarouselTile extends StatelessWidget {
     const quantityChipRight = 34.0;
     const quantityChipGapAboveFooter = 7.0;
     const quantityChipBottomInset = 44.0;
-    const quantityFontSize = 26.0;
-    const quantityLineHeight = 1.2;
-    const quantityLetterSpacing = -0.01;
     const animationDuration = Duration(milliseconds: 220);
     const footerScaleHidden = 0.85;
     const footerScaleVisible = 1.0;
@@ -263,19 +261,10 @@ class RewardCarouselTile extends StatelessWidget {
                           borderRadius: AppRadius.circular8,
                         ),
                       ),
-                      // Токена типографики для этого сочетания (600/26/1.2)
-                      // в MobileTypo пока нет — оставлено как есть, только
-                      // цвет взят из темы.
                       Text(
                         quantityLabel!,
-                        style: TextStyle(
-                          fontFamily: 'Geologica',
-                          fontWeight: FontWeight.w600,
-                          fontSize: quantityFontSize,
-                          height: quantityLineHeight,
-                          letterSpacing: quantityLetterSpacing,
-                          color: colors.appColorWhite,
-                        ),
+                        style: theme.appTypography.mobileTypo.semibold26
+                            .copyWith(color: colors.appColorWhite),
                       ),
                     ],
                   ),

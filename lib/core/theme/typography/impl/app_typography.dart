@@ -67,5 +67,74 @@ class _MobileTypo extends MobileTypo {
           height: 1.2,
           letterSpacing: 22 * _letterSpacingPercent,
         ),
+        bold14: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w700,
+          fontSize: 14,
+        ),
+        semibold24: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w600,
+          fontSize: 24,
+        ),
+        medium26: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w500,
+          fontSize: 26,
+          height: 1.2,
+          letterSpacing: 26 * _letterSpacingPercent,
+        ),
+        semibold26: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w600,
+          fontSize: 26,
+          height: 1.2,
+          letterSpacing: 26 * _letterSpacingPercent,
+        ),
+        medium26Tall: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w500,
+          fontSize: 26,
+          height: 1.35,
+          letterSpacing: 26 * _letterSpacingPercent,
+        ),
+        medium30: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w500,
+          fontSize: 30,
+          height: 1.2,
+          letterSpacing: 30 * _letterSpacingPercent,
+        ),
+        semibold30: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w600,
+          fontSize: 30,
+          height: 1.2,
+          letterSpacing: 30 * _letterSpacingPercent,
+        ),
+        // Собственный, более выраженный трекинг (-1.0, не "-1%" от fontSize,
+        // как у остальных стилей выше) — по спеке премиум-тизера, а не
+        // общее правило.
+        medium30Tight: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w500,
+          fontSize: 30,
+          height: 1.2,
+          letterSpacing: -1.0,
+        ),
+        semibold42: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w600,
+          fontSize: 42,
+          height: 1.3,
+          letterSpacing: 42 * _letterSpacingPercent,
+        ),
+        semibold48: const TextStyle(
+          fontFamily: _fontFamily,
+          fontWeight: FontWeight.w600,
+          fontSize: 48,
+          height: 0.93,
+          letterSpacing: 48 * _letterSpacingPercent,
+        ),
       );
 }

@@ -107,12 +107,10 @@ class _RewardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     const fullOpacity = 1.0;
-    const textFontSize = 26.0;
-    const textLineHeight = 1.2;
-    const textLetterSpacing = -0.26;
     const doneBadgeLeft = 294.0;
     const doneBadgeTop = 44.0;
 
@@ -139,18 +137,10 @@ class _RewardHeader extends StatelessWidget {
                   height: AppSizes.allSize96,
                 ),
                 AppSizedBoxes.horizontalSizedBoxW12,
-                // Токена типографики для этого сочетания (500/26/1.2) в
-                // MobileTypo пока нет — оставлено как есть, только цвет
-                // взят из темы.
                 Text(
                   '${AppStrings.taskRewardXpPrefix}$rewardXp',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Geologica',
-                    fontWeight: FontWeight.w500,
-                    fontSize: textFontSize,
-                    height: textLineHeight,
-                    letterSpacing: textLetterSpacing,
+                  style: theme.appTypography.mobileTypo.medium26.copyWith(
                     color: colors.textPrimary,
                   ),
                 ),
@@ -169,14 +159,10 @@ class _RewardHeader extends StatelessWidget {
                       ? null
                       : Text.rich(
                           TextSpan(
-                            style: TextStyle(
-                              fontFamily: 'Geologica',
-                              fontWeight: FontWeight.w500,
-                              fontSize: textFontSize,
-                              height: textLineHeight,
-                              letterSpacing: textLetterSpacing,
-                              color: colors.progressRingFill, // = textMuted
-                            ),
+                            style: theme.appTypography.mobileTypo.medium26
+                                .copyWith(
+                                  color: colors.progressRingFill, // textMuted
+                                ),
                             children: [
                               TextSpan(
                                 text: '$progressCurrent',
@@ -349,11 +335,9 @@ class _TasksButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
-    const labelFontSize = 26.0;
-    const labelLineHeight = 1.2;
-    const labelLetterSpacing = -0.26;
     const badgeRight = -12.0;
     const badgeTop = -10.0;
     const badgeGlowBlurRadius = 10.0;
@@ -378,17 +362,9 @@ class _TasksButton extends StatelessWidget {
                 height: AppSizes.allSize30,
               ),
               AppSizedBoxes.horizontalSizedBoxW16,
-              // Токена типографики для этого сочетания (500/26/1.2) в
-              // MobileTypo пока нет — оставлено как есть, только цвет
-              // взят из темы.
               Text(
                 AppStrings.tasksButtonLabel,
-                style: TextStyle(
-                  fontFamily: 'Geologica',
-                  fontWeight: FontWeight.w500,
-                  fontSize: labelFontSize,
-                  height: labelLineHeight,
-                  letterSpacing: labelLetterSpacing,
+                style: theme.appTypography.mobileTypo.medium26.copyWith(
                   color: colors.textPrimary,
                 ),
               ),
@@ -438,11 +414,8 @@ class _ClaimXpButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
-
-    const labelFontSize = 26.0;
-    const labelLineHeight = 1.2;
-    const labelLetterSpacing = -0.26;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     // Кнопка "Забрать опыт" тизера заданий — отдельный, более приглушённый
     // (alpha 0.4) зелёный, не claimGreen* трека наград.
@@ -471,17 +444,9 @@ class _ClaimXpButton extends StatelessWidget {
             ),
             AppSizedBoxes.horizontalSizedBoxW14,
           ],
-          // Токена типографики для этого сочетания (500/26/1.2) в
-          // MobileTypo пока нет — оставлено как есть, только цвет взят из
-          // темы.
           Text(
             claimed ? AppStrings.xpClaimedLabel : AppStrings.claimXpButtonLabel,
-            style: TextStyle(
-              fontFamily: 'Geologica',
-              fontWeight: FontWeight.w500,
-              fontSize: labelFontSize,
-              height: labelLineHeight,
-              letterSpacing: labelLetterSpacing,
+            style: theme.appTypography.mobileTypo.medium26.copyWith(
               // progressRingFill = textMuted.
               color: claimed ? colors.progressRingFill : colors.claimXpText,
             ),

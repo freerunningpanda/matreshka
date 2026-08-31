@@ -234,11 +234,8 @@ class _ClaimButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
-
-    const labelFontSize = 26.0;
-    const labelLineHeight = 1.2;
-    const labelLetterSpacing = -0.01;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     final claimGreenGradient = LinearGradient(
       begin: Alignment.topCenter,
@@ -258,17 +255,10 @@ class _ClaimButton extends StatelessWidget {
       child: Transform(
         alignment: Alignment.center,
         transform: Matrix4.skewX(-kRewardTileSkewAngle),
-        // Токена типографики для этого сочетания (500/26/1.2) в MobileTypo
-        // пока нет — оставлено как есть, только цвет взят из темы.
         child: Text(
           AppStrings.claimButtonLabel,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontFamily: 'Geologica',
-            fontWeight: FontWeight.w500,
-            fontSize: labelFontSize,
-            height: labelLineHeight,
-            letterSpacing: labelLetterSpacing,
+          style: theme.appTypography.mobileTypo.medium26.copyWith(
             color: colors.appColorWhite,
           ),
         ),
@@ -326,10 +316,10 @@ class _LevelTrackNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     const lineLeft = 121.0; // от центра этой плитки — ровно на ромбе
-    const numberFontSize = 14.0;
 
     final reached = currentXp >= requiredXp;
     final ownColor = reached
@@ -396,10 +386,7 @@ class _LevelTrackNode extends StatelessWidget {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         '$number',
-                        style: TextStyle(
-                          fontFamily: 'Geologica',
-                          fontWeight: FontWeight.w700,
-                          fontSize: numberFontSize,
+                        style: theme.appTypography.mobileTypo.bold14.copyWith(
                           color: colors.appColorWhite,
                         ),
                       ),

@@ -119,11 +119,9 @@ class _UnlockSticker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
-    const textFontSize = 30.0;
-    const textLineHeight = 1.2;
-    const textLetterSpacing = -1.0;
     const textShadowBlurRadius = 14.4;
 
     return Material(
@@ -146,15 +144,7 @@ class _UnlockSticker extends StatelessWidget {
               Text(
                 AppStrings.premiumTeaserUnlockAll,
                 textAlign: TextAlign.center,
-                // Токена типографики для этого сочетания (500/30/1.2) в
-                // MobileTypo пока нет — оставлено как есть, только цвет
-                // взят из темы.
-                style: TextStyle(
-                  fontFamily: 'Geologica',
-                  fontWeight: FontWeight.w500,
-                  fontSize: textFontSize,
-                  height: textLineHeight,
-                  letterSpacing: textLetterSpacing,
+                style: theme.appTypography.mobileTypo.medium30Tight.copyWith(
                   color: colors.accentGold,
                   shadows: [
                     Shadow(

@@ -36,12 +36,10 @@ class _CountdownTimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     const iconSize = 32.0;
-    const textFontSize = 26.0;
-    const textLineHeight = 1.2;
-    const textLetterSpacing = -0.26;
 
     return Row(
       children: [
@@ -51,15 +49,8 @@ class _CountdownTimer extends StatelessWidget {
           color: colors.timerText,
         ),
         AppSizedBoxes.horizontalSizedBoxW14,
-        // Токена типографики для этого сочетания (500/26/1.2) в MobileTypo
-        // пока нет — оставлено как есть, только цвет взят из темы.
         EventCountdownText(
-          style: TextStyle(
-            fontFamily: 'Geologica',
-            fontWeight: FontWeight.w500,
-            fontSize: textFontSize,
-            height: textLineHeight,
-            letterSpacing: textLetterSpacing,
+          style: theme.appTypography.mobileTypo.medium26.copyWith(
             color: colors.timerText,
           ),
         ),
@@ -73,11 +64,9 @@ class _EventTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
-    const titleFontSize = 48.0;
-    const titleLineHeight = 0.93;
-    const titleLetterSpacing = -0.48;
     // Прямоугольник шейдера градиента заголовка — 1×45, а не размер
     // реального текста: тот неизвестен заранее, а важна только высота (так
     // градиент растягивается по вертикали текста, не по горизонтали).
@@ -88,16 +77,9 @@ class _EventTitle extends StatelessWidget {
       colors: [colors.eventTitleTop, colors.eventTitleBottom],
     );
 
-    // Токена типографики для этого сочетания (600/48/0.93) в MobileTypo
-    // пока нет — оставлено как есть, только цвет взят из темы.
     return Text(
       AppStrings.eventTitle,
-      style: TextStyle(
-        fontFamily: 'Geologica',
-        fontWeight: FontWeight.w600,
-        fontSize: titleFontSize,
-        height: titleLineHeight,
-        letterSpacing: titleLetterSpacing,
+      style: theme.appTypography.mobileTypo.semibold48.copyWith(
         foreground: Paint()
           ..shader = titleGradient.createShader(gradientShaderRect),
       ),

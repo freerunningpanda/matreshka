@@ -116,9 +116,6 @@ class _Card extends StatelessWidget {
 
     const cardGlowBlurRadius = 40.0;
     const cardGlowSpreadRadius = 2.0;
-    const subtitleFontSize = 26.0;
-    const subtitleLineHeight = 1.2;
-    const subtitleLetterSpacing = -0.26;
 
     return Container(
       width: BattlePassEndedNotice._cardWidth,
@@ -173,15 +170,7 @@ class _Card extends StatelessWidget {
                     Text(
                       AppStrings.battlePassEndedSubtitle,
                       textAlign: TextAlign.center,
-                      // Токена типографики для этого сочетания (500/26/1.2)
-                      // в MobileTypo пока нет — оставлено как есть, только
-                      // цвет взят из темы.
-                      style: TextStyle(
-                        fontFamily: 'Geologica',
-                        fontWeight: FontWeight.w500,
-                        fontSize: subtitleFontSize,
-                        height: subtitleLineHeight,
-                        letterSpacing: subtitleLetterSpacing,
+                      style: theme.appTypography.mobileTypo.medium26.copyWith(
                         color: colors.timerText, // #E9E9F3 @ 0.4
                       ),
                     ),
@@ -259,11 +248,8 @@ class _TimerPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
-
-    const textFontSize = 30.0;
-    const textLineHeight = 1.2;
-    const textLetterSpacing = -0.3;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     // Тот же набор levelUpBorder*-стопов, что и у рамки карточки (см.
     // _Card.build), но всего 4 (без levelUpBorderLight) и по более пологой
@@ -294,15 +280,8 @@ class _TimerPill extends StatelessWidget {
         gradient: pillGradient,
         borderRadius: AppRadius.circular60,
       ),
-      // Токена типографики для этого сочетания (600/30/1.2) в MobileTypo
-      // пока нет — оставлено как есть, только цвет взят из темы.
       child: EventCountdownText(
-        style: TextStyle(
-          fontFamily: 'Geologica',
-          fontWeight: FontWeight.w600,
-          fontSize: textFontSize,
-          height: textLineHeight,
-          letterSpacing: textLetterSpacing,
+        style: theme.appTypography.mobileTypo.semibold30.copyWith(
           color: colors.countdownPillText,
         ),
       ),

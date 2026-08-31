@@ -176,13 +176,11 @@ class _UpgradeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.theme.appColors.mainColors;
+    final theme = context.theme;
+    final colors = theme.appColors.mainColors;
 
     const glowBlurRadius = 40.0;
     const glowSpreadRadius = 4.0;
-    const labelFontSize = 30.0;
-    const labelLineHeight = 1.2;
-    const labelLetterSpacing = -0.3;
 
     final itemTagGradient = LinearGradient(
       begin: Alignment.topCenter,
@@ -240,17 +238,9 @@ class _UpgradeButton extends StatelessWidget {
                     height: iconHeight,
                   ),
                   AppSizedBoxes.horizontalSizedBoxW27,
-                  // Токена типографики для этого сочетания (500/30/1.2) в
-                  // MobileTypo пока нет — оставлено как есть, только цвет
-                  // взят из темы.
                   Text(
                     label,
-                    style: TextStyle(
-                      fontFamily: 'Geologica',
-                      fontWeight: FontWeight.w500,
-                      fontSize: labelFontSize,
-                      height: labelLineHeight,
-                      letterSpacing: labelLetterSpacing,
+                    style: theme.appTypography.mobileTypo.medium30.copyWith(
                       color: colors.itemTagText,
                     ),
                   ),
