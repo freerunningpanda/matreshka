@@ -68,7 +68,7 @@ class _PremiumTeaserClusterState extends State<PremiumTeaserCluster> {
           Positioned(
             left: 6,
             top: 236,
-            width: 626,
+            width: AppSizes.horizontalSize626,
             child: _UnlockSticker(onTap: widget.onUnlock),
           ),
         ],
@@ -89,13 +89,13 @@ class _UnlockSticker extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: SizedBox(
-          height: 60,
+          height: AppSizes.verticalSize60,
           child: Stack(
             alignment: Alignment.center,
             children: [
               const SkewedBox(
-                width: 626,
-                height: 60,
+                width: AppSizes.horizontalSize626,
+                height: AppSizes.verticalSize60,
                 decoration: BoxDecoration(
                   color: Color(0x4CE29432), // rgba(226,148,50,0.3)
                   borderRadius: BorderRadius.all(Radius.circular(20)),

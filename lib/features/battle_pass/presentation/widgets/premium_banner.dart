@@ -41,8 +41,8 @@ class PremiumBanner extends StatelessWidget {
             Positioned(
               left: premiumOwned ? -50 : 20,
               top: premiumOwned ? -278 : -169,
-              width: 668,
-              height: 1304,
+              width: AppSizes.horizontalSize668,
+              height: AppSizes.verticalSize1304,
               child: Image.asset(
                 premiumOwned
                     ? AppAssets.imagePremiumBannerUnlockedArt
@@ -73,7 +73,7 @@ class PremiumBanner extends StatelessWidget {
                   ),
                   AppSizedBoxes.verticalSizedBoxH10,
                   SizedBox(
-                    width: 400,
+                    width: AppSizes.horizontalSize400,
                     child: Text(
                       premiumOwned
                           ? AppStrings.premiumBannerSubtitleLevelUp
@@ -135,7 +135,7 @@ class _MaxLevelReachedNotice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 400,
+      width: AppSizes.horizontalSize400,
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 24),
       decoration: BoxDecoration(
@@ -175,8 +175,8 @@ class _UpgradeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
-      width: 400,
+      height: AppSizes.verticalSize100,
+      width: AppSizes.horizontalSize400,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         boxShadow: const [
@@ -205,7 +205,11 @@ class _UpgradeButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AppSizedBoxes.horizontalSizedBoxW32,
-                  SvgPicture.asset(icon, width: 27, height: iconHeight),
+                  SvgPicture.asset(
+                    icon,
+                    width: AppSizes.horizontalSize27,
+                    height: iconHeight,
+                  ),
                   AppSizedBoxes.horizontalSizedBoxW27,
                   Text(
                     label,

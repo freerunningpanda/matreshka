@@ -15,8 +15,8 @@ class CentralItemDisplay extends StatelessWidget {
     return Positioned(
       left: 960,
       top: 140,
-      width: 600,
-      height: 550,
+      width: AppSizes.horizontalSize600,
+      height: AppSizes.verticalSize550,
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 350),
         child: Column(
@@ -53,8 +53,8 @@ class _Tag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 324,
-      height: 39,
+      width: AppSizes.horizontalSize324,
+      height: AppSizes.verticalSize39,
       padding: AppPadding.onlyPaddingL12R19,
       decoration: const BoxDecoration(
         gradient: AppColors.itemTagGradient,
@@ -62,7 +62,11 @@ class _Tag extends StatelessWidget {
       ),
       child: Row(
         children: [
-          SvgPicture.asset(AppAssets.iconPremiumIcon, width: 30, height: 22),
+          SvgPicture.asset(
+            AppAssets.iconPremiumIcon,
+            width: AppSizes.horizontalSize30,
+            height: AppSizes.verticalSize22,
+          ),
           AppSizedBoxes.horizontalSizedBoxW10,
           Expanded(
             child: Text(
@@ -105,7 +109,11 @@ class _ItemTitle extends StatelessWidget {
           ),
         ),
         AppSizedBoxes.horizontalSizedBoxW16,
-        SvgPicture.asset(AppAssets.iconInfo, width: 36, height: 36),
+        SvgPicture.asset(
+          AppAssets.iconInfo,
+          width: AppSizes.allSize36,
+          height: AppSizes.allSize36,
+        ),
       ],
     );
   }

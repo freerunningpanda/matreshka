@@ -284,8 +284,8 @@ class _LevelTrackNode extends StatelessWidget {
     final ownColor = reached ? _reachedColor : _unreachedColor;
 
     return SizedBox(
-      width: 242,
-      height: 34,
+      width: AppSizes.horizontalSize242,
+      height: AppSizes.verticalSize34,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.center,
@@ -327,8 +327,8 @@ class _LevelTrackNode extends StatelessWidget {
           Transform.rotate(
             angle: 0.785398, // 45°
             child: Container(
-              width: 34,
-              height: 34,
+              width: AppSizes.allSize34,
+              height: AppSizes.allSize34,
               decoration: BoxDecoration(
                 color: ownColor,
                 borderRadius: BorderRadius.circular(6),

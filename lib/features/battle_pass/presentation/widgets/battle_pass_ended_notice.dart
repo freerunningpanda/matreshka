@@ -221,7 +221,10 @@ class _TimerPill extends StatelessWidget {
       // 214 — ширина из Figma, но это минимум, а не жёсткий лимит: она
       // измерена под короткий пример ("6д 13ч 55м"), а реальный мок-дедлайн
       // (15д 12ч 42м) шире и при фиксированной ширине обрезался.
-      constraints: const BoxConstraints(minWidth: 214, minHeight: 52),
+      constraints: const BoxConstraints(
+        minWidth: AppSizes.horizontalSize214,
+        minHeight: AppSizes.verticalSize52,
+      ),
       padding: AppPadding.symmetricPaddingH28V8,
       decoration: BoxDecoration(
         gradient: AppColors.countdownPillGradient,

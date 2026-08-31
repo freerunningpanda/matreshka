@@ -14,7 +14,7 @@ class LeftNavPanel extends StatelessWidget {
       left: 0,
       top: 0,
       bottom: 0,
-      width: 295,
+      width: AppSizes.horizontalSize295,
       child: Image(
         image: AssetImage(AppAssets.imageLeftNavBar),
         fit: BoxFit.fitHeight,

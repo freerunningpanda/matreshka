@@ -14,7 +14,7 @@ class EventTimerBanner extends StatelessWidget {
     return const Positioned(
       left: 513,
       top: 56,
-      width: 439,
+      width: AppSizes.horizontalSize439,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,

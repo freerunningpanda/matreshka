@@ -216,14 +216,14 @@ class RewardCarouselTile extends StatelessWidget {
               top: quantityChipTop,
               child: IgnorePointer(
                 child: SizedBox(
-                  width: 69,
-                  height: 36,
+                  width: AppSizes.horizontalSize69,
+                  height: AppSizes.verticalSize36,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       const SkewedBox(
-                        width: 69,
-                        height: 36,
+                        width: AppSizes.horizontalSize69,
+                        height: AppSizes.verticalSize36,
                         decoration: BoxDecoration(
                           color: Color(0x8C000000),
                           borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -345,6 +345,10 @@ class _ClaimedBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset(AppAssets.iconDone, width: 48, height: 26);
+    return SvgPicture.asset(
+      AppAssets.iconDone,
+      width: AppSizes.horizontalSize48,
+      height: AppSizes.verticalSize26,
+    );
   }
 }

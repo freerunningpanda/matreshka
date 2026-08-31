@@ -107,8 +107,8 @@ class _RewardHeader extends StatelessWidget {
         Opacity(
           opacity: completed ? _kCompletedOpacity : 1,
           child: Container(
-            height: 110,
-            width: 400,
+            height: AppSizes.verticalSize110,
+            width: AppSizes.horizontalSize400,
             padding: AppPadding.horizontalPadding30,
             decoration: const BoxDecoration(
               color: AppColors.taskCardHeaderBg,
@@ -119,7 +119,11 @@ class _RewardHeader extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Image.asset(AppAssets.imageIconXpBp, width: 96, height: 96),
+                Image.asset(
+                  AppAssets.imageIconXpBp,
+                  width: AppSizes.allSize96,
+                  height: AppSizes.allSize96,
+                ),
                 AppSizedBoxes.horizontalSizedBoxW12,
                 Text(
                   '${AppStrings.taskRewardXpPrefix}$rewardXp',
@@ -135,8 +139,8 @@ class _RewardHeader extends StatelessWidget {
                 ),
                 const Spacer(),
                 Container(
-                  width: 112,
-                  height: 56,
+                  width: AppSizes.horizontalSize112,
+                  height: AppSizes.verticalSize56,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: AppColors.taskChipBg,
@@ -191,8 +195,8 @@ class _RewardHeader extends StatelessWidget {
             child: IgnorePointer(
               child: SvgPicture.asset(
                 AppAssets.iconDone,
-                width: 40,
-                height: 22,
+                width: AppSizes.horizontalSize40,
+                height: AppSizes.verticalSize22,
               ),
             ),
           ),
@@ -230,7 +234,7 @@ class _TaskBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 400,
+      width: AppSizes.horizontalSize400,
       child: Stack(
         children: [
           // Фон + текст/прогресс притушены при завершённом задании; кнопка —
@@ -307,8 +311,8 @@ class _ProgressDashes extends StatelessWidget {
       children: List.generate(target, (index) {
         final filled = index < current;
         return Container(
-          width: 54,
-          height: 8,
+          width: AppSizes.horizontalSize54,
+          height: AppSizes.verticalSize8,
           decoration: BoxDecoration(
             color: filled ? AppColors.textPrimary : AppColors.progressRingTrack,
             borderRadius: BorderRadius.circular(4),
@@ -330,7 +334,7 @@ class _TasksButton extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          width: 320,
+          width: AppSizes.horizontalSize320,
           padding: AppPadding.ltrbPaddingL36T20R36B23,
           decoration: BoxDecoration(
             color: AppColors.buttonOverlayStrong,
@@ -339,7 +343,11 @@ class _TasksButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset(AppAssets.iconTasks, width: 30, height: 30),
+              SvgPicture.asset(
+                AppAssets.iconTasks,
+                width: AppSizes.allSize30,
+                height: AppSizes.allSize30,
+              ),
               AppSizedBoxes.horizontalSizedBoxW16,
               const Text(
                 AppStrings.tasksButtonLabel,
@@ -362,8 +370,8 @@ class _TasksButton extends StatelessWidget {
             right: -12,
             top: -10,
             child: Container(
-              width: 44,
-              height: 46,
+              width: AppSizes.horizontalSize44,
+              height: AppSizes.verticalSize46,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: const [
@@ -376,8 +384,8 @@ class _TasksButton extends StatelessWidget {
               ),
               child: SvgPicture.asset(
                 AppAssets.iconStickerNew,
-                width: 44,
-                height: 46,
+                width: AppSizes.horizontalSize44,
+                height: AppSizes.verticalSize46,
               ),
             ),
           ),
@@ -399,7 +407,7 @@ class _ClaimXpButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 320,
+      width: AppSizes.horizontalSize320,
       padding: AppPadding.ltrbPaddingL36T20R36B23,
       decoration: BoxDecoration(
         gradient: claimed ? null : AppColors.claimXpButtonGradient,
@@ -410,7 +418,11 @@ class _ClaimXpButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (claimed) ...[
-            SvgPicture.asset(AppAssets.iconDone, width: 26, height: 14),
+            SvgPicture.asset(
+              AppAssets.iconDone,
+              width: AppSizes.horizontalSize26,
+              height: AppSizes.verticalSize14,
+            ),
             AppSizedBoxes.horizontalSizedBoxW14,
           ],
           Text(

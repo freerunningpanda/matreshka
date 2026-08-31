@@ -381,13 +381,13 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
                 customBorder: const CircleBorder(),
                 onTap: dismiss,
                 child: Container(
-                  width: 100,
-                  height: 100,
+                  width: AppSizes.allSize100,
+                  height: AppSizes.allSize100,
                   padding: AppPadding.allPadding32,
                   child: SvgPicture.asset(
                     AppAssets.iconClose,
-                    width: 36,
-                    height: 36,
+                    width: AppSizes.allSize36,
+                    height: AppSizes.allSize36,
                   ),
                 ),
               ),

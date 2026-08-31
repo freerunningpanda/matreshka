@@ -39,8 +39,8 @@ class XpProgressPill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 100,
-            height: 100,
+            width: AppSizes.allSize100,
+            height: AppSizes.allSize100,
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -87,7 +87,7 @@ class XpProgressPill extends StatelessWidget {
           // (currentLevel=100 — см. battle_pass_mock_api.dart) растягивали
           // бы Column шире кольца и наезжали на EventTimerBanner правее.
           SizedBox(
-            width: 100,
+            width: AppSizes.horizontalSize100,
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(

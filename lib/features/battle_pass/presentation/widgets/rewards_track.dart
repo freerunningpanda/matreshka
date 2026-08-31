@@ -416,7 +416,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
       left: 346,
       right: 80,
       bottom: 24,
-      height: 300,
+      height: AppSizes.verticalSize300,
       // Clip.none — превью юбилейного уровня выше обычной плитки (300 против
       // 240) и растёт вверх за пределы этой области, чтобы его собственный
       // ромб с номером остался на одной высоте с остальными (см.
@@ -757,7 +757,7 @@ class _TeaserCard extends StatelessWidget {
     // карточки обычной плитки (RewardCarouselTile.cardHeight = height-56 =
     // 240-56=184, top:28 внутри общего слота высотой 240).
     return SizedBox(
-      height: 240,
+      height: AppSizes.verticalSize240,
       child: Align(
         alignment: Alignment.topCenter,
         child: Padding(
@@ -766,8 +766,8 @@ class _TeaserCard extends StatelessWidget {
             alignment: Alignment.center,
             transform: Matrix4.skewX(kRewardTileSkewAngle),
             child: Container(
-              width: 439,
-              height: 184,
+              width: AppSizes.horizontalSize439,
+              height: AppSizes.verticalSize184,
               alignment: Alignment.center,
               padding: AppPadding.horizontalPadding40,
               decoration: BoxDecoration(
@@ -900,8 +900,8 @@ class _TeaserTrackRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 439,
-      height: 34,
+      width: AppSizes.horizontalSize439,
+      height: AppSizes.verticalSize34,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -965,8 +965,8 @@ class _TeaserDiamond extends StatelessWidget {
     return Transform.rotate(
       angle: 0.785398, // 45°
       child: Container(
-        width: 34,
-        height: 34,
+        width: AppSizes.allSize34,
+        height: AppSizes.allSize34,
         decoration: BoxDecoration(
           color: _TeaserTrackRow._color,
           borderRadius: const BorderRadius.all(Radius.circular(6)),
@@ -1016,9 +1016,13 @@ class _TrackSeparator extends StatelessWidget {
     return Align(
       alignment: Alignment.topCenter,
       child: SizedBox(
-        height: 240,
+        height: AppSizes.verticalSize240,
         child: Center(
-          child: SvgPicture.asset(AppAssets.iconArrow, width: 12, height: 20),
+          child: SvgPicture.asset(
+            AppAssets.iconArrow,
+            width: AppSizes.horizontalSize12,
+            height: AppSizes.verticalSize20,
+          ),
         ),
       ),
     );
@@ -1042,8 +1046,8 @@ class _ArrowButton extends StatelessWidget {
           customBorder: const CircleBorder(),
           onTap: onTap,
           child: SizedBox(
-            width: 84,
-            height: 84,
+            width: AppSizes.allSize84,
+            height: AppSizes.allSize84,
             child: Icon(icon, color: Colors.white, size: 56),
           ),
         ),

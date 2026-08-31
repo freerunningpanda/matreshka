@@ -29,7 +29,7 @@ class ClaimAllButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(30),
           onTap: onPressed,
           child: Container(
-            width: 400,
+            width: AppSizes.horizontalSize400,
             alignment: Alignment.center,
             padding: AppPadding.verticalPadding22,
             child: Text(
