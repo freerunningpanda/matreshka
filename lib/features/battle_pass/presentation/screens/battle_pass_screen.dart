@@ -126,8 +126,13 @@ class _BattlePassView extends StatelessWidget {
                             context.read<BattlePassCubit>().increaseLevel(),
                         // "Повысить уровень" нечего делать, если уровень уже
                         // максимальный — баннер вместо кнопки показывает
-                        // неактивную плашку (см. PremiumBanner).
-                        maxLevelReached: season.currentLevel >= season.maxLevel,
+                        // неактивную плашку (см. PremiumBanner). Кроме
+                        // "Battle Pass завершен" — там currentLevel тоже
+                        // максимальный, но кнопка остаётся активной, как в
+                        // "Премиум куплен / награда".
+                        maxLevelReached:
+                            season.currentLevel >= season.maxLevel &&
+                            scenario != BattlePassScenario.completed,
                         // "Забрать все награды" — только в "Макс. уровень /
                         // Много наград". Не часть колонки PremiumBanner
                         // (баннер фиксированной высоты, кнопка внутри сдвигала
@@ -208,12 +213,6 @@ class _BattlePassView extends StatelessWidget {
                             scenario ==
                                 BattlePassScenario.premiumUnlockedNoReward ||
                             scenario == BattlePassScenario.maxLevelNoReward,
-                        // Только "Завершён" открывается сразу у последнего
-                        // элемента — "Макс. уровень / Нет наград" тоже
-                        // получил все уровни claimed, но открываться должен
-                        // как обычно (см. RewardsTrack.startScrolledToEnd).
-                        startScrolledToEnd:
-                            scenario == BattlePassScenario.completed,
                       ),
                     ],
                   ),
