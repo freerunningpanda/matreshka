@@ -43,8 +43,10 @@ class BattlePassMockApi {
           currentLevel: 12,
           premiumOwned: true,
           // Тот же набор, что и у premiumUnlockedWithReward — только 4-й
-          // с bullets.png вместо boss.png.
-          claimableLevels: const {4, 5, 6, 7, 8},
+          // с bullets.png вместо boss.png. Уровни 95-100 (хвост трека) —
+          // свой отдельный набор иконок/цветов, не пересекается с
+          // premiumUnlockedWithReward.
+          claimableLevels: const {4, 5, 6, 7, 8, 95, 96, 97, 98, 99, 100},
           freeRewardOverrides: const {
             4: (icon: 'assets/images/battle_pass/bullets.png', amount: 16),
             5: (
@@ -54,8 +56,36 @@ class BattlePassMockApi {
             6: (icon: 'assets/images/battle_pass/filter.png', amount: 1),
             7: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
             8: (icon: 'assets/images/battle_pass/green_monster.png', amount: 1),
+            95: (
+              icon: 'assets/images/battle_pass/reward_mask_ghost.png',
+              amount: 1,
+            ),
+            96: (
+              icon: 'assets/images/battle_pass/premium_teaser_bag.png',
+              amount: 1,
+            ),
+            97: (icon: 'assets/images/battle_pass/bullets.png', amount: 1),
+            98: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
+            99: (
+              icon: 'assets/images/battle_pass/green_monster.png',
+              amount: 1,
+            ),
+            100: (icon: 'assets/images/battle_pass/bull.png', amount: 1),
           },
-          rarityOverrides: const {5: 'common', 6: 'epic', 7: 'epic', 8: 'epic'},
+          rarityOverrides: const {
+            5: 'common',
+            6: 'epic',
+            7: 'epic',
+            8: 'epic',
+            95: 'common',
+            96: 'common',
+            97: 'common',
+            98: 'epic',
+            99: 'epic',
+            // "orange" не имеет отдельного тира редкости — ближайший
+            // существующий вариант заливки (rewardTileGoldGradient).
+            100: 'legendary',
+          },
         );
       case BattlePassScenario.premiumUnlockedNoReward:
         return _buildSeason(
@@ -191,11 +221,17 @@ class BattlePassMockApi {
       final number = index + 1;
       final state = allClaimed
           ? 'claimed'
+          // claimableLevels — точечный оверрайд конкретных уровней под
+          // claimable, поэтому проверяется раньше locked/current: иначе
+          // уровни выше currentLevel (см. rewardsEndedPremiumOwned, 95-100)
+          // так и оставались бы 'locked' несмотря на оверрайд.
+          : claimableLevels.contains(number)
+          ? 'claimable'
           : number > currentLevel
           ? 'locked'
           : number == currentLevel
           ? 'current'
-          : (claimableLevels.contains(number) || currentLevel - number <= 3)
+          : currentLevel - number <= 3
           ? 'claimable'
           : 'claimed';
       final claimed = state == 'claimed';

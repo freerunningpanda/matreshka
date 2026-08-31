@@ -241,7 +241,9 @@ class _TaskBody extends StatelessWidget {
                   opacity: completed ? _kCompletedOpacity : 1,
                   child: Text(
                     title,
-                    textAlign: centerContent ? TextAlign.center : TextAlign.start,
+                    textAlign: centerContent
+                        ? TextAlign.center
+                        : TextAlign.start,
                     style: const TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w500,
@@ -342,10 +344,24 @@ class _TasksButton extends StatelessWidget {
           Positioned(
             right: -12,
             top: -10,
-            child: SvgPicture.asset(
-              'assets/icons/battle_pass/sticker_new.svg',
+            child: Container(
               width: 44,
               height: 46,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: const [
+                  BoxShadow(
+                    color: AppColors.glowShadow,
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: SvgPicture.asset(
+                'assets/icons/battle_pass/sticker_new.svg',
+                width: 44,
+                height: 46,
+              ),
             ),
           ),
       ],

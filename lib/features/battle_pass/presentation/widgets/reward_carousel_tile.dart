@@ -140,7 +140,7 @@ class RewardCarouselTile extends StatelessWidget {
         ? footerTop - 7 - quantityChipHeight
         : height - 44 - quantityChipHeight;
     final content = Opacity(
-      opacity: claimed || locked ? 0.5 : 1,
+      opacity: claimed ? 0.5 : 1,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
