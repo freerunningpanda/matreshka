@@ -12,8 +12,8 @@ class BattlePassEndedNotice extends StatelessWidget {
   const BattlePassEndedNotice({super.key});
 
   static const double _cardWidth = 466;
-  static const double _stickerWidth = 64;
-  static const double _stickerHeight = 68;
+  static const double _stickerWidth = 84;
+  static const double _stickerHeight = 88;
 
   // Рамка виджета (Figma): left:346 top:305 — сама иконка выше на половину
   // своей высоты, так что её низ проходит ровно по верхнему краю рамки.
@@ -34,10 +34,13 @@ class BattlePassEndedNotice extends StatelessWidget {
             padding: EdgeInsets.only(top: _stickerHeight / 2),
             child: _Card(),
           ),
-          SvgPicture.asset(
-            'assets/icons/battle_pass/sticker_new.svg',
-            width: _stickerWidth,
-            height: _stickerHeight,
+          Positioned(
+            top: 4,
+            child: SvgPicture.asset(
+              'assets/icons/battle_pass/sticker_new.svg',
+              width: _stickerWidth,
+              height: _stickerHeight,
+            ),
           ),
         ],
       ),
@@ -72,14 +75,20 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Рамка (Figma border-image): сплошной #FFB41C (AppColors.glowGold) с
-    // глянцевым бликом поверх (тот же levelUpBorderGradient, что и у самого
-    // sticker_new.svg) через blend "overlay" — тот же приём, что и у
-    // золотой кнопки в premium_banner.dart (_UpgradeButton).
+    // Рамка (Figma border-image) — 4px кольцо, а не Border.all одним цветом:
+    // спецификация даёт два слоя — сплошной #FFB41C (AppColors.glowGold) и
+    // поверх него блик levelUpBorderGradient через blend "overlay" (тот же
+    // приём, что у золотой кнопки в premium_banner.dart). Обычный
+    // "заливка + паддинг вместо бордера" здесь не подходит: интерьер сделан
+    // прозрачным намеренно (см. _flatBg/_sheenGradient), и его прозрачные
+    // слои просвечивали бы не сквозь карточку до фона экрана, а до этой
+    // золотой заливки под ними. Поэтому кольцо рисуется отдельно поверх
+    // контента через CustomPaint — так оно не участвует в фоне интерьера.
     return Container(
       width: BattlePassEndedNotice._cardWidth,
+      // Только тень — заливки/бордера здесь нет, кольцо рисует CustomPaint
+      // ниже (отдельно от контента, см. комментарий выше).
       decoration: BoxDecoration(
-        color: AppColors.glowGold,
         borderRadius: BorderRadius.circular(_outerRadius),
         boxShadow: const [
           BoxShadow(
@@ -89,12 +98,11 @@ class _Card extends StatelessWidget {
           ),
         ],
       ),
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: AppColors.levelUpBorderGradient,
-          backgroundBlendMode: BlendMode.overlay,
+      child: CustomPaint(
+        foregroundPainter: _GradientBorderPainter(
+          radius: _outerRadius,
+          borderWidth: _borderWidth,
         ),
-        padding: const EdgeInsets.all(_borderWidth),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(_outerRadius - _borderWidth),
           child: Stack(
@@ -112,19 +120,23 @@ class _Card extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      'Battle Pass завершен',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'Geologica',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 36,
-                        height: 1.3,
-                        letterSpacing: -0.36,
-                        color: Colors.white,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        'Battle Pass завершен',
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontFamily: 'Geologica',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 36,
+                          height: 1.3,
+                          letterSpacing: -0.36,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                    SizedBox(height: 28),
+                    SizedBox(height: 4),
                     Text(
                       'Успей забрать оставшиеся награды!',
                       textAlign: TextAlign.center,
@@ -150,6 +162,54 @@ class _Card extends StatelessWidget {
   }
 }
 
+/// Рамка-кольцо шириной [borderWidth] вокруг скруглённого прямоугольника
+/// (радиус [radius]) — рисуется через evenOdd-путь (внешний прямоугольник
+/// минус внутренний), поэтому середина остаётся полностью непрокрашенной:
+/// в отличие от Border.all + паддинг, ничего не подмешивается под
+/// прозрачный интерьер карточки (см. комментарий в _Card.build).
+/// Два слоя, как в Figma border-image: сплошной AppColors.glowGold и поверх
+/// него блик AppColors.levelUpBorderGradient через blend "overlay" —
+/// саveLayer ограничивает блендинг только этим кольцом, не задним фоном.
+class _GradientBorderPainter extends CustomPainter {
+  const _GradientBorderPainter({
+    required this.radius,
+    required this.borderWidth,
+  });
+
+  final double radius;
+  final double borderWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final outer = Offset.zero & size;
+    final outerRRect = RRect.fromRectAndRadius(outer, Radius.circular(radius));
+    final inner = outer.deflate(borderWidth);
+    final innerRadius = (radius - borderWidth).clamp(0.0, double.infinity);
+    final innerRRect = RRect.fromRectAndRadius(
+      inner,
+      Radius.circular(innerRadius),
+    );
+    final ringPath = Path()
+      ..fillType = PathFillType.evenOdd
+      ..addRRect(outerRRect)
+      ..addRRect(innerRRect);
+
+    canvas.saveLayer(outer, Paint());
+    canvas.drawPath(ringPath, Paint()..color = AppColors.glowGold);
+    canvas.drawPath(
+      ringPath,
+      Paint()
+        ..shader = AppColors.levelUpBorderGradient.createShader(outer)
+        ..blendMode = BlendMode.overlay,
+    );
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _GradientBorderPainter oldDelegate) =>
+      radius != oldDelegate.radius || borderWidth != oldDelegate.borderWidth;
+}
+
 class _TimerPill extends StatelessWidget {
   const _TimerPill();
 
@@ -160,7 +220,6 @@ class _TimerPill extends StatelessWidget {
       // измерена под короткий пример ("6д 13ч 55м"), а реальный мок-дедлайн
       // (15д 12ч 42м) шире и при фиксированной ширине обрезался.
       constraints: const BoxConstraints(minWidth: 214, minHeight: 52),
-      alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
       decoration: BoxDecoration(
         gradient: AppColors.countdownPillGradient,

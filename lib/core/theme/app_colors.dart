@@ -113,18 +113,21 @@ abstract final class AppColors {
   );
 
   /// Фон чипа таймера в BattlePassEndedNotice — похож на levelUpBorderGradient
-  /// (та же палитра), но свой: без FFE383 (4 стопа вместо 5) и другой угол
-  /// (138.47deg, а не диагональ угол-в-угол).
+  /// (та же палитра), но свой: без FFE383 (4 стопа вместо 5). Угол положе
+  /// диагонали угол-в-угол — чип широкий и невысокий, полный 45°-по-Alignment
+  /// давал слишком заметный перепад по вертикали (см. референс: жёлтый
+  /// держится почти по всей ширине, тёмный/розовый — только у правого края,
+  /// заметнее у нижнего угла).
   static const LinearGradient countdownPillGradient = LinearGradient(
-    begin: Alignment(-0.66, -0.75),
-    end: Alignment(0.66, 0.75),
+    begin: Alignment(-1.0, -0.4),
+    end: Alignment(1.0, 0.4),
     colors: [
       Color(0xFFFFA34E),
       Color(0xFFFFC847),
       Color(0xFFFFB51B),
       Color(0xFFFF7B5F),
     ],
-    stops: [0.0, 0.365, 0.725, 1.0],
+    stops: [0.0, 0.28, 0.72, 1.0],
   );
 
   /// Фоновые градиенты плиток трека наград — общие для `PremiumTeaserCluster`
