@@ -126,21 +126,30 @@ class _RewardsTrackState extends State<RewardsTrack> {
     final maxScrollExtent = _controller.hasClients
         ? _controller.position.maxScrollExtent
         : double.infinity;
+    int? candidate;
     for (var m = 10; m <= maxLevel; m += 10) {
-      var threshold = _centeredOffsetForLevel(m).clamp(0, maxScrollExtent);
-      // Превью только что было скрыто (весь трек пройден или конец
-      // автоскролла) — при обратном скролле оно не должно вспыхивать сразу
-      // же по пересечению того же порога, что его спрятал: плитке нужно
-      // дать немного проскроллиться первой. Порог повторного появления
-      // отодвинут на длину одной плитки назад. Только в сценарии "Конец
-      // наград (Куплен премиум)" (см. showSeasonEndTeaser) — там это реально
-      // происходит (startScrolledToEnd долистывает до самого конца).
-      if (widget.showSeasonEndTeaser && _nextMilestone == null) {
-        threshold = (threshold - _tileExtent).clamp(0, maxScrollExtent);
+      final threshold = _centeredOffsetForLevel(m).clamp(0, maxScrollExtent);
+      if (_controller.offset < threshold) {
+        candidate = m;
+        break;
       }
-      if (_controller.offset < threshold) return m;
     }
-    return null;
+    if (candidate == null) return null;
+    // Превью только что было скрыто (весь трек пройден или конец
+    // автоскролла) — при обратном скролле оно не должно вспыхивать сразу же
+    // по достижении 100, 99 или 98 уровня: сначала должен показаться 97-й.
+    // Порог самого найденного кандидата (100) при этом не трогаем — иначе
+    // вместо него возвращался бы более ранний юбилейный уровень (10), у
+    // которого порог тоже пройден. Только в сценарии "Конец наград (Куплен
+    // премиум)" (см. showSeasonEndTeaser) — там это реально происходит
+    // (startScrolledToEnd долистывает до самого конца).
+    if (widget.showSeasonEndTeaser &&
+        _nextMilestone == null &&
+        _controller.offset >=
+            _centeredOffsetForLevel(97).clamp(0, maxScrollExtent)) {
+      return null;
+    }
+    return candidate;
   }
 
   @override

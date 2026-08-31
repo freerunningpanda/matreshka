@@ -103,79 +103,101 @@ class _RewardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: completed ? _kCompletedOpacity : 1,
-      child: Container(
-        height: 110,
-        width: 400,
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        decoration: const BoxDecoration(
-          color: AppColors.taskCardHeaderBg,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
+    return Stack(
+      children: [
+        Opacity(
+          opacity: completed ? _kCompletedOpacity : 1,
+          child: Container(
+            height: 110,
+            width: 400,
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            decoration: const BoxDecoration(
+              color: AppColors.taskCardHeaderBg,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
+            ),
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/battle_pass/icon_xp_bp.png',
+                  width: 96,
+                  height: 96,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'x $rewardXp',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: 'Geologica',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 26,
+                    height: 1.2,
+                    letterSpacing: -0.26,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  width: 112,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.taskChipBg,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  // Галочка "готово" рисуется отдельным неприглушённым слоем
+                  // ниже (см. Positioned) — здесь на её месте пусто.
+                  child: completed
+                      ? null
+                      : Text.rich(
+                          TextSpan(
+                            style: const TextStyle(
+                              fontFamily: 'Geologica',
+                              fontWeight: FontWeight.w500,
+                              fontSize: 26,
+                              height: 1.2,
+                              letterSpacing: -0.26,
+                              color: AppColors.textMuted,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: '$progressCurrent',
+                                style: const TextStyle(
+                                  color: AppColors.claimGreenTop,
+                                ),
+                              ),
+                              TextSpan(text: ' / $progressTarget'),
+                            ],
+                          ),
+                        ),
+                ),
+              ],
+            ),
           ),
         ),
-        child: Row(
-          children: [
-            Image.asset(
-              'assets/images/battle_pass/icon_xp_bp.png',
-              width: 96,
-              height: 96,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'x $rewardXp',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: 'Geologica',
-                fontWeight: FontWeight.w500,
-                fontSize: 26,
-                height: 1.2,
-                letterSpacing: -0.26,
-                color: AppColors.textPrimary,
+        // Галочка "готово" — поверх притушенной шапки, сама не тускнеет
+        // вместе с ней (см. _kCompletedOpacity). Плашка Row справа всегда
+        // прижата к правому краю (Spacer забирает всё свободное место), а
+        // сама галочка центрирована в ней — координаты те же, что были бы у
+        // неё внутри Row: 400 (ширина шапки) − 30 (правый паддинг) − 112
+        // (ширина плашки) = 258 (левый край плашки); плашка высотой 56
+        // центрирована по вертикали в шапке высотой 110 → top 27. Галочка
+        // 40×22 центрирована в плашке 112×56.
+        if (completed)
+          Positioned(
+            left: 294,
+            top: 44,
+            child: IgnorePointer(
+              child: SvgPicture.asset(
+                'assets/icons/battle_pass/done.svg',
+                width: 40,
+                height: 22,
               ),
             ),
-            const Spacer(),
-            Container(
-              width: 112,
-              height: 56,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: AppColors.taskChipBg,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: completed
-                  ? SvgPicture.asset(
-                      'assets/icons/battle_pass/done.svg',
-                      width: 40,
-                      height: 22,
-                    )
-                  : Text.rich(
-                      TextSpan(
-                        style: const TextStyle(
-                          fontFamily: 'Geologica',
-                          fontWeight: FontWeight.w500,
-                          fontSize: 26,
-                          height: 1.2,
-                          letterSpacing: -0.26,
-                          color: AppColors.textMuted,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: '$progressCurrent',
-                            style: const TextStyle(
-                              color: AppColors.claimGreenTop,
-                            ),
-                          ),
-                          TextSpan(text: ' / $progressTarget'),
-                        ],
-                      ),
-                    ),
-            ),
-          ],
-        ),
-      ),
+          ),
+      ],
     );
   }
 }
