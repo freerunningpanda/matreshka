@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sized_boxes.dart';
 import '../../domain/entities/level.dart';
 import '../../domain/entities/reward.dart';
 import 'reward_carousel_tile.dart';
@@ -161,7 +162,7 @@ class _RewardTileState extends State<RewardTile> {
       mainAxisSize: MainAxisSize.min,
       children: [
         tile,
-        const SizedBox(height: 12),
+        AppSizedBoxes.verticalSizedBoxH12,
         _LevelTrackNode(
           number: level.number,
           requiredXp: level.requiredXp,
@@ -321,7 +322,7 @@ class _LevelTrackNode extends StatelessWidget {
                         stops: [0, fraction, fraction, 1],
                       ),
                     ),
-                    child: const SizedBox(height: _lineThickness),
+                    child: AppSizedBoxes.verticalSizedBoxH10,
                   );
                 },
               ),

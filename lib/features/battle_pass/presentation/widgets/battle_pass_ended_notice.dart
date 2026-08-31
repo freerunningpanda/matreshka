@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sized_boxes.dart';
 import 'event_countdown.dart';
 
 /// Заменяет карточку заданий в сценарии "Battle Pass завершен" (см.
@@ -144,7 +145,7 @@ class _Card extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 4),
+                    AppSizedBoxes.verticalSizedBoxH4,
                     Text(
                       'Успей забрать оставшиеся награды!',
                       textAlign: TextAlign.center,
@@ -157,7 +158,7 @@ class _Card extends StatelessWidget {
                         color: AppColors.timerText, // #E9E9F3 @ 0.4
                       ),
                     ),
-                    SizedBox(height: 28),
+                    AppSizedBoxes.verticalSizedBoxH28,
                     _TimerPill(),
                   ],
                 ),

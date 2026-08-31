@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_sized_boxes.dart';
 import '../../domain/repositories/battle_pass_repository.dart';
 
 /// Служебный dev-контрол переключения моковых сценариев экрана (не часть
@@ -48,8 +49,8 @@ class ScenarioSwitcher extends StatelessWidget {
                       if (scenario == current)
                         const Icon(Icons.check, size: 18)
                       else
-                        const SizedBox(width: 18),
-                      const SizedBox(width: 8),
+                        AppSizedBoxes.horizontalSizedBoxW18,
+                      AppSizedBoxes.horizontalSizedBoxW8,
                       Flexible(
                         child: Text(
                           _labels[scenario] ?? scenario.name,

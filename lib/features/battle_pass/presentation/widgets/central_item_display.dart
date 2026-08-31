@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sized_boxes.dart';
 import '../../domain/repositories/battle_pass_repository.dart';
 import 'scenario_flavor.dart';
 
@@ -34,10 +35,10 @@ class CentralItemDisplay extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            AppSizedBoxes.verticalSizedBoxH20,
             if (flavor.tag case final tag?) ...[
               _Tag(text: tag),
-              const SizedBox(height: 10),
+              AppSizedBoxes.verticalSizedBoxH10,
             ],
             _ItemTitle(text: flavor.itemTitle),
           ],
@@ -69,7 +70,7 @@ class _Tag extends StatelessWidget {
             width: 30,
             height: 22,
           ),
-          const SizedBox(width: 10),
+          AppSizedBoxes.horizontalSizedBoxW10,
           Expanded(
             child: Text(
               text,
@@ -110,7 +111,7 @@ class _ItemTitle extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 16),
+        AppSizedBoxes.horizontalSizedBoxW16,
         SvgPicture.asset(
           'assets/icons/battle_pass/info.svg',
           width: 36,

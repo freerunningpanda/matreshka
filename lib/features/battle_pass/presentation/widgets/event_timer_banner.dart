@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sized_boxes.dart';
 import 'event_countdown.dart';
 
 /// Таймер + заголовок ивента ("+" фрейм узла "Info bar", id 1:1312) —
@@ -19,7 +20,11 @@ class EventTimerBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        children: [_CountdownTimer(), SizedBox(height: 8), _EventTitle()],
+        children: [
+          _CountdownTimer(),
+          AppSizedBoxes.verticalSizedBoxH8,
+          _EventTitle(),
+        ],
       ),
     );
   }
@@ -37,7 +42,7 @@ class _CountdownTimer extends StatelessWidget {
           size: 32,
           color: AppColors.timerText,
         ),
-        const SizedBox(width: 14),
+        AppSizedBoxes.horizontalSizedBoxW14,
         const EventCountdownText(
           style: TextStyle(
             fontFamily: 'Geologica',

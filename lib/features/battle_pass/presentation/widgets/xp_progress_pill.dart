@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sized_boxes.dart';
 
 /// Индикатор уровня — "BP_Level" из макета (node 1:1312): кольцевой прогресс
 /// (сплошной трек 10% + дуга прогресса 60%, толщина 8) с номером уровня по
@@ -82,7 +83,7 @@ class XpProgressPill extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          AppSizedBoxes.verticalSizedBoxH12,
           // Ширина = кольцу выше — без этого шестизначные "100000 / 100000"
           // (currentLevel=100 — см. battle_pass_mock_api.dart) растягивали
           // бы Column шире кольца и наезжали на EventTimerBanner правее.

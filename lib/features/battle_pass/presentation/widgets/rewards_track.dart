@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sized_boxes.dart';
 import '../../domain/entities/level.dart';
 import '../../domain/entities/season.dart';
 import 'premium_teaser_cluster.dart';
@@ -666,7 +667,7 @@ class _MilestonePreview extends StatelessWidget {
           width: _cardSize,
           height: _cardSize,
         ),
-        const SizedBox(height: _spacer),
+        AppSizedBoxes.verticalSizedBoxH12,
         Transform.rotate(
           angle: 0.785398, // 45°
           child: Container(
@@ -736,7 +737,7 @@ class _SeasonEndTeaser extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _TeaserCard(maxLevel: maxLevel, requiresPremium: requiresPremium),
-          const SizedBox(height: 12),
+          AppSizedBoxes.verticalSizedBoxH12,
           _TeaserTrackRow(
             nextLevel: maxLevel + 1,
             finalLevel: _nextSeasonLevel,
@@ -912,11 +913,11 @@ class _TeaserTrackRow extends StatelessWidget {
                 width: _leadingLineWidth,
                 child: ColoredBox(
                   color: _color,
-                  child: SizedBox(height: _lineThickness),
+                  child: AppSizedBoxes.verticalSizedBoxH10,
                 ),
               ),
               _TeaserDiamond(number: nextLevel),
-              const SizedBox(width: 12),
+              AppSizedBoxes.horizontalSizedBoxW12,
               ShaderMask(
                 shaderCallback: (bounds) => _dashGradient.createShader(bounds),
                 blendMode: BlendMode.srcIn,
@@ -924,7 +925,7 @@ class _TeaserTrackRow extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     for (var i = 0; i < _dashWidths.length; i++) ...[
-                      if (i > 0) const SizedBox(width: 10),
+                      if (i > 0) AppSizedBoxes.horizontalSizedBoxW10,
                       Container(
                         width: _dashWidths[i],
                         height: _lineThickness,
@@ -939,7 +940,7 @@ class _TeaserTrackRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
+              AppSizedBoxes.horizontalSizedBoxW12,
               _TeaserDiamond(number: finalLevel),
             ],
           ),

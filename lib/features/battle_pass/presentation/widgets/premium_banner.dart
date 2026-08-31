@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sized_boxes.dart';
 
 /// Карточка премиума в правом верхнем углу — две вариации: апсейл (премиум
 /// не куплен) и "повышение уровня" (премиум куплен). Фоновая иллюстрация —
@@ -69,7 +70,7 @@ class PremiumBanner extends StatelessWidget {
                       color: AppColors.accentGold,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  AppSizedBoxes.verticalSizedBoxH10,
                   SizedBox(
                     width: 400,
                     child: Text(
@@ -207,9 +208,9 @@ class _UpgradeButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(width: 32),
+                  AppSizedBoxes.horizontalSizedBoxW32,
                   SvgPicture.asset(icon, width: 27, height: iconHeight),
-                  const SizedBox(width: 27),
+                  AppSizedBoxes.horizontalSizedBoxW27,
                   Text(
                     label,
                     style: const TextStyle(
@@ -221,7 +222,7 @@ class _UpgradeButton extends StatelessWidget {
                       color: AppColors.itemTagText,
                     ),
                   ),
-                  const SizedBox(width: 32),
+                  AppSizedBoxes.horizontalSizedBoxW32,
                 ],
               ),
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sized_boxes.dart';
 import '../../../tasks/domain/entities/task.dart';
 
 /// Карточка-тизер "Задания" на главном экране БП — узел "Tasks_Main_BP"
@@ -125,7 +126,7 @@ class _RewardHeader extends StatelessWidget {
                   width: 96,
                   height: 96,
                 ),
-                const SizedBox(width: 12),
+                AppSizedBoxes.horizontalSizedBoxW12,
                 Text(
                   'x $rewardXp',
                   textAlign: TextAlign.center,
@@ -276,7 +277,7 @@ class _TaskBody extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 50),
+                AppSizedBoxes.verticalSizedBoxH50,
                 Opacity(
                   opacity: (completed || dimProgress) ? _kCompletedOpacity : 1,
                   child: _ProgressDashes(
@@ -284,7 +285,7 @@ class _TaskBody extends StatelessWidget {
                     target: progressTarget,
                   ),
                 ),
-                const SizedBox(height: 34),
+                AppSizedBoxes.verticalSizedBoxH34,
                 footerButton,
               ],
             ),
@@ -345,7 +346,7 @@ class _TasksButton extends StatelessWidget {
                 width: 30,
                 height: 30,
               ),
-              const SizedBox(width: 16),
+              AppSizedBoxes.horizontalSizedBoxW16,
               const Text(
                 'Задания',
                 style: TextStyle(
@@ -420,7 +421,7 @@ class _ClaimXpButton extends StatelessWidget {
               width: 26,
               height: 14,
             ),
-            const SizedBox(width: 14),
+            AppSizedBoxes.horizontalSizedBoxW14,
           ],
           Text(
             claimed ? 'Получено' : 'Забрать опыт',
