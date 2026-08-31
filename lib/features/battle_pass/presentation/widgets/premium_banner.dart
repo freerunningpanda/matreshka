@@ -102,7 +102,8 @@ class PremiumBanner extends StatelessWidget {
                                 ? const _MaxLevelReachedNotice()
                                 : _UpgradeButton(
                                     label: 'Повысить уровень',
-                                    icon: 'assets/icons/battle_pass/arrow_up.svg',
+                                    icon:
+                                        'assets/icons/battle_pass/arrow_up.svg',
                                     iconHeight: 32,
                                     onPressed: onPressed,
                                   ),
@@ -141,7 +142,7 @@ class _MaxLevelReachedNotice extends StatelessWidget {
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 24),
       decoration: BoxDecoration(
-        color: AppColors.taskCardBodyBg,
+        color: AppColors.buttonOverlayStrong, // #E9E9F3 @ 0.1
         borderRadius: BorderRadius.circular(30),
       ),
       child: const Text(
@@ -214,7 +215,7 @@ class _UpgradeButton extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w500,
-                      fontSize: 30,
+                      fontSize: 22,
                       height: 1.2,
                       letterSpacing: -0.3,
                       color: AppColors.itemTagText,
