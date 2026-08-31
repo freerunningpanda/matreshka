@@ -48,7 +48,7 @@ class TasksTeaserCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: cardTap,
-          borderRadius: const BorderRadius.all(Radius.circular(30)),
+          borderRadius: AppRadius.circular30,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -113,8 +113,8 @@ class _RewardHeader extends StatelessWidget {
             decoration: const BoxDecoration(
               color: AppColors.taskCardHeaderBg,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
+                topLeft: AppRadius.radius30,
+                topRight: AppRadius.radius30,
               ),
             ),
             child: Row(
@@ -144,7 +144,7 @@ class _RewardHeader extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: AppColors.taskChipBg,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: AppRadius.circular20,
                   ),
                   // Галочка "готово" рисуется отдельным неприглушённым слоем
                   // ниже (см. Positioned) — здесь на её месте пусто.
@@ -247,8 +247,8 @@ class _TaskBody extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.taskCardBodyBg,
                   borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(30),
-                    bottomRight: Radius.circular(30),
+                    bottomLeft: AppRadius.radius30,
+                    bottomRight: AppRadius.radius30,
                   ),
                 ),
               ),
@@ -315,7 +315,7 @@ class _ProgressDashes extends StatelessWidget {
           height: AppSizes.verticalSize8,
           decoration: BoxDecoration(
             color: filled ? AppColors.textPrimary : AppColors.progressRingTrack,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: AppRadius.circular4,
           ),
         );
       }),
@@ -338,7 +338,7 @@ class _TasksButton extends StatelessWidget {
           padding: AppPadding.ltrbPaddingL36T20R36B23,
           decoration: BoxDecoration(
             color: AppColors.buttonOverlayStrong,
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: AppRadius.circular30,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -373,7 +373,7 @@ class _TasksButton extends StatelessWidget {
               width: AppSizes.horizontalSize44,
               height: AppSizes.verticalSize46,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: AppRadius.circular30,
                 boxShadow: const [
                   BoxShadow(
                     color: AppColors.glowShadow,
@@ -412,7 +412,7 @@ class _ClaimXpButton extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: claimed ? null : AppColors.claimXpButtonGradient,
         color: claimed ? AppColors.taskChipBg : null,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: AppRadius.circular30,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

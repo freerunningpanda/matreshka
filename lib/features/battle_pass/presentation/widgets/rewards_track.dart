@@ -672,7 +672,7 @@ class _MilestonePreview extends StatelessWidget {
             // переопределён diamondColor — см. выше).
             decoration: BoxDecoration(
               color: diamondColor ?? _defaultDiamondColor,
-              borderRadius: const BorderRadius.all(Radius.circular(6)),
+              borderRadius: AppRadius.circular6,
             ),
             child: Transform.rotate(
               angle: -0.785398,
@@ -775,7 +775,7 @@ class _TeaserCard extends StatelessWidget {
                   color: AppColors.progressRingFill,
                   width: 1.5,
                 ),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: AppRadius.circular24,
               ),
               child: Transform(
                 alignment: Alignment.center,
@@ -969,7 +969,7 @@ class _TeaserDiamond extends StatelessWidget {
         height: AppSizes.allSize34,
         decoration: BoxDecoration(
           color: _TeaserTrackRow._color,
-          borderRadius: const BorderRadius.all(Radius.circular(6)),
+          borderRadius: AppRadius.circular6,
         ),
         child: Transform.rotate(
           angle: -0.785398,

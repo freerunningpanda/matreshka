@@ -10,6 +10,7 @@ export '../core/theme/app_assets.dart';
 export '../core/theme/app_colors.dart';
 export '../core/theme/app_dimens.dart';
 export '../core/theme/app_padding.dart';
+export '../core/theme/app_radius.dart';
 export '../core/theme/app_sized_boxes.dart';
 export '../core/theme/app_sizes.dart';
 export '../core/theme/app_strings.dart';

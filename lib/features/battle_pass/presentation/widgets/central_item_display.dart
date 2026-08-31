@@ -58,7 +58,7 @@ class _Tag extends StatelessWidget {
       padding: AppPadding.onlyPaddingL12R19,
       decoration: const BoxDecoration(
         gradient: AppColors.itemTagGradient,
-        borderRadius: BorderRadius.all(Radius.circular(30)),
+        borderRadius: AppRadius.circular30,
       ),
       child: Row(
         children: [

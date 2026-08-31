@@ -140,7 +140,7 @@ class _MaxLevelReachedNotice extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 24),
       decoration: BoxDecoration(
         color: AppColors.buttonOverlayStrong, // #E9E9F3 @ 0.1
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: AppRadius.circular30,
       ),
       child: const Text(
         AppStrings.maxLevelReachedNotice,
@@ -178,7 +178,7 @@ class _UpgradeButton extends StatelessWidget {
       height: AppSizes.verticalSize100,
       width: AppSizes.horizontalSize400,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: AppRadius.circular30,
         boxShadow: const [
           BoxShadow(
             color: AppColors.glowShadow,
@@ -189,7 +189,7 @@ class _UpgradeButton extends StatelessWidget {
       ),
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: AppRadius.circular30,
         clipBehavior: Clip.antiAlias,
         child: Ink(
           decoration: const BoxDecoration(gradient: AppColors.itemTagGradient),

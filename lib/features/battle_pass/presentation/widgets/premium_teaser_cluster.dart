@@ -98,7 +98,7 @@ class _UnlockSticker extends StatelessWidget {
                 height: AppSizes.verticalSize60,
                 decoration: BoxDecoration(
                   color: Color(0x4CE29432), // rgba(226,148,50,0.3)
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  borderRadius: AppRadius.circular20,
                 ),
               ),
               const Text(

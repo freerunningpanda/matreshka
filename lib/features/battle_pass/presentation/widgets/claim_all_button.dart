@@ -21,12 +21,12 @@ class ClaimAllButton extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: gradient,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: AppRadius.circular30,
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: AppRadius.circular30,
           onTap: onPressed,
           child: Container(
             width: AppSizes.horizontalSize400,

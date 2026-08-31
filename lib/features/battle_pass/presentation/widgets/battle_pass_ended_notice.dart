@@ -228,7 +228,7 @@ class _TimerPill extends StatelessWidget {
       padding: AppPadding.symmetricPaddingH28V8,
       decoration: BoxDecoration(
         gradient: AppColors.countdownPillGradient,
-        borderRadius: BorderRadius.circular(60),
+        borderRadius: AppRadius.circular60,
       ),
       child: const EventCountdownText(
         style: TextStyle(

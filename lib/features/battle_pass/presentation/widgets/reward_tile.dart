@@ -213,7 +213,7 @@ class _ClaimButton extends StatelessWidget {
       alignment: Alignment.center,
       decoration: const BoxDecoration(
         gradient: AppColors.claimGreenGradient,
-        borderRadius: BorderRadius.all(Radius.circular(14)),
+        borderRadius: AppRadius.circular14,
       ),
       child: Transform(
         alignment: Alignment.center,
@@ -331,7 +331,7 @@ class _LevelTrackNode extends StatelessWidget {
               height: AppSizes.allSize34,
               decoration: BoxDecoration(
                 color: ownColor,
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: AppRadius.circular6,
               ),
               child: Transform.rotate(
                 angle: -0.785398,

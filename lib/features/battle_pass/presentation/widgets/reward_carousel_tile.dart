@@ -167,7 +167,7 @@ class RewardCarouselTile extends StatelessWidget {
                     height: cardHeight,
                     decoration: BoxDecoration(
                       gradient: gradient,
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: AppRadius.circular24,
                       border: borderColor != null && !borderIgnoresOpacity
                           ? Border.all(color: borderColor!, width: 4)
                           : null,
@@ -226,7 +226,7 @@ class RewardCarouselTile extends StatelessWidget {
                         height: AppSizes.verticalSize36,
                         decoration: BoxDecoration(
                           color: Color(0x8C000000),
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderRadius: AppRadius.circular8,
                         ),
                       ),
                       Text(
@@ -319,7 +319,7 @@ class RewardCarouselTile extends StatelessWidget {
                             height: cardHeight,
                             decoration: BoxDecoration(
                               border: Border.all(color: borderColor!, width: 4),
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: AppRadius.circular24,
                             ),
                           ),
                         ),
