@@ -16,6 +16,9 @@ enum BattlePassScenario {
   // battle_pass_screen.dart.
   maxLevelNoReward,
   completed,
+  // Пока пиксель-в-пиксель повторяет premiumUnlockedWithReward — см.
+  // комментарий у premiumUnlockedNoReward выше.
+  rewardsEndedPremiumOwned,
 }
 
 abstract class BattlePassRepository {

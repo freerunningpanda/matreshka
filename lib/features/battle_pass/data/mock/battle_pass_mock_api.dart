@@ -17,6 +17,9 @@ class BattlePassMockApi {
       case BattlePassScenario.premiumLocked:
         return _buildSeason(currentLevel: 5, premiumOwned: false);
       case BattlePassScenario.premiumUnlockedWithReward:
+      // Пока пиксель-в-пиксель повторяет premiumUnlockedWithReward — см.
+      // комментарий у enum-значения в battle_pass_repository.dart.
+      case BattlePassScenario.rewardsEndedPremiumOwned:
         return _buildSeason(
           currentLevel: 12,
           premiumOwned: true,

@@ -22,6 +22,8 @@ class ScenarioSwitcher extends StatelessWidget {
     BattlePassScenario.premiumUnlockedNoReward: 'Премиум куплен / нет наград',
     BattlePassScenario.maxLevelNoReward: 'Макс. уровень / Нет наград',
     BattlePassScenario.completed: 'Battle Pass завершен',
+    BattlePassScenario.rewardsEndedPremiumOwned:
+        'Конец наград (Куплен премиум)',
   };
 
   @override
@@ -46,7 +48,12 @@ class ScenarioSwitcher extends StatelessWidget {
                       else
                         const SizedBox(width: 18),
                       const SizedBox(width: 8),
-                      Text(_labels[scenario] ?? scenario.name),
+                      Flexible(
+                        child: Text(
+                          _labels[scenario] ?? scenario.name,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                 ),

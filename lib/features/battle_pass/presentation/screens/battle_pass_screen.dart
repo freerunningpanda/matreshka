@@ -151,6 +151,11 @@ class _BattlePassView extends StatelessWidget {
                                 scenario !=
                                     BattlePassScenario
                                         .premiumUnlockedWithReward &&
+                                // rewardsEndedPremiumOwned пока пиксель-в-
+                                // пиксель повторяет premiumUnlockedWithReward.
+                                scenario !=
+                                    BattlePassScenario
+                                        .rewardsEndedPremiumOwned &&
                                 // premiumUnlockedNoReward прячет эту кнопку;
                                 // maxLevelNoReward в плане UI берёт его за
                                 // основу (см. комментарий у enum-значения) —
@@ -224,7 +229,9 @@ class _BattlePassView extends StatelessWidget {
                             scenario ==
                                 BattlePassScenario.premiumUnlockedNoReward ||
                             scenario == BattlePassScenario.maxLevelNoReward ||
-                            scenario == BattlePassScenario.completed,
+                            scenario == BattlePassScenario.completed ||
+                            scenario ==
+                                BattlePassScenario.rewardsEndedPremiumOwned,
                         // Плавающее превью юбилейного уровня без короны,
                         // рамка всегда белая — только в "Battle Pass
                         // завершен".

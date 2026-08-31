@@ -30,7 +30,10 @@ class ScenarioFlavor {
       itemTitle: 'Мега пак',
       tag: 'Доступно с прокачкой!',
     ),
-    BattlePassScenario.premiumUnlockedWithReward => const ScenarioFlavor(
+    // Пока пиксель-в-пиксель повторяет premiumUnlockedWithReward — см.
+    // комментарий у enum-значения в battle_pass_repository.dart.
+    BattlePassScenario.premiumUnlockedWithReward ||
+    BattlePassScenario.rewardsEndedPremiumOwned => const ScenarioFlavor(
       itemAsset: '$_assetsBase/reward_item_purchased.png',
       itemTitle: '«Роковая женщина» или «Босс мафии»',
       tag: 'Доступно с прокачкой!',

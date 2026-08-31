@@ -16,6 +16,9 @@ class TasksMockApi {
       // а не maxLevel (несмотря на currentLevel=40 в season) — тот же таск
       // и обычный переход на экран заданий, без "Забрать опыт" с тизера.
       case BattlePassScenario.maxLevelNoReward:
+      // Пока пиксель-в-пиксель повторяет premiumUnlockedWithReward — см.
+      // комментарий у enum-значения в battle_pass_repository.dart.
+      case BattlePassScenario.rewardsEndedPremiumOwned:
         return _overview(premiumOwned: true, task: _completedRewardTask);
       case BattlePassScenario.maxLevel:
         // Узел "Tasks_Main_BP" для "Макс. уровень / Много наград" (см.
