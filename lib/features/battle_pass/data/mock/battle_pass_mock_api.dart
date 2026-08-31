@@ -38,6 +38,38 @@ class BattlePassMockApi {
           },
           rarityOverrides: const {5: 'common', 6: 'epic', 7: 'epic', 8: 'epic'},
         );
+      case BattlePassScenario.premiumUnlockedNoReward:
+        return _buildSeason(
+          currentLevel: 12,
+          premiumOwned: true,
+          // Свой набор точечных оверрайдов, отдельный от
+          // premiumUnlockedWithReward: 4-й — тёмная (common) заливка,
+          // 5-й тоже тёмный, 6-8 — фиолетовая (epic). Все claimable — без
+          // этого 5-й по дефолтной формуле уходит в 'claimed' (притух +
+          // галочка), а он должен выглядеть обычной ещё не забранной
+          // плиткой, просто до первого тапа (см. RewardTile._selected).
+          claimableLevels: const {4, 5, 6, 7, 8},
+          freeRewardOverrides: const {
+            4: (
+              icon: 'assets/images/battle_pass/reward_mask_ghost.png',
+              amount: 1,
+            ),
+            5: (
+              icon: 'assets/images/battle_pass/premium_teaser_bag.png',
+              amount: 1,
+            ),
+            6: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
+            7: (icon: 'assets/images/battle_pass/green_monster.png', amount: 1),
+            8: (icon: 'assets/images/battle_pass/bull.png', amount: 1),
+          },
+          rarityOverrides: const {
+            4: 'common',
+            5: 'common',
+            6: 'epic',
+            7: 'epic',
+            8: 'epic',
+          },
+        );
       case BattlePassScenario.maxLevel:
         return _buildSeason(
           currentLevel: _maxLevel,

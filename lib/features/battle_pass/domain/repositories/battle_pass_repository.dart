@@ -6,6 +6,10 @@ enum BattlePassScenario {
   premiumLocked,
   premiumUnlockedWithReward,
   maxLevel,
+  // Изначально был точной копией premiumUnlockedWithReward, постепенно
+  // обрастает точечными отличиями (см. tasks_mock_api.dart — таск пока
+  // общий с premiumUnlockedWithReward).
+  premiumUnlockedNoReward,
   completed,
 }
 

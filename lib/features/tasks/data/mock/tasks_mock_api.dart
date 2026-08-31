@@ -9,6 +9,9 @@ class TasksMockApi {
       case BattlePassScenario.premiumLocked:
         return _overview(premiumOwned: false, task: _activeTask);
       case BattlePassScenario.premiumUnlockedWithReward:
+      // Пока пиксель-в-пиксель повторяет premiumUnlockedWithReward — см.
+      // комментарий у enum-значения в battle_pass_repository.dart.
+      case BattlePassScenario.premiumUnlockedNoReward:
         return _overview(premiumOwned: true, task: _completedRewardTask);
       case BattlePassScenario.maxLevel:
         // Узел "Tasks_Main_BP" для "Макс. уровень / Много наград" (см.

@@ -138,6 +138,12 @@ class _BattlePassView extends StatelessWidget {
                                 scenario !=
                                     BattlePassScenario
                                         .premiumUnlockedWithReward &&
+                                // Пока пиксель-в-пиксель повторяет
+                                // premiumUnlockedWithReward — см. комментарий
+                                // у enum-значения.
+                                scenario !=
+                                    BattlePassScenario
+                                        .premiumUnlockedNoReward &&
                                 season.levels.any(
                                   (l) => l.state == LevelState.claimable,
                                 )
@@ -182,9 +188,14 @@ class _BattlePassView extends StatelessWidget {
                             context.read<BattlePassCubit>().purchasePremium(),
                         highlightMaxLevelMilestone:
                             scenario == BattlePassScenario.maxLevel,
+                        // Пока пиксель-в-пиксель повторяет
+                        // premiumUnlockedWithReward — см. комментарий у
+                        // enum-значения.
                         hideGiftBadge:
                             scenario ==
-                            BattlePassScenario.premiumUnlockedWithReward,
+                                BattlePassScenario.premiumUnlockedWithReward ||
+                            scenario ==
+                                BattlePassScenario.premiumUnlockedNoReward,
                       ),
                     ],
                   ),
