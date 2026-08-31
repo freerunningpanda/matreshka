@@ -1,13 +1,33 @@
+import '../../../battle_pass/domain/repositories/battle_pass_repository.dart';
+
 /// Экран "Задания" в этом задании — минимальная заглушка (см. README): один
 /// мок-таск для тизер-карточки на главном экране БП (узел "Tasks_Main_BP",
 /// id 1:1266 в Figma), список на самом экране "Задания" не разбирался.
 class TasksMockApi {
-  Map<String, dynamic> fetchTasks(bool premiumOwned) => {
+  Map<String, dynamic> fetchTasks(BattlePassScenario scenario) {
+    switch (scenario) {
+      case BattlePassScenario.premiumLocked:
+        return _overview(premiumOwned: false, task: _activeTask);
+      case BattlePassScenario.premiumUnlockedWithReward:
+        return _overview(premiumOwned: true, task: _completedRewardTask);
+      case BattlePassScenario.maxLevel:
+        // Узел "Tasks_Main_BP" для "Макс. уровень / Много наград" (см.
+        // Figma-скрин): другой таск ("...в классическом режиме"), больше
+        // XP и явный клейм ("Забрать опыт") прямо с тизера — обрабатывается
+        // отдельно на уровне виджета (TasksTeaserCard.claimableInline).
+        return _overview(premiumOwned: true, task: _classicModeTask);
+      case BattlePassScenario.completed:
+        return _overview(premiumOwned: true, task: _completedRewardTask);
+    }
+  }
+
+  Map<String, dynamic> _overview({
+    required bool premiumOwned,
+    required Map<String, dynamic> task,
+  }) => {
     'premium_owned': premiumOwned,
     'premium_xp_buff_active': false,
-    'tasks': <Map<String, dynamic>>[
-      premiumOwned ? _completedTask : _activeTask,
-    ],
+    'tasks': <Map<String, dynamic>>[task],
   };
 
   static const _activeTask = {
@@ -20,15 +40,24 @@ class TasksMockApi {
     'claimed': false,
   };
 
-  // Узел "Tasks_Main_BP" для сценария "премиум куплен / награда" (node-id
-  // 1-1324 в Figma): тот же таск, но уже выполнен и ждёт клейма — отсюда
-  // другой набор чисел (прогресс 5/5, xp x100).
-  static const _completedTask = {
+  static const _completedRewardTask = {
     'id': 1,
     'title': 'Используйте определенный предмет (Энергетик) 10 раз.',
     'progress_current': 5,
     'progress_target': 5,
     'reward_xp': 100,
+    'completed': true,
+    'claimed': false,
+  };
+
+  static const _classicModeTask = {
+    'id': 1,
+    'title':
+        'Используйте определенный предмет (Энергетик) 10 раз в '
+        'классическом режиме.',
+    'progress_current': 5,
+    'progress_target': 5,
+    'reward_xp': 250,
     'completed': true,
     'claimed': false,
   };

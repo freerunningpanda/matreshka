@@ -33,7 +33,7 @@ class PremiumBanner extends StatelessWidget {
             // и обрезается по её границам — намеренный портретный bleed, а не
             // изображение, вписанное в карточку.
             Positioned(
-              left: 0,
+              left: 10,
               top: premiumOwned ? -74 : -169,
               width: 668,
               height: 1304,

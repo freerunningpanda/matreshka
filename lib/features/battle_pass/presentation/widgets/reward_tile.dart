@@ -173,7 +173,7 @@ class _ClaimButton extends StatelessWidget {
       alignment: Alignment.center,
       decoration: const BoxDecoration(
         gradient: AppColors.claimGreenGradient,
-        borderRadius: BorderRadius.all(Radius.circular(20)),
+        borderRadius: BorderRadius.all(Radius.circular(14)),
       ),
       child: Transform(
         alignment: Alignment.center,

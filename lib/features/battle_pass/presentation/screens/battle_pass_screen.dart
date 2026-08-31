@@ -32,20 +32,20 @@ class BattlePassScreen extends StatelessWidget {
       create: (_) => sl<BattlePassCubit>(),
       child: BlocProvider<TasksCubit>(
         create: (_) => sl<TasksCubit>(),
-        // Мок-таск на тизер-карточке (см. TasksMockApi) зависит от того,
-        // куплен ли премиум — держим его в синхроне со season.premiumOwned,
-        // а не только с начальным сценарием TasksCubit по умолчанию.
+        // Мок-таск на тизер-карточке (см. TasksMockApi) свой под каждый
+        // сценарий (разные xp/прогресс/текст) — держим его в синхроне со
+        // scenario, а не только с начальным сценарием TasksCubit по
+        // умолчанию. Сравниваем именно scenario, а не season.premiumOwned:
+        // "премиум куплен/награда" и "макс. уровень" оба premiumOwned=true,
+        // но с разными тасками.
         child: BlocListener<BattlePassCubit, BattlePassState>(
           listenWhen: (previous, current) =>
               current is BattlePassLoaded &&
               (previous is! BattlePassLoaded ||
-                  previous.season.premiumOwned !=
-                      current.season.premiumOwned),
+                  previous.scenario != current.scenario),
           listener: (context, state) {
             if (state is BattlePassLoaded) {
-              context.read<TasksCubit>().load(
-                premiumOwned: state.season.premiumOwned,
-              );
+              context.read<TasksCubit>().load(state.scenario);
             }
           },
           child: const _BattlePassView(),
@@ -89,22 +89,38 @@ class _BattlePassView extends StatelessWidget {
                       ),
                       const EventTimerBanner(),
                       BlocBuilder<TasksCubit, TasksState>(
-                        builder: (context, tasksState) => TasksTeaserCard(
-                          task: switch (tasksState) {
+                        builder: (context, tasksState) {
+                          final task = switch (tasksState) {
                             TasksLoaded(:final overview) =>
                               overview.tasks.isEmpty
                                   ? null
                                   : overview.tasks.first,
                             _ => null,
-                          },
-                          onTap: () => AppRouter.toTasks(context),
-                        ),
+                          };
+                          return TasksTeaserCard(
+                            task: task,
+                            onTap: () => AppRouter.toTasks(context),
+                            // "Забрать опыт" прямо с тизера — только в
+                            // "Макс. уровень / Много наград" (см. README про
+                            // мок-схему заданий); в остальных завершённый
+                            // таск по-прежнему просто ведёт на экран заданий.
+                            claimableInline:
+                                scenario == BattlePassScenario.maxLevel,
+                            onClaimXp: task == null
+                                ? null
+                                : () => context.read<TasksCubit>().claimTaskXp(
+                                    task.id,
+                                  ),
+                          );
+                        },
                       ),
                       CentralItemDisplay(scenario: scenario),
                       _DismissiblePremiumPromo(
                         premiumOwned: season.premiumOwned,
                         onUnlockPremium: () =>
                             context.read<BattlePassCubit>().purchasePremium(),
+                        onIncreaseLevel: () =>
+                            context.read<BattlePassCubit>().increaseLevel(),
                       ),
                       RewardsTrack(
                         season: season,
@@ -171,10 +187,12 @@ class _DismissiblePremiumPromo extends StatefulWidget {
   const _DismissiblePremiumPromo({
     required this.premiumOwned,
     required this.onUnlockPremium,
+    required this.onIncreaseLevel,
   });
 
   final bool premiumOwned;
   final VoidCallback onUnlockPremium;
+  final VoidCallback onIncreaseLevel;
 
   @override
   State<_DismissiblePremiumPromo> createState() =>
@@ -194,12 +212,13 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
         children: [
           PremiumBanner(
             premiumOwned: widget.premiumOwned,
-            // Пока премиум не куплен, кнопка баннера — "Прокачать": она
-            // должна переключать сценарий на премиум, а не просто прятать
-            // баннер (крестик рядом отвечает за скрытие отдельно). Когда
-            // премиум уже куплен, у кнопки нет своего действия для "повысить
-            // уровень" — оставляем прежнее поведение (скрыть баннер).
-            onPressed: widget.premiumOwned ? dismiss : widget.onUnlockPremium,
+            // Кнопка баннера переключает сценарий в обоих состояниях —
+            // "Прокачать" ведёт на премиум, "Повысить уровень" на макс.
+            // уровень; скрытие баннера остаётся отдельным действием
+            // крестика рядом, а не побочным эффектом этой кнопки.
+            onPressed: widget.premiumOwned
+                ? widget.onIncreaseLevel
+                : widget.onUnlockPremium,
           ),
           Positioned(
             right: 80,

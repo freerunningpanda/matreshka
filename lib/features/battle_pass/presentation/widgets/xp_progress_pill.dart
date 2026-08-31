@@ -25,6 +25,12 @@ class XpProgressPill extends StatelessWidget {
     final progress = isMaxLevel || xpToNextLevel == 0
         ? 1.0
         : (currentXp / xpToNextLevel).clamp(0.0, 1.0);
+    // На макс. уровне экран не присылает следующий порог (xpToNextLevel=0,
+    // идти дальше некуда) — раньше здесь был текст "Максимальный уровень",
+    // но он шире кольца (100px) и ломает вёрстку. Вместо него тот же формат
+    // "текущее/порог", что и на обычных уровнях, просто вместо порога — уже
+    // набранный опыт (кольцо и так полное).
+    final xpLabelTarget = xpToNextLevel == 0 ? currentXp : xpToNextLevel;
     return Positioned(
       left: 346,
       top: 37,
@@ -68,7 +74,7 @@ class XpProgressPill extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            isMaxLevel ? 'Максимальный уровень' : '$currentXp / $xpToNextLevel',
+            '$currentXp / $xpLabelTarget',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontFamily: 'Geologica',

@@ -24,6 +24,23 @@ abstract final class AppColors {
   static const Color claimPurpleTop = Color(0xFF925CD8);
   static const Color claimPurpleBottom = Color(0xFF864AD4);
 
+  // Кнопка "Забрать опыт" тизера заданий (сценарий "Макс. уровень / Много
+  // наград") — отдельный, более приглушённый (alpha 0.4) зелёный, не
+  // claimGreen* трека наград.
+  static const Color claimXpButtonTop = Color(
+    0x6655B675,
+  ); // rgba(85,182,117,0.4)
+  static const Color claimXpButtonBottom = Color(
+    0x66449761,
+  ); // rgba(68,151,97,0.4)
+  static const Color claimXpText = Color(0xFF68C286);
+
+  static const LinearGradient claimXpButtonGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [claimXpButtonTop, claimXpButtonBottom],
+  );
+
   static const Color glowGold = Color(0xFFFFB41C);
   static const Color glowShadow = Color(0x52FFB800); // rgba(255,184,0,0.32)
 

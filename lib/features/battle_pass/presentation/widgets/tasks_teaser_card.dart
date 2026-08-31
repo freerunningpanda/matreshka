@@ -10,15 +10,36 @@ import '../../../tasks/domain/entities/task.dart';
 /// Полноценный список заданий — вне скоупа (см. README), поэтому показывается
 /// один мок-таск.
 class TasksTeaserCard extends StatelessWidget {
-  const TasksTeaserCard({required this.onTap, this.task, super.key});
+  const TasksTeaserCard({
+    required this.onTap,
+    this.task,
+    this.claimableInline = false,
+    this.onClaimXp,
+    super.key,
+  });
 
   final VoidCallback onTap;
   final BattlePassTask? task;
+
+  /// "Макс. уровень / Много наград" (см. README про мок-схему заданий) —
+  /// вместо перехода на экран заданий выполненный таск клеймится прямо с
+  /// тизера ("Забрать опыт"). Во всех остальных сценариях завершённый таск
+  /// по-прежнему просто открывает экран заданий.
+  final bool claimableInline;
+  final VoidCallback? onClaimXp;
 
   @override
   Widget build(BuildContext context) {
     final task = this.task;
     if (task == null) return const SizedBox.shrink();
+
+    final claimMode = claimableInline && task.completed;
+    // Клейм-режим переиспользует "просматриваемый" completed-стиль (притух-
+    // ание + чек-иконка в чипе, см. сценарий "премиум куплен/награда") лишь
+    // частично: числовой прогресс здесь остаётся видимым и на полной
+    // непрозрачности — completed в этом смысле относится только к обычному
+    // browsable-варианту.
+    final cardTap = claimMode ? (task.claimed ? null : onClaimXp) : onTap;
 
     return Positioned(
       left: 346,
@@ -27,7 +48,7 @@ class TasksTeaserCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onTap,
+          onTap: cardTap,
           borderRadius: const BorderRadius.all(Radius.circular(30)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -36,13 +57,21 @@ class TasksTeaserCard extends StatelessWidget {
                 rewardXp: task.rewardXp,
                 progressCurrent: task.progressCurrent,
                 progressTarget: task.progressTarget,
-                completed: task.completed,
+                completed: task.completed && !claimMode,
               ),
               _TaskBody(
                 title: task.title,
                 progressCurrent: task.progressCurrent,
                 progressTarget: task.progressTarget,
-                completed: task.completed,
+                completed: task.completed && !claimMode,
+                // Клейм-режим не притушен целиком (см. выше), но заголовок
+                // центрируется, а сегменты прогресса всё равно притушены —
+                // отдельные флаги, не общий completed.
+                centerContent: claimMode,
+                dimProgress: claimMode,
+                footerButton: claimMode
+                    ? _ClaimXpButton(claimed: task.claimed)
+                    : _TasksButton(showRewardBadge: task.completed),
               ),
             ],
           ),
@@ -157,12 +186,25 @@ class _TaskBody extends StatelessWidget {
     required this.progressCurrent,
     required this.progressTarget,
     required this.completed,
+    required this.footerButton,
+    this.centerContent = false,
+    this.dimProgress = false,
   });
 
   final String title;
   final int progressCurrent;
   final int progressTarget;
   final bool completed;
+  final Widget footerButton;
+
+  /// "Забрать опыт" (см. TasksTeaserCard.claimMode) центрирует заголовок,
+  /// а не притушивает его вместе с остальным — самостоятельный флаг,
+  /// отдельный от completed.
+  final bool centerContent;
+
+  /// Сегменты прогресса притушены и в клейм-режиме, хотя заголовок и
+  /// шапка карточки в нём остаются на полной непрозрачности.
+  final bool dimProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -190,13 +232,16 @@ class _TaskBody extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(40, 44, 40, 20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: centerContent
+                  ? CrossAxisAlignment.center
+                  : CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Opacity(
                   opacity: completed ? _kCompletedOpacity : 1,
                   child: Text(
                     title,
+                    textAlign: centerContent ? TextAlign.center : TextAlign.start,
                     style: const TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w500,
@@ -209,14 +254,14 @@ class _TaskBody extends StatelessWidget {
                 ),
                 const SizedBox(height: 50),
                 Opacity(
-                  opacity: completed ? _kCompletedOpacity : 1,
+                  opacity: (completed || dimProgress) ? _kCompletedOpacity : 1,
                   child: _ProgressDashes(
                     current: progressCurrent,
                     target: progressTarget,
                   ),
                 ),
                 const SizedBox(height: 34),
-                _TasksButton(showRewardBadge: completed),
+                footerButton,
               ],
             ),
           ),
@@ -304,6 +349,54 @@ class _TasksButton extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// Кнопка клейма опыта прямо с тизера ("Забрать опыт" / "Получено" — см.
+/// сценарий "Макс. уровень / Много наград"). В отличие от _TasksButton не
+/// декоративна: собственного тапа не имеет — реагирует на тап по всей
+/// карточке (см. TasksTeaserCard.cardTap), а после клейма просто выглядит
+/// неактивной (карточка перестаёт быть кликабельной вместе с ней).
+class _ClaimXpButton extends StatelessWidget {
+  const _ClaimXpButton({required this.claimed});
+
+  final bool claimed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 320,
+      padding: const EdgeInsets.fromLTRB(36, 20, 36, 23),
+      decoration: BoxDecoration(
+        gradient: claimed ? null : AppColors.claimXpButtonGradient,
+        color: claimed ? AppColors.taskChipBg : null,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (claimed) ...[
+            SvgPicture.asset(
+              'assets/icons/battle_pass/done.svg',
+              width: 26,
+              height: 14,
+            ),
+            const SizedBox(width: 14),
+          ],
+          Text(
+            claimed ? 'Получено' : 'Забрать опыт',
+            style: TextStyle(
+              fontFamily: 'Geologica',
+              fontWeight: FontWeight.w500,
+              fontSize: 26,
+              height: 1.2,
+              letterSpacing: -0.26,
+              color: claimed ? AppColors.textMuted : AppColors.claimXpText,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

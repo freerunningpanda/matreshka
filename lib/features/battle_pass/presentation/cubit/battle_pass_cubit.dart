@@ -69,6 +69,11 @@ class BattlePassCubit extends Cubit<BattlePassState> {
   Future<void> purchasePremium() =>
       switchScenario(BattlePassScenario.premiumUnlockedWithReward);
 
+  /// Мок-"повышение уровня" по кнопке в баннере (см. purchasePremium) — тот
+  /// же принцип: реального прогресса нет, просто переключаем сценарий на
+  /// макс. уровень.
+  Future<void> increaseLevel() => switchScenario(BattlePassScenario.maxLevel);
+
   Future<void> claimAllRewards() async {
     final current = state;
     if (current is! BattlePassLoaded) return;

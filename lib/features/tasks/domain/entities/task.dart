@@ -19,6 +19,16 @@ class BattlePassTask extends Equatable {
   final bool completed;
   final bool claimed;
 
+  BattlePassTask copyWith({bool? claimed}) => BattlePassTask(
+    id: id,
+    title: title,
+    progressCurrent: progressCurrent,
+    progressTarget: progressTarget,
+    rewardXp: rewardXp,
+    completed: completed,
+    claimed: claimed ?? this.claimed,
+  );
+
   @override
   List<Object?> get props => [
     id,
