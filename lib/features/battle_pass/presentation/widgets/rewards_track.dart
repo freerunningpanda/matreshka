@@ -773,6 +773,13 @@ class _TeaserTrackRow extends StatelessWidget {
   /// кончик, без запаса между линией и видимым краем оставался зазор.
   static const _backReach = 121.0 - 24.04 + 12.0 + 21.0 + 6.0;
 
+  /// Видимая (в пределах этого виджета) часть ведущей линии — вместе с
+  /// _backReach должна давать тот же промежуток между видимыми краями
+  /// соседних ромбов, что и у обычных сегментов трека (99→100 и т.п.):
+  /// _diamondStride − 2·_diamondHalfSpan ≈ 254 − 48.08 ≈ 205.92 (те же
+  /// константы, что в reward_tile.dart). 205.92 − _backReach ≈ 64.
+  static const _leadingLineWidth = 64.0;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -790,8 +797,8 @@ class _TeaserTrackRow extends StatelessWidget {
           ),
           Row(
             children: [
-              const Expanded(
-                flex: 3,
+              const SizedBox(
+                width: _leadingLineWidth,
                 child: ColoredBox(
                   color: _color,
                   child: SizedBox(height: _lineThickness),
@@ -800,7 +807,6 @@ class _TeaserTrackRow extends StatelessWidget {
               _TeaserDiamond(number: nextLevel),
               const SizedBox(width: 16),
               Expanded(
-                flex: 4,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(
