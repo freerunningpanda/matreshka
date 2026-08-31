@@ -17,6 +17,7 @@ class RewardsTrack extends StatefulWidget {
     required this.onUnlockPremium,
     this.highlightMaxLevelMilestone = false,
     this.hideGiftBadge = false,
+    this.simplifyMilestonePreview = false,
     super.key,
   });
 
@@ -32,6 +33,12 @@ class RewardsTrack extends StatefulWidget {
   /// Значок подарка убран у всех обычных плиток трека — только в сценарии
   /// "Премиум куплен / награда" (см. battle_pass_screen.dart).
   final bool hideGiftBadge;
+
+  /// У плавающего превью юбилейного уровня убрана корона (premium.svg), а
+  /// рамка всегда белая (#E9E9F3, 4px) вместо оранжевой "к клейму готово" —
+  /// независимо от того, забран сам уровень или нет. Только в сценарии
+  /// "Battle Pass завершен" (см. battle_pass_screen.dart).
+  final bool simplifyMilestonePreview;
 
   @override
   State<RewardsTrack> createState() => _RewardsTrackState();
@@ -322,6 +329,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
                 diamondColor: widget.highlightMaxLevelMilestone
                     ? AppColors.milestoneDiamondMaxLevel
                     : null,
+                simplified: widget.simplifyMilestonePreview,
               ),
             ),
           if (_nextMilestone != null)
@@ -408,6 +416,7 @@ class _MilestonePreview extends StatelessWidget {
     required this.level,
     required this.onTap,
     this.diamondColor,
+    this.simplified = false,
   });
 
   final BattlePassLevel level;
@@ -416,6 +425,10 @@ class _MilestonePreview extends StatelessWidget {
   /// Переопределяет цвет ромба ниже (по умолчанию — обычный серый
   /// _defaultDiamondColor); см. RewardsTrack.highlightMaxLevelMilestone.
   final Color? diamondColor;
+
+  /// См. RewardsTrack.simplifyMilestonePreview — без короны, рамка всегда
+  /// белая независимо от claimed.
+  final bool simplified;
 
   static const _accentColor = Color(0xFFDA7128);
   static const _glowColor = Color(0xFFE23600);
@@ -463,8 +476,10 @@ class _MilestonePreview extends StatelessWidget {
           asset: reward?.iconAsset ?? '',
           gradient: _cardGradient,
           badge: RewardBadgeKind.premium,
-          showBadge: !claimed,
-          borderColor: claimed ? AppColors.textPrimary : _accentColor,
+          showBadge: !claimed && !simplified,
+          borderColor: (claimed || simplified)
+              ? AppColors.textPrimary
+              : _accentColor,
           borderIgnoresOpacity: claimed,
           showGlow: !claimed,
           glowColor: _glowColor,

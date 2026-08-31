@@ -131,7 +131,9 @@ class BattlePassMockApi {
         );
       case BattlePassScenario.completed:
         return _buildSeason(
-          currentLevel: _maxLevel,
+          // Кольцо уровня в левом верхнем углу — как в "премиум куплен /
+          // награда" (тот же currentLevel: 12), а не "40/40" макс. уровня.
+          currentLevel: 12,
           premiumOwned: true,
           // BattlePassEndedNotice зовёт "успеть забрать оставшиеся
           // награды" — значит есть что забирать, поэтому не allClaimed:

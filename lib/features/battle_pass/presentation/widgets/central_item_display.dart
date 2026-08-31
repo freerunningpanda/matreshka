@@ -16,7 +16,7 @@ class CentralItemDisplay extends StatelessWidget {
     final flavor = ScenarioFlavor.of(scenario);
     return Positioned(
       left: 960,
-      top: 160,
+      top: 140,
       width: 600,
       height: 550,
       child: AnimatedSwitcher(

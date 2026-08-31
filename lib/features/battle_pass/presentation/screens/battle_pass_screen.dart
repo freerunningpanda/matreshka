@@ -225,6 +225,11 @@ class _BattlePassView extends StatelessWidget {
                                 BattlePassScenario.premiumUnlockedNoReward ||
                             scenario == BattlePassScenario.maxLevelNoReward ||
                             scenario == BattlePassScenario.completed,
+                        // Плавающее превью юбилейного уровня без короны,
+                        // рамка всегда белая — только в "Battle Pass
+                        // завершен".
+                        simplifyMilestonePreview:
+                            scenario == BattlePassScenario.completed,
                       ),
                     ],
                   ),
