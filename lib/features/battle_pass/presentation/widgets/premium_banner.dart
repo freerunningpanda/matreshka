@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_padding.dart';
-import '../../../../core/theme/app_sized_boxes.dart';
+import '../../../exports.dart';
 
 /// Карточка премиума в правом верхнем углу — две вариации: апсейл (премиум
 /// не куплен) и "повышение уровня" (премиум куплен). Фоновая иллюстрация —

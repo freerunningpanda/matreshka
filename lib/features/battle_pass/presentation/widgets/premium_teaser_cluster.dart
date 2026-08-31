@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import 'reward_carousel_tile.dart';
+import '../../../exports.dart';
 
 /// Блок из 3 премиум-наград в начале трека (узел "Frame 1539", id 1:1275) +
 /// плашка "Получи все сразу!" (Premium_Awards_Stiker, id 1:1297) под ним.

@@ -3,14 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_padding.dart';
-import '../../../../core/theme/app_sized_boxes.dart';
-import '../../domain/entities/level.dart';
-import '../../domain/entities/season.dart';
-import 'premium_teaser_cluster.dart';
-import 'reward_carousel_tile.dart';
-import 'reward_tile.dart';
+import '../../../exports.dart';
 
 class RewardsTrack extends StatefulWidget {
   const RewardsTrack({

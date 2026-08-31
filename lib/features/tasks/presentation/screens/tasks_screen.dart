@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/di/injection_container.dart';
-import '../../../../core/theme/app_padding.dart';
-import '../cubit/tasks_cubit.dart';
+import '../../../exports.dart';
 
 /// Минимальная реализация по ТЗ: пустой экран с кнопкой "Назад".
 /// Слои domain/data/cubit уже готовы принять реальный контент экрана "Задания".

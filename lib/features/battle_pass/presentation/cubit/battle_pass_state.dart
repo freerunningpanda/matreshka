@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../domain/entities/season.dart';
-import '../../domain/repositories/battle_pass_repository.dart';
+import '../../../exports.dart';
 
 sealed class BattlePassState extends Equatable {
   const BattlePassState();

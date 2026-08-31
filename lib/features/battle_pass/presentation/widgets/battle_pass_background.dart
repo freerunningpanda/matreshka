@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../exports.dart';
 
 /// Полноэкранный фон архи-сцены из макета (BG-компонент в Figma).
 class BattlePassBackground extends StatelessWidget {

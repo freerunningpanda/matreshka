@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../features/tasks/presentation/screens/tasks_screen.dart';
+import '../exports.dart';
 
 abstract final class AppRouter {
   static Future<void> toTasks(BuildContext context) => Navigator.of(

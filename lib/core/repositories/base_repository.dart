@@ -1,4 +1,4 @@
-import '../result/result.dart';
+import '../exports.dart';
 
 abstract class BaseRepository {
   Future<Result<T>> execute<T>(

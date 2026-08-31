@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_padding.dart';
-import '../../../../core/theme/app_sized_boxes.dart';
+import '../../../exports.dart';
 
 /// Индикатор уровня — "BP_Level" из макета (node 1:1312): кольцевой прогресс
 /// (сплошной трек 10% + дуга прогресса 60%, толщина 8) с номером уровня по

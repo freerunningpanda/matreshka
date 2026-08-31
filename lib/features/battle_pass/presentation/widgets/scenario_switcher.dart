@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_padding.dart';
-import '../../../../core/theme/app_sized_boxes.dart';
-import '../../domain/repositories/battle_pass_repository.dart';
+import '../../../exports.dart';
 
 /// Служебный dev-контрол переключения моковых сценариев экрана (не часть
 /// макета) — способ переключать состояния экрана, который просит ТЗ.

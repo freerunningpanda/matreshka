@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_padding.dart';
-import '../../../../core/theme/app_sized_boxes.dart';
-import 'event_countdown.dart';
+import '../../../exports.dart';
 
 /// Заменяет карточку заданий в сценарии "Battle Pass завершен" (см.
 /// battle_pass_screen.dart) — раздавать/выполнять задания уже нечего,

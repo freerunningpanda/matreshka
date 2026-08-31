@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../result/result.dart';
+import '../exports.dart';
 
 abstract class UseCase<T, Params> {
   const UseCase();

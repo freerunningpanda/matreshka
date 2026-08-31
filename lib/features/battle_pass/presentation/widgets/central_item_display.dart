@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_padding.dart';
-import '../../../../core/theme/app_sized_boxes.dart';
-import '../../domain/repositories/battle_pass_repository.dart';
-import 'scenario_flavor.dart';
+import '../../../exports.dart';
 
 /// Центральный предмет БП над аркой (Item + Item_Name из макета, id 1:1259).
 class CentralItemDisplay extends StatelessWidget {

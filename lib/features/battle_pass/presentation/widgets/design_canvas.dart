@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import '../../../../core/theme/app_dimens.dart';
+import '../../../exports.dart';
 
 /// Оборачивает контент в фиксированный холст 2320×1080 (как в Figma) и
 /// растягивает его на весь экран устройства — реальные экраны чуть отличаются

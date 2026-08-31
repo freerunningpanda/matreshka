@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_sized_boxes.dart';
-import 'event_countdown.dart';
+import '../../../exports.dart';
 
 /// Таймер + заголовок ивента ("+" фрейм узла "Info bar", id 1:1312) —
 /// рядом с кольцом уровня. Дедлайн — статичный мок (см. README): сам ивент

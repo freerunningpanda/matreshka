@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../domain/entities/tasks_overview.dart';
+import '../../../exports.dart';
 
 sealed class TasksState extends Equatable {
   const TasksState();

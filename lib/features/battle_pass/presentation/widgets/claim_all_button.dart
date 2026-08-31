@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_padding.dart';
+import '../../../exports.dart';
 
 /// Кнопка "Забрать все награды" — зелёный градиент (есть что забрать) или
 /// фиолетовый (апсейл премиума), см. AppColors.claim*Gradient из макета.

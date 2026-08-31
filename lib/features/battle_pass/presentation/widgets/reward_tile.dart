@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_padding.dart';
-import '../../../../core/theme/app_sized_boxes.dart';
-import '../../domain/entities/level.dart';
-import '../../domain/entities/reward.dart';
-import 'reward_carousel_tile.dart';
+import '../../../exports.dart';
 
 class RewardTile extends StatefulWidget {
   const RewardTile({

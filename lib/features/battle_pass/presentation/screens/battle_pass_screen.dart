@@ -2,29 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/di/injection_container.dart';
-import '../../../../core/navigation/app_router.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_dimens.dart';
-import '../../../../core/theme/app_padding.dart';
-import '../../../tasks/presentation/cubit/tasks_cubit.dart';
-import '../../../tasks/presentation/cubit/tasks_state.dart';
-import '../../domain/entities/level.dart';
-import '../../domain/repositories/battle_pass_repository.dart';
-import '../cubit/battle_pass_cubit.dart';
-import '../cubit/battle_pass_state.dart';
-import '../widgets/battle_pass_background.dart';
-import '../widgets/battle_pass_ended_notice.dart';
-import '../widgets/central_item_display.dart';
-import '../widgets/claim_all_button.dart';
-import '../widgets/design_canvas.dart';
-import '../widgets/event_timer_banner.dart';
-import '../widgets/left_nav_panel.dart';
-import '../widgets/premium_banner.dart';
-import '../widgets/rewards_track.dart';
-import '../widgets/scenario_switcher.dart';
-import '../widgets/tasks_teaser_card.dart';
-import '../widgets/xp_progress_pill.dart';
+import '../../../exports.dart';
 
 class BattlePassScreen extends StatelessWidget {
   const BattlePassScreen({super.key});
