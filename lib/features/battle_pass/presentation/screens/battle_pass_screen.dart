@@ -151,11 +151,15 @@ class _BattlePassView extends StatelessWidget {
                                 scenario !=
                                     BattlePassScenario
                                         .premiumUnlockedWithReward &&
-                                // rewardsEndedPremiumOwned пока пиксель-в-
-                                // пиксель повторяет premiumUnlockedWithReward.
+                                // rewardsEndedPremiumOwned/NotOwned пока
+                                // пиксель-в-пиксель повторяют
+                                // premiumUnlockedWithReward.
                                 scenario !=
                                     BattlePassScenario
                                         .rewardsEndedPremiumOwned &&
+                                scenario !=
+                                    BattlePassScenario
+                                        .rewardsEndedPremiumNotOwned &&
                                 // premiumUnlockedNoReward прячет эту кнопку;
                                 // maxLevelNoReward в плане UI берёт его за
                                 // основу (см. комментарий у enum-значения) —
@@ -187,6 +191,18 @@ class _BattlePassView extends StatelessWidget {
                             : null,
                       ),
                       RewardsTrack(
+                        // rewardsEndedPremiumOwned и rewardsEndedPremium
+                        // NotOwned делят одинаковые season_id/currentLevel/
+                        // startScrolledToEnd — RewardsTrack.didUpdateWidget
+                        // сравнивает именно эти поля, чтобы решить, нужен ли
+                        // повторный прыжок скролла, и между этими двумя
+                        // сценариями не видит разницы вовсе (все три
+                        // совпадают). Ключ по scenario форсирует полное
+                        // пересоздание виджета (и его initState) при любом
+                        // переключении сценария — так прыжок к концу списка
+                        // отрабатывает каждый раз заново, а не только когда
+                        // отличается season/currentLevel/startScrolledToEnd.
+                        key: ValueKey(scenario),
                         season: season,
                         onClaim: (levelNumber) async {
                           // Второй вызов должен дождаться первого: claimReward
@@ -231,41 +247,57 @@ class _BattlePassView extends StatelessWidget {
                             scenario == BattlePassScenario.maxLevelNoReward ||
                             scenario == BattlePassScenario.completed ||
                             scenario ==
-                                BattlePassScenario.rewardsEndedPremiumOwned,
+                                BattlePassScenario.rewardsEndedPremiumOwned ||
+                            scenario ==
+                                BattlePassScenario.rewardsEndedPremiumNotOwned,
                         // Плавающее превью юбилейного уровня без короны,
                         // рамка всегда белая — только в "Battle Pass
                         // завершен".
                         simplifyMilestonePreview:
                             scenario == BattlePassScenario.completed,
-                        // "Конец наград (Куплен премиум)" открывается сразу
-                        // у последнего элемента трека.
+                        // "Конец наград (Куплен/Не куплен премиум)"
+                        // открываются сразу у последнего элемента трека.
                         startScrolledToEnd:
                             scenario ==
-                            BattlePassScenario.rewardsEndedPremiumOwned,
+                                BattlePassScenario.rewardsEndedPremiumOwned ||
+                            scenario ==
+                                BattlePassScenario.rewardsEndedPremiumNotOwned,
                         // Тизер "следующего сезона" в самом конце трека —
-                        // тоже только в "Конец наград (Куплен премиум)".
-                        // Заодно (см. RewardsTrack._computeNextMilestone)
-                        // включает задержку повторного появления превью
-                        // юбилейного уровня при обратном скролле от конца.
+                        // тоже в обоих. Заодно (см.
+                        // RewardsTrack._computeNextMilestone) включает
+                        // задержку повторного появления превью юбилейного
+                        // уровня при обратном скролле от конца.
                         showSeasonEndTeaser:
                             scenario ==
-                            BattlePassScenario.rewardsEndedPremiumOwned,
+                                BattlePassScenario.rewardsEndedPremiumOwned ||
+                            scenario ==
+                                BattlePassScenario.rewardsEndedPremiumNotOwned,
+                        // Текст карточки — "нужна прокачка" вместо "откроются
+                        // после уровня N" только тут: премиум не куплен.
+                        showSeasonEndTeaserRequiresPremium:
+                            scenario ==
+                            BattlePassScenario.rewardsEndedPremiumNotOwned,
                         // Плитка 97-го уровня — рамка #E9E9F3 и значок
-                        // подарка независимо от hideGiftBadge — тоже только
-                        // здесь.
+                        // подарка независимо от hideGiftBadge — тоже в обоих.
                         highlightedLevelNumber:
                             scenario ==
-                                BattlePassScenario.rewardsEndedPremiumOwned
+                                    BattlePassScenario
+                                        .rewardsEndedPremiumOwned ||
+                                scenario ==
+                                    BattlePassScenario
+                                        .rewardsEndedPremiumNotOwned
                             ? 97
                             : null,
                         // Плавающее превью юбилейного уровня — без короны
-                        // (premium.svg) тоже только здесь; список наград и
-                        // так её не показывает в этом сценарии — премиум уже
-                        // куплен (premiumOwned: true в моке), см.
-                        // RewardTile.showPremiumBadge.
+                        // (premium.svg) тоже в обоих. В rewardsEndedPremium
+                        // NotOwned премиум не куплен, поэтому список наград
+                        // корону всё же показывает — тут отключена только
+                        // она, у самого плавающего превью.
                         hideMilestonePremiumBadge:
                             scenario ==
-                            BattlePassScenario.rewardsEndedPremiumOwned,
+                                BattlePassScenario.rewardsEndedPremiumOwned ||
+                            scenario ==
+                                BattlePassScenario.rewardsEndedPremiumNotOwned,
                       ),
                     ],
                   ),

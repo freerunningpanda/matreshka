@@ -87,6 +87,51 @@ class BattlePassMockApi {
             100: 'legendary',
           },
         );
+      case BattlePassScenario.rewardsEndedPremiumNotOwned:
+        // Наполнение — точная копия rewardsEndedPremiumOwned, только
+        // premiumOwned: false.
+        return _buildSeason(
+          currentLevel: 12,
+          premiumOwned: false,
+          claimableLevels: const {4, 5, 6, 7, 8, 95, 96, 97, 98, 99, 100},
+          freeRewardOverrides: const {
+            4: (icon: 'assets/images/battle_pass/bullets.png', amount: 16),
+            5: (
+              icon: 'assets/images/battle_pass/premium_teaser_bag.png',
+              amount: 1,
+            ),
+            6: (icon: 'assets/images/battle_pass/filter.png', amount: 1),
+            7: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
+            8: (icon: 'assets/images/battle_pass/green_monster.png', amount: 1),
+            95: (
+              icon: 'assets/images/battle_pass/reward_mask_ghost.png',
+              amount: 1,
+            ),
+            96: (
+              icon: 'assets/images/battle_pass/premium_teaser_bag.png',
+              amount: 1,
+            ),
+            97: (icon: 'assets/images/battle_pass/bullets.png', amount: 1),
+            98: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
+            99: (
+              icon: 'assets/images/battle_pass/green_monster.png',
+              amount: 1,
+            ),
+            100: (icon: 'assets/images/battle_pass/bull.png', amount: 1),
+          },
+          rarityOverrides: const {
+            5: 'common',
+            6: 'epic',
+            7: 'epic',
+            8: 'epic',
+            95: 'common',
+            96: 'common',
+            97: 'common',
+            98: 'epic',
+            99: 'epic',
+            100: 'legendary',
+          },
+        );
       case BattlePassScenario.premiumUnlockedNoReward:
         return _buildSeason(
           currentLevel: 12,

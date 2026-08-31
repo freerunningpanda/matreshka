@@ -20,6 +20,7 @@ class RewardsTrack extends StatefulWidget {
     this.simplifyMilestonePreview = false,
     this.startScrolledToEnd = false,
     this.showSeasonEndTeaser = false,
+    this.showSeasonEndTeaserRequiresPremium = false,
     this.highlightedLevelNumber,
     this.hideMilestonePremiumBadge = false,
     super.key,
@@ -52,9 +53,14 @@ class RewardsTrack extends StatefulWidget {
   final bool simplifyMilestonePreview;
 
   /// Карточка "следующий сезон" в самом конце трека (после последнего
-  /// уровня) — только в сценарии "Конец наград (Куплен премиум)" (см.
-  /// battle_pass_screen.dart).
+  /// уровня) — только в сценариях "Конец наград (Куплен/Не куплен
+  /// премиум)" (см. battle_pass_screen.dart).
   final bool showSeasonEndTeaser;
+
+  /// Текст карточки "следующий сезон" — "нужна прокачка" вместо "откроются
+  /// после уровня N". Только в сценарии "Конец наград (Не куплен премиум)"
+  /// (см. battle_pass_screen.dart).
+  final bool showSeasonEndTeaserRequiresPremium;
 
   /// Номер уровня, чья плитка получает рамку 4px solid #E9E9F3 и значок
   /// подарка независимо от hideGiftBadge — точечно 97-й уровень в сценарии
@@ -219,8 +225,10 @@ class _RewardsTrackState extends State<RewardsTrack> {
   void _scrollToCurrent() {
     if (!_controller.hasClients) return;
     // Пока премиум не куплен, трек должен открываться с самого начала —
-    // с тизером премиум-наград, а не сразу проскроленным вперёд.
-    if (!widget.season.premiumOwned) return;
+    // с тизером премиум-наград, а не сразу проскроленным вперёд. Кроме
+    // startScrolledToEnd ("Конец наград" — и с премиумом, и без): туда
+    // нужно долистать до конца независимо от того, куплен премиум или нет.
+    if (!widget.season.premiumOwned && !widget.startScrolledToEnd) return;
     // "Конец наград" — сразу к последнему элементу; иначе — смещаемся
     // только к 2-му, тизера уже нет, но и к текущему уровню, который может
     // быть далеко, сразу прыгать не нужно.
@@ -241,6 +249,17 @@ class _RewardsTrackState extends State<RewardsTrack> {
         )
         .then((_) {
           if (!mounted) return;
+          // На треке в ~100 плиток (с тизером премиума в начале — ещё +676px)
+          // maxScrollExtent, взятый ДО первого animateTo, иногда чуть меньше
+          // окончательного — анимация останавливается, не долистав до
+          // самого края (рамка карточки "следующий сезон" обрезана). Здесь
+          // maxScrollExtent уже точно финальный — довскролливаем без
+          // анимации, если есть расхождение.
+          if (widget.startScrolledToEnd &&
+              _controller.hasClients &&
+              _controller.offset < _controller.position.maxScrollExtent - 1) {
+            _controller.jumpTo(_controller.position.maxScrollExtent);
+          }
           setState(() {
             _isAutoScrolling = false;
             _nextMilestone = _computeNextMilestone();
@@ -399,29 +418,16 @@ class _RewardsTrackState extends State<RewardsTrack> {
               ),
             ),
           if (_showLeftArrow)
-            if (_nextMilestone != null)
-              Positioned(
-                // На одной линии со стрелкой к юбилейному уровню — обе
-                // стрелки трека должны стоять на одной высоте.
-                left: 0,
-                top: _MilestonePreview.cardCenterY - 32,
-                child: _ArrowButton(
-                  icon: Icons.chevron_left,
-                  onTap: () => _scrollBy(-_tileExtent * 3),
-                ),
-              )
-            else
-              Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: _ArrowButton(
-                    icon: Icons.chevron_left,
-                    onTap: () => _scrollBy(-_tileExtent * 3),
-                  ),
-                ),
+            Positioned(
+              // На одной линии со стрелкой к юбилейному уровню — обе
+              // стрелки трека должны стоять на одной высоте.
+              left: 0,
+              top: _MilestonePreview.cardCenterY - 32,
+              child: _ArrowButton(
+                icon: Icons.chevron_left,
+                onTap: () => _scrollBy(-_tileExtent * 3),
               ),
+            ),
           if (_nextMilestone != null)
             Positioned(
               right: 0,
@@ -492,7 +498,11 @@ class _RewardsTrackState extends State<RewardsTrack> {
           hideGiftBadge: widget.hideGiftBadge,
           highlighted: widget.highlightedLevelNumber == levels[i].number,
         ),
-      if (widget.showSeasonEndTeaser) _SeasonEndTeaser(maxLevel: levels.length),
+      if (widget.showSeasonEndTeaser)
+        _SeasonEndTeaser(
+          maxLevel: levels.length,
+          requiresPremium: widget.showSeasonEndTeaserRequiresPremium,
+        ),
     ];
     final listView = ListView(
       controller: _controller,
@@ -645,9 +655,16 @@ class _MilestonePreview extends StatelessWidget {
 /// плитка (карточка 240 + отступ 12 + ряд ромбов 34 = 286), чтобы встать в
 /// ряд с остальными элементами ListView без отдельного позиционирования.
 class _SeasonEndTeaser extends StatelessWidget {
-  const _SeasonEndTeaser({required this.maxLevel});
+  const _SeasonEndTeaser({
+    required this.maxLevel,
+    this.requiresPremium = false,
+  });
 
   final int maxLevel;
+
+  /// См. RewardsTrack.showSeasonEndTeaserRequiresPremium — меняет текст
+  /// карточки на "нужна прокачка" вместо "откроются после уровня N".
+  final bool requiresPremium;
 
   /// Уровень-ориентир следующего "сезона" наград, показанный в конце
   /// прерывистого сегмента — по референсу из Figma.
@@ -668,7 +685,7 @@ class _SeasonEndTeaser extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _TeaserCard(maxLevel: maxLevel),
+          _TeaserCard(maxLevel: maxLevel, requiresPremium: requiresPremium),
           const SizedBox(height: 12),
           _TeaserTrackRow(
             nextLevel: maxLevel + 1,
@@ -681,9 +698,10 @@ class _SeasonEndTeaser extends StatelessWidget {
 }
 
 class _TeaserCard extends StatelessWidget {
-  const _TeaserCard({required this.maxLevel});
+  const _TeaserCard({required this.maxLevel, this.requiresPremium = false});
 
   final int maxLevel;
+  final bool requiresPremium;
 
   @override
   Widget build(BuildContext context) {
@@ -727,18 +745,30 @@ class _TeaserCard extends StatelessWidget {
                       letterSpacing: -0.26,
                       color: AppColors.textMuted,
                     ),
-                    children: [
-                      const TextSpan(
-                        text: 'Награды откроются после прохождения ',
-                      ),
-                      TextSpan(
-                        text: '$maxLevel уровня',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ],
+                    children: requiresPremium
+                        ? [
+                            TextSpan(text: 'Награды $maxLevel+ уровней '),
+                            const TextSpan(text: 'доступны только\nс '),
+                            const TextSpan(
+                              text: 'прокачкой',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ]
+                        : [
+                            const TextSpan(
+                              text: 'Награды откроются после прохождения ',
+                            ),
+                            TextSpan(
+                              text: '$maxLevel уровня',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
                   ),
                   textAlign: TextAlign.center,
                 ),

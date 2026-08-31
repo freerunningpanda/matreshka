@@ -43,7 +43,10 @@ class ScenarioFlavor {
     ),
     // Та же картинка/тег, что и у premiumUnlockedWithReward — только
     // название предмета короче ("Мега пак" вместо длинного варианта).
-    BattlePassScenario.rewardsEndedPremiumOwned => const ScenarioFlavor(
+    // rewardsEndedPremiumNotOwned — та же, что и у rewardsEndedPremiumOwned
+    // (см. battle_pass_mock_api.dart — наполнение оттуда же).
+    BattlePassScenario.rewardsEndedPremiumOwned ||
+    BattlePassScenario.rewardsEndedPremiumNotOwned => const ScenarioFlavor(
       itemAsset: '$_assetsBase/bullets.png',
       itemTitle: 'Мега пак',
       tag: 'Доступно с прокачкой!',

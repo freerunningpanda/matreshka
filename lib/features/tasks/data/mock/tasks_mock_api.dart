@@ -20,6 +20,10 @@ class TasksMockApi {
       // комментарий у enum-значения в battle_pass_repository.dart.
       case BattlePassScenario.rewardsEndedPremiumOwned:
         return _overview(premiumOwned: true, task: _completedRewardTask);
+      case BattlePassScenario.rewardsEndedPremiumNotOwned:
+        // Тот же таск, что и у rewardsEndedPremiumOwned — только
+        // premiumOwned: false (в этом сценарии премиум не куплен).
+        return _overview(premiumOwned: false, task: _completedRewardTask);
       case BattlePassScenario.maxLevel:
         // Узел "Tasks_Main_BP" для "Макс. уровень / Много наград" (см.
         // Figma-скрин): другой таск ("...в классическом режиме"), больше

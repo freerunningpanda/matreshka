@@ -19,6 +19,9 @@ enum BattlePassScenario {
   // Пока пиксель-в-пиксель повторяет premiumUnlockedWithReward — см.
   // комментарий у premiumUnlockedNoReward выше.
   rewardsEndedPremiumOwned,
+  // Наполнение UI берём из rewardsEndedPremiumOwned — постепенно обрастает
+  // точечными отличиями (см. комментарий у premiumUnlockedNoReward выше).
+  rewardsEndedPremiumNotOwned,
 }
 
 abstract class BattlePassRepository {

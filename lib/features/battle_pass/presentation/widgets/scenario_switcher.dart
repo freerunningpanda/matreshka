@@ -24,6 +24,8 @@ class ScenarioSwitcher extends StatelessWidget {
     BattlePassScenario.completed: 'Battle Pass завершен',
     BattlePassScenario.rewardsEndedPremiumOwned:
         'Конец наград (Куплен премиум)',
+    BattlePassScenario.rewardsEndedPremiumNotOwned:
+        'Конец наград (Не куплен премиум)',
   };
 
   @override
@@ -65,7 +67,7 @@ class ScenarioSwitcher extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                Icons.science_outlined,
+                Icons.swap_horiz,
                 color: Colors.white,
                 size: 22,
               ),
