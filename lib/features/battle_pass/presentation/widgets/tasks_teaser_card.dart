@@ -36,11 +36,13 @@ class TasksTeaserCard extends StatelessWidget {
                 rewardXp: task.rewardXp,
                 progressCurrent: task.progressCurrent,
                 progressTarget: task.progressTarget,
+                completed: task.completed,
               ),
               _TaskBody(
                 title: task.title,
                 progressCurrent: task.progressCurrent,
                 progressTarget: task.progressTarget,
+                completed: task.completed,
               ),
             ],
           ),
@@ -50,80 +52,100 @@ class TasksTeaserCard extends StatelessWidget {
   }
 }
 
+// Общая притушенность выполненного, но ещё не забранного задания — узел
+// "Tasks_Main_BP" сценария "премиум куплен / награда" (node-id 1-1324 в
+// Figma). Кнопка "Задания" и бейдж на ней в эту притушенность не входят —
+// они остаются на полной непрозрачности, поэтому оборачиваются в Opacity
+// отдельно от заголовка/текста/прогресса.
+const double _kCompletedOpacity = 0.55;
+
 class _RewardHeader extends StatelessWidget {
   const _RewardHeader({
     required this.rewardXp,
     required this.progressCurrent,
     required this.progressTarget,
+    required this.completed,
   });
 
   final int rewardXp;
   final int progressCurrent;
   final int progressTarget;
+  final bool completed;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 110,
-      width: 400,
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      decoration: const BoxDecoration(
-        color: AppColors.taskCardHeaderBg,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+    return Opacity(
+      opacity: completed ? _kCompletedOpacity : 1,
+      child: Container(
+        height: 110,
+        width: 400,
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        decoration: const BoxDecoration(
+          color: AppColors.taskCardHeaderBg,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            'assets/images/battle_pass/icon_xp_bp.png',
-            width: 96,
-            height: 96,
-          ),
-          const SizedBox(width: 12),
-          Text(
-            'x $rewardXp',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: 'Geologica',
-              fontWeight: FontWeight.w500,
-              fontSize: 26,
-              height: 1.2,
-              letterSpacing: -0.26,
-              color: AppColors.textPrimary,
+        child: Row(
+          children: [
+            Image.asset(
+              'assets/images/battle_pass/icon_xp_bp.png',
+              width: 96,
+              height: 96,
             ),
-          ),
-          const Spacer(),
-          Container(
-            width: 112,
-            height: 56,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColors.taskChipBg,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text.rich(
-              TextSpan(
-                style: const TextStyle(
-                  fontFamily: 'Geologica',
-                  fontWeight: FontWeight.w500,
-                  fontSize: 26,
-                  height: 1.2,
-                  letterSpacing: -0.26,
-                  color: AppColors.textMuted,
-                ),
-                children: [
-                  TextSpan(
-                    text: '$progressCurrent',
-                    style: const TextStyle(color: AppColors.claimGreenTop),
-                  ),
-                  TextSpan(text: ' / $progressTarget'),
-                ],
+            const SizedBox(width: 12),
+            Text(
+              'x $rewardXp',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'Geologica',
+                fontWeight: FontWeight.w500,
+                fontSize: 26,
+                height: 1.2,
+                letterSpacing: -0.26,
+                color: AppColors.textPrimary,
               ),
             ),
-          ),
-        ],
+            const Spacer(),
+            Container(
+              width: 112,
+              height: 56,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.taskChipBg,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: completed
+                  ? SvgPicture.asset(
+                      'assets/icons/battle_pass/done.svg',
+                      width: 40,
+                      height: 22,
+                    )
+                  : Text.rich(
+                      TextSpan(
+                        style: const TextStyle(
+                          fontFamily: 'Geologica',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 26,
+                          height: 1.2,
+                          letterSpacing: -0.26,
+                          color: AppColors.textMuted,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: '$progressCurrent',
+                            style: const TextStyle(
+                              color: AppColors.claimGreenTop,
+                            ),
+                          ),
+                          TextSpan(text: ' / $progressTarget'),
+                        ],
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -134,43 +156,70 @@ class _TaskBody extends StatelessWidget {
     required this.title,
     required this.progressCurrent,
     required this.progressTarget,
+    required this.completed,
   });
 
   final String title;
   final int progressCurrent;
   final int progressTarget;
+  final bool completed;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 400,
-      padding: const EdgeInsets.fromLTRB(40, 44, 40, 20),
-      decoration: const BoxDecoration(
-        color: AppColors.taskCardBodyBg,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontFamily: 'Geologica',
-              fontWeight: FontWeight.w500,
-              fontSize: 22,
-              height: 1.2,
-              letterSpacing: -0.22,
-              color: AppColors.textMuted,
+          // Фон + текст/прогресс притушены при завершённом задании; кнопка —
+          // отдельный слой поверх, полностью непрозрачный (см.
+          // _kCompletedOpacity).
+          Positioned.fill(
+            child: Opacity(
+              opacity: completed ? _kCompletedOpacity : 1,
+              child: const DecoratedBox(
+                decoration: BoxDecoration(
+                  color: AppColors.taskCardBodyBg,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
+                  ),
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 50),
-          _ProgressDashes(current: progressCurrent, target: progressTarget),
-          const SizedBox(height: 34),
-          _TasksButton(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(40, 44, 40, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Opacity(
+                  opacity: completed ? _kCompletedOpacity : 1,
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: 'Geologica',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 22,
+                      height: 1.2,
+                      letterSpacing: -0.22,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 50),
+                Opacity(
+                  opacity: completed ? _kCompletedOpacity : 1,
+                  child: _ProgressDashes(
+                    current: progressCurrent,
+                    target: progressTarget,
+                  ),
+                ),
+                const SizedBox(height: 34),
+                _TasksButton(showRewardBadge: completed),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -203,39 +252,58 @@ class _ProgressDashes extends StatelessWidget {
 }
 
 class _TasksButton extends StatelessWidget {
-  const _TasksButton();
+  const _TasksButton({this.showRewardBadge = false});
+
+  final bool showRewardBadge;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 320,
-      padding: const EdgeInsets.fromLTRB(36, 20, 36, 23),
-      decoration: BoxDecoration(
-        color: AppColors.buttonOverlayStrong,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            'assets/icons/battle_pass/icn_tasks.svg',
-            width: 30,
-            height: 30,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: 320,
+          padding: const EdgeInsets.fromLTRB(36, 20, 36, 23),
+          decoration: BoxDecoration(
+            color: AppColors.buttonOverlayStrong,
+            borderRadius: BorderRadius.circular(30),
           ),
-          const SizedBox(width: 16),
-          const Text(
-            'Задания',
-            style: TextStyle(
-              fontFamily: 'Geologica',
-              fontWeight: FontWeight.w500,
-              fontSize: 26,
-              height: 1.2,
-              letterSpacing: -0.26,
-              color: AppColors.textPrimary,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                'assets/icons/battle_pass/icn_tasks.svg',
+                width: 30,
+                height: 30,
+              ),
+              const SizedBox(width: 16),
+              const Text(
+                'Задания',
+                style: TextStyle(
+                  fontFamily: 'Geologica',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 26,
+                  height: 1.2,
+                  letterSpacing: -0.26,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Бейдж "есть невостребованная награда" — сидит в правом верхнем
+        // углу кнопки, слегка выходя за её границы.
+        if (showRewardBadge)
+          Positioned(
+            right: -12,
+            top: -10,
+            child: SvgPicture.asset(
+              'assets/icons/battle_pass/sticker_new.svg',
+              width: 40,
+              height: 42,
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 }

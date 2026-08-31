@@ -11,8 +11,10 @@ class TasksRepositoryImpl extends BaseRepository implements TasksRepository {
   final TasksMockApi _mockApi;
 
   @override
-  Future<Result<TasksOverview>> getTasks() => execute(
-    () async => TasksOverviewModel.fromJson(_mockApi.fetchTasks()),
-    const Failure('Не удалось загрузить задания'),
-  );
+  Future<Result<TasksOverview>> getTasks({required bool premiumOwned}) =>
+      execute(
+        () async =>
+            TasksOverviewModel.fromJson(_mockApi.fetchTasks(premiumOwned)),
+        const Failure('Не удалось загрузить задания'),
+      );
 }

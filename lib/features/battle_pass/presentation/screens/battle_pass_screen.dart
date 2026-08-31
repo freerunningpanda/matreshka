@@ -32,7 +32,24 @@ class BattlePassScreen extends StatelessWidget {
       create: (_) => sl<BattlePassCubit>(),
       child: BlocProvider<TasksCubit>(
         create: (_) => sl<TasksCubit>(),
-        child: const _BattlePassView(),
+        // Мок-таск на тизер-карточке (см. TasksMockApi) зависит от того,
+        // куплен ли премиум — держим его в синхроне со season.premiumOwned,
+        // а не только с начальным сценарием TasksCubit по умолчанию.
+        child: BlocListener<BattlePassCubit, BattlePassState>(
+          listenWhen: (previous, current) =>
+              current is BattlePassLoaded &&
+              (previous is! BattlePassLoaded ||
+                  previous.season.premiumOwned !=
+                      current.season.premiumOwned),
+          listener: (context, state) {
+            if (state is BattlePassLoaded) {
+              context.read<TasksCubit>().load(
+                premiumOwned: state.season.premiumOwned,
+              );
+            }
+          },
+          child: const _BattlePassView(),
+        ),
       ),
     );
   }
