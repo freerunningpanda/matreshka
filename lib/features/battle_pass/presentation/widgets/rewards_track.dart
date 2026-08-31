@@ -21,6 +21,7 @@ class RewardsTrack extends StatefulWidget {
     this.startScrolledToEnd = false,
     this.showSeasonEndTeaser = false,
     this.highlightedLevelNumber,
+    this.hideMilestonePremiumBadge = false,
     super.key,
   });
 
@@ -60,6 +61,12 @@ class RewardsTrack extends StatefulWidget {
   /// "Конец наград (Куплен премиум)" (см. battle_pass_screen.dart). `null`
   /// (по умолчанию) — ни одна плитка не подсвечена.
   final int? highlightedLevelNumber;
+
+  /// Плавающее превью юбилейного уровня — без короны (premium.svg), но с
+  /// обычным (не всегда белым) цветом рамки, в отличие от
+  /// simplifyMilestonePreview. Только в сценарии "Конец наград (Куплен
+  /// премиум)" (см. battle_pass_screen.dart).
+  final bool hideMilestonePremiumBadge;
 
   @override
   State<RewardsTrack> createState() => _RewardsTrackState();
@@ -429,6 +436,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
                     ? AppColors.milestoneDiamondMaxLevel
                     : null,
                 simplified: widget.simplifyMilestonePreview,
+                hidePremiumBadge: widget.hideMilestonePremiumBadge,
               ),
             ),
           if (_nextMilestone != null)
@@ -518,6 +526,7 @@ class _MilestonePreview extends StatelessWidget {
     required this.onTap,
     this.diamondColor,
     this.simplified = false,
+    this.hidePremiumBadge = false,
   });
 
   final BattlePassLevel level;
@@ -530,6 +539,12 @@ class _MilestonePreview extends StatelessWidget {
   /// См. RewardsTrack.simplifyMilestonePreview — без короны, рамка всегда
   /// белая независимо от claimed.
   final bool simplified;
+
+  /// Убирает только корону (premium.svg), не трогая цвет рамки — в отличие
+  /// от `simplified`, которая меняет и то и другое разом. Только в сценарии
+  /// "Конец наград (Куплен премиум)" (см.
+  /// RewardsTrack.hideMilestonePremiumBadge).
+  final bool hidePremiumBadge;
 
   static const _accentColor = Color(0xFFDA7128);
   static const _glowColor = Color(0xFFE23600);
@@ -577,7 +592,7 @@ class _MilestonePreview extends StatelessWidget {
           asset: reward?.iconAsset ?? '',
           gradient: _cardGradient,
           badge: RewardBadgeKind.premium,
-          showBadge: !claimed && !simplified,
+          showBadge: !claimed && !simplified && !hidePremiumBadge,
           borderColor: (claimed || simplified)
               ? AppColors.textPrimary
               : _accentColor,

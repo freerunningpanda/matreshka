@@ -258,6 +258,14 @@ class _BattlePassView extends StatelessWidget {
                                 BattlePassScenario.rewardsEndedPremiumOwned
                             ? 97
                             : null,
+                        // Плавающее превью юбилейного уровня — без короны
+                        // (premium.svg) тоже только здесь; список наград и
+                        // так её не показывает в этом сценарии — премиум уже
+                        // куплен (premiumOwned: true в моке), см.
+                        // RewardTile.showPremiumBadge.
+                        hideMilestonePremiumBadge:
+                            scenario ==
+                            BattlePassScenario.rewardsEndedPremiumOwned,
                       ),
                     ],
                   ),
