@@ -25,42 +25,47 @@ class AppTypography extends BaseTypography<AppTypography> {
 class _MobileTypo extends MobileTypo {
   static const String _fontFamily = 'Geologica';
 
+  // Figma задаёт letterSpacing в процентах от fontSize (тут везде "-1%"), а
+  // не в абсолютных px, которых ждёт TextStyle.letterSpacing — поэтому
+  // каждое значение переведено как fontSize * -0.01, а не взято "как есть".
+  static const _letterSpacingPercent = -0.01;
+
   _MobileTypo()
     : super(
-        h4: TextStyle(
+        h4: const TextStyle(
           fontFamily: _fontFamily,
           fontWeight: FontWeight.w600,
           fontSize: 36,
           height: 1.3,
-          letterSpacing: -0.01,
+          letterSpacing: 36 * _letterSpacingPercent,
         ),
-        p4Reg: TextStyle(
+        p4Reg: const TextStyle(
           fontFamily: _fontFamily,
           fontWeight: FontWeight.w400,
           fontSize: 22,
           height: 1.2,
-          letterSpacing: -0.01,
+          letterSpacing: 22 * _letterSpacingPercent,
         ),
-        p1Med: TextStyle(
+        p1Med: const TextStyle(
           fontFamily: _fontFamily,
           fontWeight: FontWeight.w500,
           fontSize: 22,
           height: 1.2,
-          letterSpacing: -0.01,
+          letterSpacing: 22 * _letterSpacingPercent,
         ),
-        p2Med: TextStyle(
+        p2Med: const TextStyle(
           fontFamily: _fontFamily,
           fontWeight: FontWeight.w400,
           fontSize: 30,
           height: 1.2,
-          letterSpacing: -0.01,
+          letterSpacing: 30 * _letterSpacingPercent,
         ),
-        p4Med: TextStyle(
+        p4Med: const TextStyle(
           fontFamily: _fontFamily,
           fontWeight: FontWeight.w500,
           fontSize: 22,
           height: 1.2,
-          letterSpacing: -0.01,
+          letterSpacing: 22 * _letterSpacingPercent,
         ),
       );
 }
