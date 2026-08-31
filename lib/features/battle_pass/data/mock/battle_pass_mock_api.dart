@@ -133,7 +133,27 @@ class BattlePassMockApi {
         return _buildSeason(
           currentLevel: _maxLevel,
           premiumOwned: true,
-          allClaimed: true,
+          // BattlePassEndedNotice зовёт "успеть забрать оставшиеся
+          // награды" — значит есть что забирать, поэтому не allClaimed:
+          // уровни 4-8 остаются claimable. 4-й — ghost x16 (редкость и так
+          // common по дефолтной формуле, оверрайда не требует); 5-й —
+          // тёмная (common) заливка, 6-8 — фиолетовая (epic), тот же набор
+          // иконок, что и у premiumUnlockedNoReward/maxLevelNoReward выше.
+          claimableLevels: const {4, 5, 6, 7, 8},
+          freeRewardOverrides: const {
+            4: (
+              icon: 'assets/images/battle_pass/reward_mask_ghost.png',
+              amount: 16,
+            ),
+            5: (
+              icon: 'assets/images/battle_pass/premium_teaser_bag.png',
+              amount: 1,
+            ),
+            6: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
+            7: (icon: 'assets/images/battle_pass/green_monster.png', amount: 1),
+            8: (icon: 'assets/images/battle_pass/bull.png', amount: 1),
+          },
+          rarityOverrides: const {5: 'common', 6: 'epic', 7: 'epic', 8: 'epic'},
         );
     }
   }

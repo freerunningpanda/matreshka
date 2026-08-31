@@ -160,6 +160,10 @@ class _BattlePassView extends StatelessWidget {
                                         .premiumUnlockedNoReward &&
                                 scenario !=
                                     BattlePassScenario.maxLevelNoReward &&
+                                // Battle Pass завершен: клейм каждой награды
+                                // остаётся точечным по плиткам, общей кнопки
+                                // под баннером здесь нет.
+                                scenario != BattlePassScenario.completed &&
                                 season.levels.any(
                                   (l) => l.state == LevelState.claimable,
                                 )
@@ -219,7 +223,8 @@ class _BattlePassView extends StatelessWidget {
                                 BattlePassScenario.premiumUnlockedWithReward ||
                             scenario ==
                                 BattlePassScenario.premiumUnlockedNoReward ||
-                            scenario == BattlePassScenario.maxLevelNoReward,
+                            scenario == BattlePassScenario.maxLevelNoReward ||
+                            scenario == BattlePassScenario.completed,
                       ),
                     ],
                   ),

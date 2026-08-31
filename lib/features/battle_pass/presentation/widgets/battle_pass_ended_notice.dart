@@ -12,8 +12,7 @@ class BattlePassEndedNotice extends StatelessWidget {
   const BattlePassEndedNotice({super.key});
 
   static const double _cardWidth = 466;
-  static const double _stickerWidth = 84;
-  static const double _stickerHeight = 88;
+  static const double _stickerHeight = 92;
 
   // Рамка виджета (Figma): left:346 top:305 — сама иконка выше на половину
   // своей высоты, так что её низ проходит ровно по верхнему краю рамки.
@@ -35,11 +34,20 @@ class BattlePassEndedNotice extends StatelessWidget {
             child: _Card(),
           ),
           Positioned(
-            top: 4,
-            child: SvgPicture.asset(
-              'assets/icons/battle_pass/sticker_new.svg',
-              width: _stickerWidth,
-              height: _stickerHeight,
+            top: -8,
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.glowShadow,
+                    blurRadius: 40,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: SvgPicture.asset(
+                'assets/icons/battle_pass/sticker_big.svg',
+              ),
             ),
           ),
         ],
