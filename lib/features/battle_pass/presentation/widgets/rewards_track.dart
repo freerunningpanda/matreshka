@@ -65,6 +65,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
   static const double _tileExtent = 254;
 
   bool _showLeftArrow = false;
+  bool _showRightArrow = true;
   bool _hasScrolled = false;
   int? _nextMilestone;
 
@@ -122,19 +123,34 @@ class _RewardsTrackState extends State<RewardsTrack> {
     _controller.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToCurrent();
-      if (mounted) setState(() => _nextMilestone = _computeNextMilestone());
+      if (mounted) {
+        setState(() {
+          _nextMilestone = _computeNextMilestone();
+          _showRightArrow = !_atScrollEnd;
+        });
+      }
     });
   }
 
+  /// Правый край списка физически достигнут — стрелка вправо (та, что ведёт
+  /// дальше по треку, а не к юбилейному уровню — см. build) дальше скроллить
+  /// уже некуда, поэтому прячется.
+  bool get _atScrollEnd =>
+      _controller.hasClients &&
+      _controller.offset >= _controller.position.maxScrollExtent - 1;
+
   void _onScroll() {
     final showLeftArrow = _controller.offset >= _firstItemExtent;
+    final showRightArrow = !_atScrollEnd;
     final hasScrolled = _controller.offset > 0;
     final nextMilestone = _computeNextMilestone();
     if (showLeftArrow != _showLeftArrow ||
+        showRightArrow != _showRightArrow ||
         hasScrolled != _hasScrolled ||
         nextMilestone != _nextMilestone) {
       setState(() {
         _showLeftArrow = showLeftArrow;
+        _showRightArrow = showRightArrow;
         _hasScrolled = hasScrolled;
         _nextMilestone = nextMilestone;
       });
@@ -362,7 +378,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
                 onTap: () => _scrollToMilestone(_nextMilestone!),
               ),
             )
-          else
+          else if (_showRightArrow)
             Positioned(
               right: 0,
               top: 0,
