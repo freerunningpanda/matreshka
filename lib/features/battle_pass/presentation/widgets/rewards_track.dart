@@ -755,7 +755,7 @@ class _TeaserTrackRow extends StatelessWidget {
 
   /// Ширины чёрточек пунктира: крайние — короткие, три средних — длиннее и
   /// одного размера между собой (см. дизайн).
-  static const _dashWidths = [16.0, 38.0, 38.0, 38.0, 16.0];
+  static const _dashWidths = [20.0, 32.0, 32.0, 32.0, 20.0];
 
   /// Толщина линии — та же, что у обычных соединительных линий трека, см.
   /// _LevelTrackNode._lineThickness в reward_tile.dart (там она приватная,
@@ -821,7 +821,7 @@ class _TeaserTrackRow extends StatelessWidget {
                 ),
               ),
               _TeaserDiamond(number: nextLevel),
-              const SizedBox(width: 6),
+              const SizedBox(width: 12),
               ShaderMask(
                 shaderCallback: (bounds) => _dashGradient.createShader(bounds),
                 blendMode: BlendMode.srcIn,
@@ -829,7 +829,7 @@ class _TeaserTrackRow extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     for (var i = 0; i < _dashWidths.length; i++) ...[
-                      if (i > 0) const SizedBox(width: 6),
+                      if (i > 0) const SizedBox(width: 10),
                       Container(
                         width: _dashWidths[i],
                         height: _lineThickness,
@@ -844,7 +844,7 @@ class _TeaserTrackRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 12),
               _TeaserDiamond(number: finalLevel),
             ],
           ),
