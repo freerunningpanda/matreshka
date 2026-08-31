@@ -17,7 +17,19 @@ class BattlePassMockApi {
       case BattlePassScenario.premiumLocked:
         return _buildSeason(currentLevel: 5, premiumOwned: false);
       case BattlePassScenario.premiumUnlockedWithReward:
-        return _buildSeason(currentLevel: 12, premiumOwned: true);
+        return _buildSeason(
+          currentLevel: 12,
+          premiumOwned: true,
+          // Узел из Figma для этого сценария показывает 4-й уровень как
+          // ещё не забранный "боевой" приз (пара "босс мафии" x16) —
+          // выбивается из обычного правила "claimable только 3 уровня
+          // перед текущим", поэтому уровень и его иконка/количество
+          // заданы точечным оверрайдом, а не общей формулой.
+          claimableLevels: const {4},
+          freeRewardOverrides: const {
+            4: (icon: 'assets/images/battle_pass/boss.png', amount: 16),
+          },
+        );
       case BattlePassScenario.maxLevel:
         return _buildSeason(currentLevel: _maxLevel, premiumOwned: true);
       case BattlePassScenario.completed:
@@ -33,6 +45,8 @@ class BattlePassMockApi {
     required int currentLevel,
     required bool premiumOwned,
     bool allClaimed = false,
+    Set<int> claimableLevels = const {},
+    Map<int, ({String icon, int amount})> freeRewardOverrides = const {},
   }) {
     final levels = List.generate(_maxLevel, (index) {
       final number = index + 1;
@@ -42,17 +56,26 @@ class BattlePassMockApi {
           ? 'locked'
           : number == currentLevel
           ? 'current'
-          : (currentLevel - number <= 3 ? 'claimable' : 'claimed');
+          : (claimableLevels.contains(number) || currentLevel - number <= 3)
+          ? 'claimable'
+          : 'claimed';
       final claimed = state == 'claimed';
       // Премиум-награда есть не на каждом уровне — только там, где и так
       // выпадает более редкий бесплатный предмет: это она "продаёт" апгрейд,
       // корону над плиткой показываем именно на таких уровнях.
       final hasPremiumTier = _rarityFor(number) != 'common';
+      final freeOverride = freeRewardOverrides[number];
       return {
         'number': number,
         'required_xp': number * 1000,
         'state': state,
-        'free_reward': _reward(number, premium: false, claimed: claimed),
+        'free_reward': _reward(
+          number,
+          premium: false,
+          claimed: claimed,
+          iconAssetOverride: freeOverride?.icon,
+          amountOverride: freeOverride?.amount,
+        ),
         'premium_reward': hasPremiumTier
             ? _reward(number, premium: true, claimed: premiumOwned && claimed)
             : null,
@@ -92,6 +115,8 @@ class BattlePassMockApi {
     int level, {
     required bool premium,
     required bool claimed,
+    String? iconAssetOverride,
+    int? amountOverride,
   }) {
     final iconIndex = (level - 1) % _rewardIcons.length;
     // Чип количества (×N) показываем только у леденца — у остальных наград
@@ -99,14 +124,16 @@ class BattlePassMockApi {
     final isLollipop = iconIndex == 0;
     // 10-й уровень — легендарный, у него свой уникальный ассет вместо
     // обычного цикла из четырёх иконок.
-    final iconAsset = level == 10
-        ? 'assets/images/battle_pass/case_audi.png'
-        : _rewardIcons[iconIndex];
+    final iconAsset =
+        iconAssetOverride ??
+        (level == 10
+            ? 'assets/images/battle_pass/case_audi.png'
+            : _rewardIcons[iconIndex]);
     return {
       'id': level * 10 + (premium ? 1 : 0),
       'name': premium ? 'Премиум-награда $level ур.' : 'Награда $level ур.',
       'icon_asset': iconAsset,
-      'amount': premium ? 50 : (isLollipop ? 16 : 1),
+      'amount': amountOverride ?? (premium ? 50 : (isLollipop ? 16 : 1)),
       'rarity': _rarityFor(level),
       'claimed': claimed,
     };

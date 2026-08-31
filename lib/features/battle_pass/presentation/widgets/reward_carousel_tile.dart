@@ -115,6 +115,17 @@ class RewardCarouselTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardWidth = width - 42;
     final cardHeight = height - 56;
+    const footerMargin = 8.0;
+    const footerHeight = 48.0;
+    final footerTop = 28 + cardHeight - footerMargin - footerHeight;
+    const quantityChipHeight = 36.0;
+    // Когда снизу есть плашка "Забрать", чип количества не может стоять на
+    // своём обычном месте (у нижнего края карточки) — она его перекрывает.
+    // Сдвигаем чип строго над плашкой с отступом 7px, а без плашки
+    // оставляем прежнее место у низа карточки.
+    final quantityChipTop = footer != null
+        ? footerTop - 7 - quantityChipHeight
+        : height - 44 - quantityChipHeight;
     final content = Opacity(
       opacity: claimed || locked ? 0.5 : 1,
       child: Stack(
@@ -187,8 +198,8 @@ class RewardCarouselTile extends StatelessWidget {
           ),
           if (quantityLabel != null)
             Positioned(
-              right: 48,
-              bottom: 44,
+              right: 34,
+              top: quantityChipTop,
               child: IgnorePointer(
                 child: SizedBox(
                   width: 69,
@@ -222,9 +233,6 @@ class RewardCarouselTile extends StatelessWidget {
             ),
           Builder(
             builder: (context) {
-              const margin = 8.0;
-              const footerHeight = 48.0;
-              final footerTop = 28 + cardHeight - margin - footerHeight;
               // Наклоняем плашку footer вокруг того же центра, что и сама
               // карточка (28 + cardHeight/2), а не вокруг своего — иначе
               // при независимом наклоне вокруг собственного (более
@@ -234,8 +242,8 @@ class RewardCarouselTile extends StatelessWidget {
               final origin = Offset(0, 28 + cardHeight / 2 - footerTop);
               final visible = footer != null;
               return Positioned(
-                left: 21 + margin,
-                width: cardWidth - margin * 2,
+                left: 21 + footerMargin,
+                width: cardWidth - footerMargin * 2,
                 top: footerTop,
                 height: footerHeight,
                 child: IgnorePointer(
