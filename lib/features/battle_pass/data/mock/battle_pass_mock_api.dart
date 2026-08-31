@@ -43,10 +43,12 @@ class BattlePassMockApi {
           currentLevel: _maxLevel,
           premiumOwned: true,
           // Тот же точечный оверрайд, что и у "премиум куплен/награда" (см.
-          // выше) — 4-й и 5-й уровни трека показаны claimable с конкретными
-          // иконками/количеством по Figma; 5-й вдобавок красится под редкость
-          // 4-го (common), а не свою обычную (epic) — они должны совпадать
-          // цветом заливки.
+          // выше) — уровни 4-8 получают конкретные иконки по Figma. 4 и 5 —
+          // claimable (выбиваются из обычного правила "только 3 уровня перед
+          // текущим"); 6-8 уже забраны — остаются на дефолтном 'claimed' (не
+          // добавлены в claimableLevels), только с этими иконками/цветом.
+          // 5-й красится под редкость 4-го (common), 6-8 — под фиолетовую
+          // (epic), а не свою обычную.
           claimableLevels: const {4, 5},
           freeRewardOverrides: const {
             4: (
@@ -57,8 +59,11 @@ class BattlePassMockApi {
               icon: 'assets/images/battle_pass/premium_teaser_bag.png',
               amount: 16,
             ),
+            6: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
+            7: (icon: 'assets/images/battle_pass/green_monster.png', amount: 1),
+            8: (icon: 'assets/images/battle_pass/bull.png', amount: 1),
           },
-          rarityOverrides: const {5: 'common'},
+          rarityOverrides: const {5: 'common', 6: 'epic', 7: 'epic', 8: 'epic'},
         );
       case BattlePassScenario.completed:
         return _buildSeason(
