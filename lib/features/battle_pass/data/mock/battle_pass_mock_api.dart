@@ -31,7 +31,27 @@ class BattlePassMockApi {
           },
         );
       case BattlePassScenario.maxLevel:
-        return _buildSeason(currentLevel: _maxLevel, premiumOwned: true);
+        return _buildSeason(
+          currentLevel: _maxLevel,
+          premiumOwned: true,
+          // Тот же точечный оверрайд, что и у "премиум куплен/награда" (см.
+          // выше) — 4-й и 5-й уровни трека показаны claimable с конкретными
+          // иконками/количеством по Figma; 5-й вдобавок красится под редкость
+          // 4-го (common), а не свою обычную (epic) — они должны совпадать
+          // цветом заливки.
+          claimableLevels: const {4, 5},
+          freeRewardOverrides: const {
+            4: (
+              icon: 'assets/images/battle_pass/reward_mask_ghost.png',
+              amount: 16,
+            ),
+            5: (
+              icon: 'assets/images/battle_pass/premium_teaser_bag.png',
+              amount: 16,
+            ),
+          },
+          rarityOverrides: const {5: 'common'},
+        );
       case BattlePassScenario.completed:
         return _buildSeason(
           currentLevel: _maxLevel,
@@ -47,6 +67,7 @@ class BattlePassMockApi {
     bool allClaimed = false,
     Set<int> claimableLevels = const {},
     Map<int, ({String icon, int amount})> freeRewardOverrides = const {},
+    Map<int, String> rarityOverrides = const {},
   }) {
     final levels = List.generate(_maxLevel, (index) {
       final number = index + 1;
@@ -60,10 +81,13 @@ class BattlePassMockApi {
           ? 'claimable'
           : 'claimed';
       final claimed = state == 'claimed';
+      final rarity = rarityOverrides[number] ?? _rarityFor(number);
       // Премиум-награда есть не на каждом уровне — только там, где и так
       // выпадает более редкий бесплатный предмет: это она "продаёт" апгрейд,
-      // корону над плиткой показываем именно на таких уровнях.
-      final hasPremiumTier = _rarityFor(number) != 'common';
+      // корону над плиткой показываем именно на таких уровнях. Переопределён-
+      // ная (под другой уровень) редкость тоже отменяет корону — иначе
+      // заливка "как у 4-го" не сходится с тем, есть ли премиум-плитка.
+      final hasPremiumTier = rarity != 'common';
       final freeOverride = freeRewardOverrides[number];
       return {
         'number': number,
@@ -75,6 +99,7 @@ class BattlePassMockApi {
           claimed: claimed,
           iconAssetOverride: freeOverride?.icon,
           amountOverride: freeOverride?.amount,
+          rarityOverride: rarityOverrides[number],
         ),
         'premium_reward': hasPremiumTier
             ? _reward(number, premium: true, claimed: premiumOwned && claimed)
@@ -117,6 +142,7 @@ class BattlePassMockApi {
     required bool claimed,
     String? iconAssetOverride,
     int? amountOverride,
+    String? rarityOverride,
   }) {
     final iconIndex = (level - 1) % _rewardIcons.length;
     // Чип количества (×N) показываем только у леденца — у остальных наград
@@ -134,7 +160,7 @@ class BattlePassMockApi {
       'name': premium ? 'Премиум-награда $level ур.' : 'Награда $level ур.',
       'icon_asset': iconAsset,
       'amount': amountOverride ?? (premium ? 50 : (isLollipop ? 16 : 1)),
-      'rarity': _rarityFor(level),
+      'rarity': rarityOverride ?? _rarityFor(level),
       'claimed': claimed,
     };
   }
