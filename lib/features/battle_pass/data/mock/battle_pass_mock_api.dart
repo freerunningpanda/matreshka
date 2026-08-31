@@ -92,7 +92,7 @@ class BattlePassMockApi {
         // premiumOwned: false.
         return _buildSeason(
           currentLevel: 12,
-          premiumOwned: false,
+          premiumOwned: true,
           claimableLevels: const {4, 5, 6, 7, 8, 95, 96, 97, 98, 99, 100},
           freeRewardOverrides: const {
             4: (icon: 'assets/images/battle_pass/bullets.png', amount: 16),

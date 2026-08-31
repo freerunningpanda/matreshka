@@ -41,7 +41,7 @@ class PremiumBanner extends StatelessWidget {
             // и обрезается по её границам — намеренный портретный bleed, а не
             // изображение, вписанное в карточку.
             Positioned(
-              left: -20,
+              left: premiumOwned ? -50 : 20,
               top: premiumOwned ? -278 : -169,
               width: 668,
               height: 1304,
@@ -138,7 +138,7 @@ class _MaxLevelReachedNotice extends StatelessWidget {
     return Container(
       width: 400,
       alignment: Alignment.center,
-      padding: AppPadding.symmetricPaddingH24V22,
+      padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 24),
       decoration: BoxDecoration(
         color: AppColors.buttonOverlayStrong, // #E9E9F3 @ 0.1
         borderRadius: BorderRadius.circular(30),
