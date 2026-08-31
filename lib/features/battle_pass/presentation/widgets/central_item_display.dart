@@ -27,8 +27,10 @@ class CentralItemDisplay extends StatelessWidget {
           children: [
             Expanded(child: Image.asset(flavor.itemAsset, fit: BoxFit.contain)),
             const SizedBox(height: 20),
-            _Tag(text: flavor.tag),
-            const SizedBox(height: 10),
+            if (flavor.tag case final tag?) ...[
+              _Tag(text: tag),
+              const SizedBox(height: 10),
+            ],
             _ItemTitle(text: flavor.itemTitle),
           ],
         ),

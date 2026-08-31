@@ -7,12 +7,15 @@ class ScenarioFlavor {
   const ScenarioFlavor({
     required this.itemAsset,
     required this.itemTitle,
-    required this.tag,
+    this.tag,
   });
 
   final String itemAsset;
   final String itemTitle;
-  final String tag;
+
+  /// null — плашки-тега над названием предмета нет (см. "Макс. уровень /
+  /// Много наград": она конфликтует с названием по месту, ей там не быть).
+  final String? tag;
 
   static const _assetsBase = 'assets/images/battle_pass';
 
@@ -31,7 +34,6 @@ class ScenarioFlavor {
     BattlePassScenario.completed => const ScenarioFlavor(
       itemAsset: '$_assetsBase/reward_item_max_level.png',
       itemTitle: 'Мега пак',
-      tag: 'Максимальный уровень',
     ),
   };
 }
