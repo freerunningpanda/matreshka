@@ -17,9 +17,6 @@ class BattlePassMockApi {
       case BattlePassScenario.premiumLocked:
         return _buildSeason(currentLevel: 5, premiumOwned: false);
       case BattlePassScenario.premiumUnlockedWithReward:
-      // Пока пиксель-в-пиксель повторяет premiumUnlockedWithReward — см.
-      // комментарий у enum-значения в battle_pass_repository.dart.
-      case BattlePassScenario.rewardsEndedPremiumOwned:
         return _buildSeason(
           currentLevel: 12,
           premiumOwned: true,
@@ -31,6 +28,25 @@ class BattlePassMockApi {
           claimableLevels: const {4, 5, 6, 7, 8},
           freeRewardOverrides: const {
             4: (icon: 'assets/images/battle_pass/boss.png', amount: 16),
+            5: (
+              icon: 'assets/images/battle_pass/premium_teaser_bag.png',
+              amount: 1,
+            ),
+            6: (icon: 'assets/images/battle_pass/filter.png', amount: 1),
+            7: (icon: 'assets/images/battle_pass/blue_devil.png', amount: 1),
+            8: (icon: 'assets/images/battle_pass/green_monster.png', amount: 1),
+          },
+          rarityOverrides: const {5: 'common', 6: 'epic', 7: 'epic', 8: 'epic'},
+        );
+      case BattlePassScenario.rewardsEndedPremiumOwned:
+        return _buildSeason(
+          currentLevel: 12,
+          premiumOwned: true,
+          // Тот же набор, что и у premiumUnlockedWithReward — только 4-й
+          // с bullets.png вместо boss.png.
+          claimableLevels: const {4, 5, 6, 7, 8},
+          freeRewardOverrides: const {
+            4: (icon: 'assets/images/battle_pass/bullets.png', amount: 16),
             5: (
               icon: 'assets/images/battle_pass/premium_teaser_bag.png',
               amount: 1,

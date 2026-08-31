@@ -9,6 +9,7 @@ class ScenarioFlavor {
     required this.itemTitle,
     this.tag,
     this.itemOffsetY = 0,
+    this.itemScale = 1,
   });
 
   final String itemAsset;
@@ -22,6 +23,10 @@ class ScenarioFlavor {
   /// reward_item_max_level.png композиция ниже остальных, поднята на 30px.
   final double itemOffsetY;
 
+  /// Масштаб картинки предмета сверх обычного BoxFit.contain — у
+  /// bullets.png (rewardsEndedPremiumOwned) увеличена на 8%.
+  final double itemScale;
+
   static const _assetsBase = 'assets/images/battle_pass';
 
   static ScenarioFlavor of(BattlePassScenario scenario) => switch (scenario) {
@@ -30,13 +35,19 @@ class ScenarioFlavor {
       itemTitle: 'Мега пак',
       tag: 'Доступно с прокачкой!',
     ),
-    // Пока пиксель-в-пиксель повторяет premiumUnlockedWithReward — см.
-    // комментарий у enum-значения в battle_pass_repository.dart.
-    BattlePassScenario.premiumUnlockedWithReward ||
-    BattlePassScenario.rewardsEndedPremiumOwned => const ScenarioFlavor(
+    BattlePassScenario.premiumUnlockedWithReward => const ScenarioFlavor(
       itemAsset: '$_assetsBase/reward_item_purchased.png',
       itemTitle: '«Роковая женщина» или «Босс мафии»',
       tag: 'Доступно с прокачкой!',
+      itemScale: 1.22,
+    ),
+    // Та же картинка/тег, что и у premiumUnlockedWithReward — только
+    // название предмета короче ("Мега пак" вместо длинного варианта).
+    BattlePassScenario.rewardsEndedPremiumOwned => const ScenarioFlavor(
+      itemAsset: '$_assetsBase/bullets.png',
+      itemTitle: 'Мега пак',
+      tag: 'Доступно с прокачкой!',
+      itemScale: 1.12,
     ),
     // CentralItemDisplay для "Премиум куплен / нет наград" и "Макс.
     // уровень / Нет наград" — такой же, как у "Макс. уровень / Много
@@ -48,6 +59,7 @@ class ScenarioFlavor {
       itemAsset: '$_assetsBase/reward_item_max_level.png',
       itemTitle: 'Мега пак',
       itemOffsetY: -70,
+      itemScale: 1.06,
     ),
   };
 }

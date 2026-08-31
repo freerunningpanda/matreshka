@@ -28,8 +28,9 @@ class CentralItemDisplay extends StatelessWidget {
             Expanded(
               child: Transform.translate(
                 offset: Offset(0, flavor.itemOffsetY),
-                child: Image.asset(flavor.itemAsset, fit: BoxFit.contain,
-                
+                child: Transform.scale(
+                  scale: flavor.itemScale,
+                  child: Image.asset(flavor.itemAsset, fit: BoxFit.contain),
                 ),
               ),
             ),
