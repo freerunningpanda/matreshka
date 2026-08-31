@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_padding.dart';
 import '../../../../core/theme/app_sized_boxes.dart';
 import 'event_countdown.dart';
 
@@ -30,10 +31,7 @@ class BattlePassEndedNotice extends StatelessWidget {
         clipBehavior: Clip.none,
         alignment: Alignment.topCenter,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: _stickerHeight / 2),
-            child: _Card(),
-          ),
+          const Padding(padding: AppPadding.topPadding46, child: _Card()),
           Positioned(
             top: -8,
             child: Container(
@@ -125,7 +123,7 @@ class _Card extends StatelessWidget {
                 child: DecoratedBox(decoration: BoxDecoration(color: _flatBg)),
               ),
               const Padding(
-                padding: EdgeInsets.fromLTRB(40, 40, 40, 32),
+                padding: AppPadding.ltrbPaddingL40T40R40B32,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -229,7 +227,7 @@ class _TimerPill extends StatelessWidget {
       // измерена под короткий пример ("6д 13ч 55м"), а реальный мок-дедлайн
       // (15д 12ч 42м) шире и при фиксированной ширине обрезался.
       constraints: const BoxConstraints(minWidth: 214, minHeight: 52),
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
+      padding: AppPadding.symmetricPaddingH28V8,
       decoration: BoxDecoration(
         gradient: AppColors.countdownPillGradient,
         borderRadius: BorderRadius.circular(60),

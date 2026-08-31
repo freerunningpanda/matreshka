@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_padding.dart';
 import '../../../../core/theme/app_sized_boxes.dart';
 import '../../domain/repositories/battle_pass_repository.dart';
 
@@ -35,7 +36,7 @@ class ScenarioSwitcher extends StatelessWidget {
       child: Align(
         alignment: Alignment.bottomRight,
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: AppPadding.allPadding12,
           child: PopupMenuButton<BattlePassScenario>(
             initialValue: current,
             onSelected: onChanged,
@@ -62,7 +63,7 @@ class ScenarioSwitcher extends StatelessWidget {
                 ),
             ],
             child: Container(
-              padding: const EdgeInsets.all(12),
+              padding: AppPadding.allPadding12,
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.55),
                 shape: BoxShape.circle,

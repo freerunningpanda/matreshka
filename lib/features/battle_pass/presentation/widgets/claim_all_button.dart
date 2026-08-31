@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_padding.dart';
+
 /// Кнопка "Забрать все награды" — зелёный градиент (есть что забрать) или
 /// фиолетовый (апсейл премиума), см. AppColors.claim*Gradient из макета.
 class ClaimAllButton extends StatelessWidget {
@@ -29,7 +31,7 @@ class ClaimAllButton extends StatelessWidget {
           child: Container(
             width: 400,
             alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(vertical: 22),
+            padding: AppPadding.verticalPadding22,
             child: Text(
               label,
               textAlign: TextAlign.center,

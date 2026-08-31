@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_padding.dart';
 import '../../../../core/theme/app_sized_boxes.dart';
 
 /// Индикатор уровня — "BP_Level" из макета (node 1:1312): кольцевой прогресс
@@ -63,7 +64,7 @@ class XpProgressPill extends StatelessWidget {
                   // Не впритык к краям кольца — при трёхзначном уровне
                   // (100) есть куда сжаться перед тем, как FittedBox
                   // реально понадобится.
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: AppPadding.horizontalPadding8,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(

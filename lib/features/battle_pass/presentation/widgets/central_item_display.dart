@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_padding.dart';
 import '../../../../core/theme/app_sized_boxes.dart';
 import '../../domain/repositories/battle_pass_repository.dart';
 import 'scenario_flavor.dart';
@@ -58,7 +59,7 @@ class _Tag extends StatelessWidget {
     return Container(
       width: 324,
       height: 39,
-      padding: const EdgeInsets.only(left: 12, right: 19),
+      padding: AppPadding.onlyPaddingL12R19,
       decoration: const BoxDecoration(
         gradient: AppColors.itemTagGradient,
         borderRadius: BorderRadius.all(Radius.circular(30)),

@@ -6,6 +6,7 @@ import '../../../../core/di/injection_container.dart';
 import '../../../../core/navigation/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_dimens.dart';
+import '../../../../core/theme/app_padding.dart';
 import '../../../tasks/presentation/cubit/tasks_cubit.dart';
 import '../../../tasks/presentation/cubit/tasks_state.dart';
 import '../../domain/entities/level.dart';
@@ -404,7 +405,7 @@ class _DismissiblePremiumPromoState extends State<_DismissiblePremiumPromo> {
                 child: Container(
                   width: 100,
                   height: 100,
-                  padding: const EdgeInsets.all(32),
+                  padding: AppPadding.allPadding32,
                   child: SvgPicture.asset(
                     'assets/icons/battle_pass/icn_x.svg',
                     width: 36,

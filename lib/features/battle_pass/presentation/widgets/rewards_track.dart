@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_padding.dart';
 import '../../../../core/theme/app_sized_boxes.dart';
 import '../../domain/entities/level.dart';
 import '../../domain/entities/season.dart';
@@ -732,7 +733,7 @@ class _SeasonEndTeaser extends StatelessWidget {
     // maxScrollExtent заканчивается раньше, чем скошенный правый край рамки
     // на самом деле дорисован, и его обрезает Viewport.
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 21),
+      padding: AppPadding.horizontalPadding21,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -767,7 +768,7 @@ class _TeaserCard extends StatelessWidget {
       child: Align(
         alignment: Alignment.topCenter,
         child: Padding(
-          padding: const EdgeInsets.only(top: 28),
+          padding: AppPadding.topPadding28,
           child: Transform(
             alignment: Alignment.center,
             transform: Matrix4.skewX(kRewardTileSkewAngle),
@@ -775,7 +776,7 @@ class _TeaserCard extends StatelessWidget {
               width: 439,
               height: 184,
               alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 40),
+              padding: AppPadding.horizontalPadding40,
               decoration: BoxDecoration(
                 border: Border.all(
                   color: AppColors.progressRingFill,
@@ -973,7 +974,7 @@ class _TeaserDiamond extends StatelessWidget {
               // Трёхзначные уровни (100+) не помещаются в ромб на полный
               // fontSize — сжимаем, а не обрезаем цифры (см. тот же приём в
               // _LevelTrackNode, reward_tile.dart).
-              padding: const EdgeInsets.symmetric(horizontal: 3),
+              padding: AppPadding.horizontalPadding3,
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
@@ -1033,7 +1034,7 @@ class _ArrowButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: AppPadding.horizontalPadding8,
       child: Material(
         color: AppColors.buttonOverlayStrong,
         shape: const CircleBorder(),

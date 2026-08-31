@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_padding.dart';
 import '../../../../core/theme/app_sized_boxes.dart';
 import '../../../tasks/domain/entities/task.dart';
 
@@ -111,7 +112,7 @@ class _RewardHeader extends StatelessWidget {
           child: Container(
             height: 110,
             width: 400,
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: AppPadding.horizontalPadding30,
             decoration: const BoxDecoration(
               color: AppColors.taskCardHeaderBg,
               borderRadius: BorderRadius.only(
@@ -253,7 +254,7 @@ class _TaskBody extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(40, 44, 40, 20),
+            padding: AppPadding.ltrbPaddingL40T44R40B20,
             child: Column(
               crossAxisAlignment: centerContent
                   ? CrossAxisAlignment.center
@@ -333,7 +334,7 @@ class _TasksButton extends StatelessWidget {
       children: [
         Container(
           width: 320,
-          padding: const EdgeInsets.fromLTRB(36, 20, 36, 23),
+          padding: AppPadding.ltrbPaddingL36T20R36B23,
           decoration: BoxDecoration(
             color: AppColors.buttonOverlayStrong,
             borderRadius: BorderRadius.circular(30),
@@ -406,7 +407,7 @@ class _ClaimXpButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 320,
-      padding: const EdgeInsets.fromLTRB(36, 20, 36, 23),
+      padding: AppPadding.ltrbPaddingL36T20R36B23,
       decoration: BoxDecoration(
         gradient: claimed ? null : AppColors.claimXpButtonGradient,
         color: claimed ? AppColors.taskChipBg : null,

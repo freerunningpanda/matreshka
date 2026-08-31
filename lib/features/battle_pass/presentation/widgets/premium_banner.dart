@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_padding.dart';
 import '../../../../core/theme/app_sized_boxes.dart';
 
 /// Карточка премиума в правом верхнем углу — две вариации: апсейл (премиум
@@ -98,7 +99,7 @@ class PremiumBanner extends StatelessWidget {
                       ? Align(
                           alignment: Alignment.center,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 32, top: 53),
+                            padding: AppPadding.onlyPaddingL32T53,
                             child: maxLevelReached
                                 ? const _MaxLevelReachedNotice()
                                 : _UpgradeButton(
@@ -111,11 +112,7 @@ class PremiumBanner extends StatelessWidget {
                           ),
                         )
                       : Padding(
-                          padding: const EdgeInsets.only(
-                            left: 125,
-                            top: 27,
-                            right: 80,
-                          ),
+                          padding: AppPadding.onlyPaddingL125T27R80,
                           child: _UpgradeButton(
                             label: 'Прокачать',
                             onPressed: onPressed,
@@ -141,7 +138,7 @@ class _MaxLevelReachedNotice extends StatelessWidget {
     return Container(
       width: 400,
       alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 24),
+      padding: AppPadding.symmetricPaddingH24V22,
       decoration: BoxDecoration(
         color: AppColors.buttonOverlayStrong, // #E9E9F3 @ 0.1
         borderRadius: BorderRadius.circular(30),
