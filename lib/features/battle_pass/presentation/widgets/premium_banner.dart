@@ -33,15 +33,15 @@ class PremiumBanner extends StatelessWidget {
             // и обрезается по её границам — намеренный портретный bleed, а не
             // изображение, вписанное в карточку.
             Positioned(
-              left: 10,
-              top: premiumOwned ? -74 : -169,
+              left: -20,
+              top: premiumOwned ? -278 : -169,
               width: 668,
               height: 1304,
               child: Image.asset(
                 premiumOwned
                     ? 'assets/images/battle_pass/premium_banner_unlocked_art.png'
                     : 'assets/images/battle_pass/premium_banner_locked_art.png',
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
               ),
             ),
             Positioned(
