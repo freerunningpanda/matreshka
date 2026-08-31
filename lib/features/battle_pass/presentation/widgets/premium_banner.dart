@@ -215,7 +215,7 @@ class _UpgradeButton extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: 'Geologica',
                       fontWeight: FontWeight.w500,
-                      fontSize: 22,
+                      fontSize: 30,
                       height: 1.2,
                       letterSpacing: -0.3,
                       color: AppColors.itemTagText,
