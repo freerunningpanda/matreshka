@@ -434,7 +434,20 @@ class _RewardsTrackState extends State<RewardsTrack> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          _buildTrack(),
+          _TrackList(
+            season: widget.season,
+            controller: _controller,
+            onClaim: widget.onClaim,
+            onUnlockPremium: widget.onUnlockPremium,
+            hideGiftBadge: widget.hideGiftBadge,
+            highlightedLevelNumber: widget.highlightedLevelNumber,
+            hideCarouselPremiumBadge: widget.hideCarouselPremiumBadge,
+            goldGradientLevelNumber: widget.goldGradientLevelNumber,
+            showSeasonEndTeaser: widget.showSeasonEndTeaser,
+            showSeasonEndTeaserRequiresPremium:
+                widget.showSeasonEndTeaserRequiresPremium,
+            fadeGradient: _trackFadeGradient,
+          ),
           if (_nextMilestone != null)
             // Плитки трека, которые превью юбилейного уровня перекрывает
             // собой, не подрезаются жёстко — сами гаснут (alpha 0) уже на
@@ -533,40 +546,76 @@ class _RewardsTrackState extends State<RewardsTrack> {
       ),
     );
   }
+}
 
-  Widget _buildTrack() {
-    final levels = widget.season.levels;
+/// Сама прокручиваемая лента наград (плитки уровней + тизеры по краям) —
+/// вынесена из `_RewardsTrackState.build` в отдельный виджет, а не
+/// приватный build-метод, чтобы у неё было собственное место в дереве
+/// элементов (а не слитное с остальным содержимым `Stack` в build трека).
+class _TrackList extends StatelessWidget {
+  const _TrackList({
+    required this.season,
+    required this.controller,
+    required this.onClaim,
+    required this.onUnlockPremium,
+    required this.hideGiftBadge,
+    required this.highlightedLevelNumber,
+    required this.hideCarouselPremiumBadge,
+    required this.goldGradientLevelNumber,
+    required this.showSeasonEndTeaser,
+    required this.showSeasonEndTeaserRequiresPremium,
+    required this.fadeGradient,
+  });
+
+  final BattlePassSeason season;
+  final ScrollController controller;
+  final void Function(int levelNumber) onClaim;
+  final VoidCallback onUnlockPremium;
+  final bool hideGiftBadge;
+  final int? highlightedLevelNumber;
+  final bool hideCarouselPremiumBadge;
+  final int? goldGradientLevelNumber;
+  final bool showSeasonEndTeaser;
+  final bool showSeasonEndTeaserRequiresPremium;
+
+  /// Считается в `_RewardsTrackState` — зависит от её собственного состояния
+  /// скролла (_nextMilestone/_hasScrolled), которое эта лента не хранит.
+  final Gradient Function(double width) fadeGradient;
+
+  @override
+  Widget build(BuildContext context) {
+    final levels = season.levels;
     final items = [
-      if (!widget.season.premiumOwned)
+      if (!season.premiumOwned)
         PremiumTeaserCluster(
-          onUnlock: widget.onUnlockPremium,
-          hidePremiumBadge: widget.hideCarouselPremiumBadge,
+          onUnlock: onUnlockPremium,
+          hidePremiumBadge: hideCarouselPremiumBadge,
         ),
       for (var i = 0; i < levels.length; i++)
         RewardTile(
           level: levels[i],
-          premiumOwned: widget.season.premiumOwned,
-          currentXp: widget.season.currentXp,
+          premiumOwned: season.premiumOwned,
+          currentXp: season.currentXp,
           nextRequiredXp: i + 1 < levels.length
               ? levels[i + 1].requiredXp
               : null,
-          onClaim: () => widget.onClaim(levels[i].number),
-          onUnlockPremium: widget.onUnlockPremium,
-          hideGiftBadge: widget.hideGiftBadge,
-          highlighted: widget.highlightedLevelNumber == levels[i].number,
-          hidePremiumBadge: widget.hideCarouselPremiumBadge,
-          gradientOverride: widget.goldGradientLevelNumber == levels[i].number
+          onClaim: () => onClaim(levels[i].number),
+          onUnlockPremium: onUnlockPremium,
+          hideGiftBadge: hideGiftBadge,
+          highlighted: highlightedLevelNumber == levels[i].number,
+          hidePremiumBadge: hideCarouselPremiumBadge,
+          gradientOverride: goldGradientLevelNumber == levels[i].number
               ? AppColors.rewardTileGoldGradient
               : null,
         ),
-      if (widget.showSeasonEndTeaser)
+      if (showSeasonEndTeaser)
         _SeasonEndTeaser(
           maxLevel: levels.length,
-          requiresPremium: widget.showSeasonEndTeaserRequiresPremium,
+          requiresPremium: showSeasonEndTeaserRequiresPremium,
         ),
     ];
     final listView = ListView(
-      controller: _controller,
+      controller: controller,
       scrollDirection: Axis.horizontal,
       children: [
         for (var i = 0; i < items.length; i++) ...[
@@ -577,7 +626,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
     );
     return ShaderMask(
       shaderCallback: (bounds) =>
-          _trackFadeGradient(bounds.width).createShader(bounds),
+          fadeGradient(bounds.width).createShader(bounds),
       blendMode: BlendMode.dstIn,
       child: listView,
     );
