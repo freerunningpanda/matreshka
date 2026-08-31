@@ -244,6 +244,9 @@ class _BattlePassView extends StatelessWidget {
                             BattlePassScenario.rewardsEndedPremiumOwned,
                         // Тизер "следующего сезона" в самом конце трека —
                         // тоже только в "Конец наград (Куплен премиум)".
+                        // Заодно (см. RewardsTrack._computeNextMilestone)
+                        // включает задержку повторного появления превью
+                        // юбилейного уровня при обратном скролле от конца.
                         showSeasonEndTeaser:
                             scenario ==
                             BattlePassScenario.rewardsEndedPremiumOwned,

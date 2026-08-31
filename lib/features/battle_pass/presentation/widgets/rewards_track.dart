@@ -103,9 +103,19 @@ class _RewardsTrackState extends State<RewardsTrack> {
   double _centeredOffsetForLevel(int levelNumber) =>
       _offsetForLevel(levelNumber) - _viewportHalfGap;
 
+  /// Идёт программный прыжок скролла (_scrollToCurrent) — на время самой
+  /// анимации превью юбилейного уровня не пересчитывается вовсе, а не
+  /// мелькает по каждому пройденному уровню (10, 20…) на пути к цели. Только
+  /// у "Конец наград (Куплен премиум)" (см. RewardsTrack.startScrolledToEnd)
+  /// прыжок достаточно длинный, чтобы это было заметно — у остальных
+  /// сценариев короткий прыжок ни один порог юбилейного уровня не пересекает,
+  /// так что флаг для них по факту не влияет на видимый результат.
+  bool _isAutoScrolling = false;
+
   /// Ближайший ещё не пройденный юбилейный уровень (10, 20, 30…) — пока он
   /// не проскроллен в начало трека, к нему ведут стрелка вправо и оверлей.
   int? _computeNextMilestone() {
+    if (_isAutoScrolling) return null;
     final maxLevel = widget.season.levels.length;
     // Центрированный порог последнего уровня физически недостижим — под
     // ним нет содержимого, чтобы дотянуть его до середины вьюпорта, и
@@ -117,7 +127,17 @@ class _RewardsTrackState extends State<RewardsTrack> {
         ? _controller.position.maxScrollExtent
         : double.infinity;
     for (var m = 10; m <= maxLevel; m += 10) {
-      final threshold = _centeredOffsetForLevel(m).clamp(0, maxScrollExtent);
+      var threshold = _centeredOffsetForLevel(m).clamp(0, maxScrollExtent);
+      // Превью только что было скрыто (весь трек пройден или конец
+      // автоскролла) — при обратном скролле оно не должно вспыхивать сразу
+      // же по пересечению того же порога, что его спрятал: плитке нужно
+      // дать немного проскроллиться первой. Порог повторного появления
+      // отодвинут на длину одной плитки назад. Только в сценарии "Конец
+      // наград (Куплен премиум)" (см. showSeasonEndTeaser) — там это реально
+      // происходит (startScrolledToEnd долистывает до самого конца).
+      if (widget.showSeasonEndTeaser && _nextMilestone == null) {
+        threshold = (threshold - _tileExtent).clamp(0, maxScrollExtent);
+      }
       if (_controller.offset < threshold) return m;
     }
     return null;
@@ -184,11 +204,25 @@ class _RewardsTrackState extends State<RewardsTrack> {
     final target = widget.startScrolledToEnd
         ? _controller.position.maxScrollExtent
         : _tileExtent;
-    _controller.animateTo(
-      target.clamp(0, _controller.position.maxScrollExtent),
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeOutCubic,
-    );
+    // Только у startScrolledToEnd прыжок достаточно длинный, чтобы по пути
+    // пересечь пороги нескольких юбилейных уровней подряд — без подавления
+    // превью мелькало бы "10, 20, 30…" за одну 500-мс анимацию. У короткого
+    // прыжка (_tileExtent) порог первого уровня всё равно не пересекается,
+    // так что для остальных сценариев подавлять нечего — флаг не трогаем.
+    if (widget.startScrolledToEnd) _isAutoScrolling = true;
+    _controller
+        .animateTo(
+          target.clamp(0, _controller.position.maxScrollExtent),
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOutCubic,
+        )
+        .then((_) {
+          if (!mounted) return;
+          setState(() {
+            _isAutoScrolling = false;
+            _nextMilestone = _computeNextMilestone();
+          });
+        });
   }
 
   void _scrollToMilestone(int levelNumber) {
@@ -246,6 +280,17 @@ class _RewardsTrackState extends State<RewardsTrack> {
     colors: [Colors.black, Colors.black],
   );
 
+  /// Тот же левый fade, что у `_edgeFadeGradient`, но без правого — только
+  /// для карточки "следующий сезон" (см. showSeasonEndTeaser) на самом конце
+  /// трека: она последний элемент, дальше скроллить некуда, поэтому её
+  /// рамка не должна частично гаснуть у правого края.
+  static const _leftOnlyFadeGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    stops: [0.0, 0.07],
+    colors: [Colors.transparent, Colors.black],
+  );
+
   /// Расстояние от правого края трека до середины стрелки, ведущей к
   /// юбилейному уровню (см. её же `right`/паддинг ниже в build) — начиная
   /// отсюда плитки уже не должны рендериться вовсе.
@@ -257,7 +302,11 @@ class _RewardsTrackState extends State<RewardsTrack> {
   /// фиксированным процентом ширины трека.
   Gradient _trackFadeGradient(double width) {
     if (_nextMilestone == null) {
-      return _hasScrolled ? _edgeFadeGradient : _noFadeGradient;
+      if (!_hasScrolled) return _noFadeGradient;
+      if (widget.showSeasonEndTeaser && _atScrollEnd) {
+        return _leftOnlyFadeGradient;
+      }
+      return _edgeFadeGradient;
     }
     const transitionWidth = 150.0;
     final fadeEndStop = 1 - _milestoneArrowMidpoint / width;
@@ -577,9 +626,13 @@ class _SeasonEndTeaser extends StatelessWidget {
     // Тот же левый отступ (21), что у видимой карточки обычной плитки
     // (RewardCarouselTile: left:21 внутри бокса 242 шириной) — иначе
     // расстояние от _TrackSeparator до рамки тизера меньше, чем между ним
-    // и обычной плиткой.
+    // и обычной плиткой. Правый отступ той же величины — буфер под наклон
+    // (kRewardTileSkewAngle): сам Transform не резервирует под сдвиг место
+    // в layout, а это последний элемент списка — без запаса справа
+    // maxScrollExtent заканчивается раньше, чем скошенный правый край рамки
+    // на самом деле дорисован, и его обрезает Viewport.
     return Padding(
-      padding: const EdgeInsets.only(left: 21),
+      padding: const EdgeInsets.symmetric(horizontal: 21),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
