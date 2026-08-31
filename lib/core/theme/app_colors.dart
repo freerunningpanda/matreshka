@@ -60,6 +60,10 @@ abstract final class AppColors {
   );
 
   static const Color itemTagText = Color(0xFF3C0B0B);
+
+  // Текст таймера в плашке BattlePassEndedNotice — отдельный тёмный, не
+  // itemTagText (у той же золотой плашки-тега выше).
+  static const Color countdownPillText = Color(0xFF18191F);
   static const Color itemTagGradientTop = Color(0xFFEFCB4C);
   static const Color itemTagGradientBottom = Color(0xFFF6743C);
 
@@ -106,6 +110,21 @@ abstract final class AppColors {
       Color(0xFFFF7B5F),
     ],
     stops: [0.0, 0.37, 0.40, 0.73, 1.0],
+  );
+
+  /// Фон чипа таймера в BattlePassEndedNotice — похож на levelUpBorderGradient
+  /// (та же палитра), но свой: без FFE383 (4 стопа вместо 5) и другой угол
+  /// (138.47deg, а не диагональ угол-в-угол).
+  static const LinearGradient countdownPillGradient = LinearGradient(
+    begin: Alignment(-0.66, -0.75),
+    end: Alignment(0.66, 0.75),
+    colors: [
+      Color(0xFFFFA34E),
+      Color(0xFFFFC847),
+      Color(0xFFFFB51B),
+      Color(0xFFFF7B5F),
+    ],
+    stops: [0.0, 0.365, 0.725, 1.0],
   );
 
   /// Фоновые градиенты плиток трека наград — общие для `PremiumTeaserCluster`

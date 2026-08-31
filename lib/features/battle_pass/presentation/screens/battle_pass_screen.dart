@@ -13,6 +13,7 @@ import '../../domain/repositories/battle_pass_repository.dart';
 import '../cubit/battle_pass_cubit.dart';
 import '../cubit/battle_pass_state.dart';
 import '../widgets/battle_pass_background.dart';
+import '../widgets/battle_pass_ended_notice.dart';
 import '../widgets/central_item_display.dart';
 import '../widgets/claim_all_button.dart';
 import '../widgets/design_canvas.dart';
@@ -89,34 +90,40 @@ class _BattlePassView extends StatelessWidget {
                             : 0,
                       ),
                       const EventTimerBanner(),
-                      BlocBuilder<TasksCubit, TasksState>(
-                        builder: (context, tasksState) {
-                          final task = switch (tasksState) {
-                            TasksLoaded(:final overview) =>
-                              overview.tasks.isEmpty
+                      // Карточка заданий убрана в "Battle Pass завершен" —
+                      // раздавать/выполнять задания уже нечего, вместо неё
+                      // итоговое сообщение с обратным отсчётом.
+                      if (scenario == BattlePassScenario.completed)
+                        const BattlePassEndedNotice()
+                      else
+                        BlocBuilder<TasksCubit, TasksState>(
+                          builder: (context, tasksState) {
+                            final task = switch (tasksState) {
+                              TasksLoaded(:final overview) =>
+                                overview.tasks.isEmpty
+                                    ? null
+                                    : overview.tasks.first,
+                              _ => null,
+                            };
+                            return TasksTeaserCard(
+                              task: task,
+                              onTap: () => AppRouter.toTasks(context),
+                              // "Забрать опыт" прямо с тизера — только в
+                              // "Макс. уровень / Много наград" (см. README
+                              // про мок-схему заданий). "Макс. уровень / Нет
+                              // наград" в плане UI берёт за основу
+                              // premiumUnlockedNoReward — там обычный переход
+                              // на экран заданий, без клейма с тизера.
+                              claimableInline:
+                                  scenario == BattlePassScenario.maxLevel,
+                              onClaimXp: task == null
                                   ? null
-                                  : overview.tasks.first,
-                            _ => null,
-                          };
-                          return TasksTeaserCard(
-                            task: task,
-                            onTap: () => AppRouter.toTasks(context),
-                            // "Забрать опыт" прямо с тизера — только в
-                            // "Макс. уровень / Много наград" (см. README про
-                            // мок-схему заданий). "Макс. уровень / Нет
-                            // наград" в плане UI берёт за основу
-                            // premiumUnlockedNoReward — там обычный переход
-                            // на экран заданий, без клейма с тизера.
-                            claimableInline:
-                                scenario == BattlePassScenario.maxLevel,
-                            onClaimXp: task == null
-                                ? null
-                                : () => context.read<TasksCubit>().claimTaskXp(
-                                    task.id,
-                                  ),
-                          );
-                        },
-                      ),
+                                  : () => context
+                                        .read<TasksCubit>()
+                                        .claimTaskXp(task.id),
+                            );
+                          },
+                        ),
                       CentralItemDisplay(scenario: scenario),
                       _DismissiblePremiumPromo(
                         premiumOwned: season.premiumOwned,

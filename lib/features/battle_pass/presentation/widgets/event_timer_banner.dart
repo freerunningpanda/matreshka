@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import 'event_countdown.dart';
 
 /// Таймер + заголовок ивента ("+" фрейм узла "Info bar", id 1:1312) —
 /// рядом с кольцом уровня. Дедлайн — статичный мок (см. README): сам ивент
@@ -20,52 +19,17 @@ class EventTimerBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        children: [
-          _CountdownTimer(),
-          SizedBox(height: 8),
-          _EventTitle(),
-        ],
+        children: [_CountdownTimer(), SizedBox(height: 8), _EventTitle()],
       ),
     );
   }
 }
 
-class _CountdownTimer extends StatefulWidget {
+class _CountdownTimer extends StatelessWidget {
   const _CountdownTimer();
 
   @override
-  State<_CountdownTimer> createState() => _CountdownTimerState();
-}
-
-class _CountdownTimerState extends State<_CountdownTimer> {
-  late final DateTime _deadline;
-  late Duration _remaining;
-  Timer? _ticker;
-
-  @override
-  void initState() {
-    super.initState();
-    _deadline = DateTime.now().add(
-      const Duration(days: 15, hours: 12, minutes: 42),
-    );
-    _remaining = _deadline.difference(DateTime.now());
-    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
-      final left = _deadline.difference(DateTime.now());
-      setState(() => _remaining = left.isNegative ? Duration.zero : left);
-    });
-  }
-
-  @override
-  void dispose() {
-    _ticker?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final days = _remaining.inDays;
-    final hours = _remaining.inHours % 24;
-    final minutes = _remaining.inMinutes % 60;
     return Row(
       children: [
         const Icon(
@@ -74,9 +38,8 @@ class _CountdownTimerState extends State<_CountdownTimer> {
           color: AppColors.timerText,
         ),
         const SizedBox(width: 14),
-        Text(
-          '$daysд $hoursч $minutesм',
-          style: const TextStyle(
+        const EventCountdownText(
+          style: TextStyle(
             fontFamily: 'Geologica',
             fontWeight: FontWeight.w500,
             fontSize: 26,
