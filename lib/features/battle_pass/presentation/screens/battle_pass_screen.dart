@@ -250,6 +250,14 @@ class _BattlePassView extends StatelessWidget {
                         showSeasonEndTeaser:
                             scenario ==
                             BattlePassScenario.rewardsEndedPremiumOwned,
+                        // Плитка 97-го уровня — рамка #E9E9F3 и значок
+                        // подарка независимо от hideGiftBadge — тоже только
+                        // здесь.
+                        highlightedLevelNumber:
+                            scenario ==
+                                BattlePassScenario.rewardsEndedPremiumOwned
+                            ? 97
+                            : null,
                       ),
                     ],
                   ),

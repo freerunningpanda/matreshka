@@ -20,6 +20,7 @@ class RewardsTrack extends StatefulWidget {
     this.simplifyMilestonePreview = false,
     this.startScrolledToEnd = false,
     this.showSeasonEndTeaser = false,
+    this.highlightedLevelNumber,
     super.key,
   });
 
@@ -53,6 +54,12 @@ class RewardsTrack extends StatefulWidget {
   /// уровня) — только в сценарии "Конец наград (Куплен премиум)" (см.
   /// battle_pass_screen.dart).
   final bool showSeasonEndTeaser;
+
+  /// Номер уровня, чья плитка получает рамку 4px solid #E9E9F3 и значок
+  /// подарка независимо от hideGiftBadge — точечно 97-й уровень в сценарии
+  /// "Конец наград (Куплен премиум)" (см. battle_pass_screen.dart). `null`
+  /// (по умолчанию) — ни одна плитка не подсвечена.
+  final int? highlightedLevelNumber;
 
   @override
   State<RewardsTrack> createState() => _RewardsTrackState();
@@ -475,6 +482,7 @@ class _RewardsTrackState extends State<RewardsTrack> {
           onClaim: () => widget.onClaim(levels[i].number),
           onUnlockPremium: widget.onUnlockPremium,
           hideGiftBadge: widget.hideGiftBadge,
+          highlighted: widget.highlightedLevelNumber == levels[i].number,
         ),
       if (widget.showSeasonEndTeaser) _SeasonEndTeaser(maxLevel: levels.length),
     ];
@@ -647,7 +655,10 @@ class _SeasonEndTeaser extends StatelessWidget {
         children: [
           _TeaserCard(maxLevel: maxLevel),
           const SizedBox(height: 12),
-          _TeaserTrackRow(fromLevel: maxLevel, toLevel: _nextSeasonLevel),
+          _TeaserTrackRow(
+            nextLevel: maxLevel + 1,
+            finalLevel: _nextSeasonLevel,
+          ),
         ],
       ),
     );
@@ -725,49 +736,90 @@ class _TeaserCard extends StatelessWidget {
   }
 }
 
-/// Прерывистый сегмент трека после `fromLevel`: сам уровень, следующий за
-/// ним, затем ряд коротких чёрточек вместо промежуточных ромбов (их слишком
-/// много, чтобы рисовать каждый) и финальный ромб `toLevel` — тот же язык,
-/// что у _ProgressDashes в tasks_teaser_card.dart.
+/// Прерывистый сегмент трека от `nextLevel` (сразу за последним реальным
+/// уровнем — его собственный ромб рисует сам RewardTile, здесь не
+/// дублируется) до `finalLevel`, по дизайну: сплошная линия к `nextLevel`
+/// (продолжает линию последнего реального уровня — сам он её не дорисовывает,
+/// см. RewardTile.nextRequiredXp — у последнего уровня трека всегда null),
+/// затем зазор, ряд коротких равных чёрточек вместо промежуточных ромбов (их
+/// слишком много, чтобы рисовать каждый — тот же язык, что у
+/// _ProgressDashes в tasks_teaser_card.dart) и ещё один зазор перед
+/// финальным ромбом.
 class _TeaserTrackRow extends StatelessWidget {
-  const _TeaserTrackRow({required this.fromLevel, required this.toLevel});
+  const _TeaserTrackRow({required this.nextLevel, required this.finalLevel});
 
-  final int fromLevel;
-  final int toLevel;
+  final int nextLevel;
+  final int finalLevel;
 
   static const _color = Color(0xFF4A4A52);
+  static const _dashCount = 4;
+
+  /// Толщина линии — та же, что у обычных соединительных линий трека, см.
+  /// _LevelTrackNode._lineThickness в reward_tile.dart (там она приватная,
+  /// значение продублировано).
+  static const _lineThickness = 10.0;
+
+  /// Расстояние от левого края этого виджета до ПРАВОГО (видимого) края ромба
+  /// настоящего последнего уровня (100), чью исходящую линию сам он не
+  /// рисует — RewardTile.nextRequiredXp у последнего уровня трека всегда
+  /// null: половина его собственного слота (242/2=121) минус половина
+  /// диагонали ромба (34·√2/2≈24.04, тот же _diamondHalfSpan, что в
+  /// reward_tile.dart) + ширина стрелки-разделителя между элементами списка
+  /// (12, см. _TrackSeparator) + левый отступ этого виджета под рамку
+  /// карточки (21, см. _SeasonEndTeaser). Останавливается у края ромба, а не
+  /// у его центра — этот виджет красится позже (выше по z) реального тайла,
+  /// поэтому линия до центра перекрывала бы цифры номера. +6 сверху —
+  /// скруглённые углы ромба (borderRadius:6) немного "срезают" его острый
+  /// кончик, без запаса между линией и видимым краем оставался зазор.
+  static const _backReach = 121.0 - 24.04 + 12.0 + 21.0 + 6.0;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 439,
       height: 34,
-      child: Row(
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          _TeaserDiamond(number: fromLevel),
-          const Expanded(
-            child: ColoredBox(color: _color, child: SizedBox(height: 4)),
+          Positioned(
+            left: -_backReach,
+            top: (34 - _lineThickness) / 2,
+            width: _backReach,
+            height: _lineThickness,
+            child: const ColoredBox(color: _color),
           ),
-          _TeaserDiamond(number: fromLevel + 1),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(
-                5,
-                (_) => Container(
-                  width: 14,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: _color,
-                    borderRadius: BorderRadius.circular(2),
+          Row(
+            children: [
+              const Expanded(
+                flex: 3,
+                child: ColoredBox(
+                  color: _color,
+                  child: SizedBox(height: _lineThickness),
+                ),
+              ),
+              _TeaserDiamond(number: nextLevel),
+              const SizedBox(width: 16),
+              Expanded(
+                flex: 4,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(
+                    _dashCount,
+                    (_) => Container(
+                      width: 14,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: _color,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+              const SizedBox(width: 16),
+              _TeaserDiamond(number: finalLevel),
+            ],
           ),
-          const SizedBox(width: 16),
-          _TeaserDiamond(number: toLevel),
         ],
       ),
     );
@@ -793,13 +845,22 @@ class _TeaserDiamond extends StatelessWidget {
         child: Transform.rotate(
           angle: -0.785398,
           child: Center(
-            child: Text(
-              '$number',
-              style: const TextStyle(
-                fontFamily: 'Geologica',
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-                color: Colors.white,
+            child: Padding(
+              // Трёхзначные уровни (100+) не помещаются в ромб на полный
+              // fontSize — сжимаем, а не обрезаем цифры (см. тот же приём в
+              // _LevelTrackNode, reward_tile.dart).
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '$number',
+                  style: const TextStyle(
+                    fontFamily: 'Geologica',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ),

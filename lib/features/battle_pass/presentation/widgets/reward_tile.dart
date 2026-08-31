@@ -14,6 +14,7 @@ class RewardTile extends StatefulWidget {
     required this.onUnlockPremium,
     this.nextRequiredXp,
     this.hideGiftBadge = false,
+    this.highlighted = false,
     super.key,
   });
 
@@ -24,6 +25,13 @@ class RewardTile extends StatefulWidget {
   /// значок подарка в углу плитки убран у всех уровней; корона за премиум
   /// это не затрагивает.
   final bool hideGiftBadge;
+
+  /// Рамка 4px solid #E9E9F3 (AppColors.textPrimary) и значок подарка,
+  /// даже если он скрыт для всего трека через hideGiftBadge — точечно для
+  /// 97-го уровня сценария "Конец наград (Куплен премиум)" (см.
+  /// battle_pass_screen.dart). Активная рамка "к клейму готово" (зелёная)
+  /// всё равно перевешивает — см. showClaimUi ниже.
+  final bool highlighted;
 
   /// Порог опыта следующего по порядку уровня — нужен, чтобы соединительная
   /// линия трека красилась по реальному прогрессу (currentXp относительно
@@ -86,11 +94,16 @@ class _RewardTileState extends State<RewardTile> {
           ? AppColors.rewardTilePurpleGradient
           : _rarityGradient(reward?.rarity),
       badge: showPremiumBadge ? RewardBadgeKind.premium : RewardBadgeKind.gift,
-      showBadge: showPremiumBadge || !widget.hideGiftBadge,
+      showBadge:
+          showPremiumBadge || widget.highlighted || !widget.hideGiftBadge,
       quantityLabel: (reward != null && reward.amount > 1)
           ? '×${reward.amount}'
           : null,
-      borderColor: showClaimUi ? const Color(0xFF3DDC6B) : null,
+      borderColor: showClaimUi
+          ? const Color(0xFF3DDC6B)
+          : widget.highlighted
+          ? AppColors.textPrimary
+          : null,
       showGlow: showClaimUi,
       claimed: claimed,
       locked: visuallyLocked,
@@ -303,13 +316,21 @@ class _LevelTrackNode extends StatelessWidget {
               child: Transform.rotate(
                 angle: -0.785398,
                 child: Center(
-                  child: Text(
-                    '$number',
-                    style: const TextStyle(
-                      fontFamily: 'Geologica',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color: Colors.white,
+                  child: Padding(
+                    // Трёхзначные уровни (100+) не помещаются в ромб на
+                    // полный fontSize — сжимаем, а не обрезаем цифры.
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        '$number',
+                        style: const TextStyle(
+                          fontFamily: 'Geologica',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),
