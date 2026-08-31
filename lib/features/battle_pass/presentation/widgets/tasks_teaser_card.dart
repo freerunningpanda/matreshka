@@ -103,15 +103,23 @@ class _RewardHeader extends StatelessWidget {
               color: AppColors.taskChipBg,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
-              '$progressCurrent / $progressTarget',
-              style: const TextStyle(
-                fontFamily: 'Geologica',
-                fontWeight: FontWeight.w500,
-                fontSize: 26,
-                height: 1.2,
-                letterSpacing: -0.26,
-                color: AppColors.textMuted,
+            child: Text.rich(
+              TextSpan(
+                style: const TextStyle(
+                  fontFamily: 'Geologica',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 26,
+                  height: 1.2,
+                  letterSpacing: -0.26,
+                  color: AppColors.textMuted,
+                ),
+                children: [
+                  TextSpan(
+                    text: '$progressCurrent',
+                    style: const TextStyle(color: AppColors.claimGreenTop),
+                  ),
+                  TextSpan(text: ' / $progressTarget'),
+                ],
               ),
             ),
           ),
