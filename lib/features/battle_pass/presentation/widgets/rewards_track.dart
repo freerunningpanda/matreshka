@@ -249,22 +249,49 @@ class _RewardsTrackState extends State<RewardsTrack> {
         )
         .then((_) {
           if (!mounted) return;
-          // На треке в ~100 плиток (с тизером премиума в начале — ещё +676px)
-          // maxScrollExtent, взятый ДО первого animateTo, иногда чуть меньше
-          // окончательного — анимация останавливается, не долистав до
-          // самого края (рамка карточки "следующий сезон" обрезана). Здесь
-          // maxScrollExtent уже точно финальный — довскролливаем без
-          // анимации, если есть расхождение.
-          if (widget.startScrolledToEnd &&
-              _controller.hasClients &&
-              _controller.offset < _controller.position.maxScrollExtent - 1) {
-            _controller.jumpTo(_controller.position.maxScrollExtent);
+          if (widget.startScrolledToEnd) {
+            // maxScrollExtent сразу после animateTo — ещё не окончательное
+            // значение (см. _settleAtEnd), а у длинного трека с большим
+            // ведущим виджетом (PremiumTeaserCluster) может застрять
+            // заниженным — одного jumpTo(maxScrollExtent) недостаточно.
+            _settleAtEnd();
+            return;
           }
           setState(() {
             _isAutoScrolling = false;
             _nextMilestone = _computeNextMilestone();
           });
         });
+  }
+
+  /// maxScrollExtent, прочитанный сразу после animateTo, — лишь оценка:
+  /// SliverList без itemExtent экстраполирует её по уже построенным
+  /// (видимым + в пределах cacheExtent) детям, а не по всем ~100 плиткам
+  /// трека сразу. У "Не куплен премиум" самый первый построенный элемент —
+  /// PremiumTeaserCluster шириной 676 вместо обычных ~254 — сильно
+  /// перекашивает эту оценку, и она застревает заниженной: ClampingScroll
+  /// Physics каждый кадр обрезает офсет по текущей (ещё не окончательной)
+  /// оценке, а раз офсет не растёт — Sliver не строит следующих детей, и
+  /// оценка не уточняется дальше. Поэтому коррекция не одноразовая: прыгаем
+  /// на текущий maxScrollExtent и на следующем кадре проверяем, вырос ли
+  /// он — пока растёт, кадр за кадром достраиваются новые плитки; как
+  /// только два кадра подряд дают одно и то же значение, конец
+  /// действительно достигнут.
+  void _settleAtEnd([double? previousExtent]) {
+    if (!mounted || !_controller.hasClients) {
+      _isAutoScrolling = false;
+      return;
+    }
+    final extent = _controller.position.maxScrollExtent;
+    _controller.jumpTo(extent);
+    if (previousExtent != null && extent <= previousExtent + 0.5) {
+      setState(() {
+        _isAutoScrolling = false;
+        _nextMilestone = _computeNextMilestone();
+      });
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _settleAtEnd(extent));
   }
 
   void _scrollToMilestone(int levelNumber) {

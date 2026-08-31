@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../core/theme/app_colors.dart';
-
 /// Общий наклон (shear) для всех "боевых" элементов трека — плитки,
 /// значок награды, чип количества, рамка кнопки, стрелка. Иконки/текст
 /// внутри остаются прямыми — это отдельный неповёрнутый слой поверх.
